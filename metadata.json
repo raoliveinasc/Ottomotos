@@ -1,0 +1,6 @@
+{
+  "name": "OttoMotos Developer Portal & Database Modeler",
+  "description": "Initial infrastructure setup, Vercel/Next.js/Github guideline portal and interactive Supabase PostgreSQL database schemas & visual simulation environment for the OttoMotos startup.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
