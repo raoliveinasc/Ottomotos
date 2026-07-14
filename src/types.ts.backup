@@ -1,0 +1,615 @@
+/**
+ * Types and static setup scripts for OttoMotos Developer Portal & Database Modeler.
+ */
+
+export interface UserProfile {
+  id: string; // Auth UUID
+  name: string;
+  email: string;
+  phone: string;
+  role: 'client_b2c' | 'client_b2b' | 'mechanic' | 'admin';
+  created_at: string;
+}
+
+export interface ServiceItem {
+  id: string;
+  name: string;
+  type: 'Pronto Atendimento' | 'Sob Agendamento';
+  estimated_time_m: number; // in minutes
+  base_price_brl: number;
+}
+
+export interface ServiceOrder {
+  id: string;
+  client_id: string;
+  mechanic_id: string;
+  vehicle_plate: string;
+  vehicle_model: string;
+  start_time: string;
+  end_time: string | null;
+  attendance_model: 'Express' | 'Station' | 'Mobile';
+  status: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED' | 'REMOVAL';
+  displacement_tax: number;
+  ai_diagnostics: {
+    pred_maintenance?: string;
+    anomaly_alerts?: string[];
+    risk_level?: 'LOW' | 'MEDIUM' | 'HIGH';
+    engine_temp_analysis?: string;
+    gemini_summary?: string;
+  } | null;
+  created_at: string;
+  cancellation_time?: string;
+  rating?: number;
+  feedback?: string;
+  total_spent?: number;
+  rework_required?: boolean;
+}
+
+export interface InventoryItem {
+  id: string;
+  item_name: string;
+  quantity: number;
+  minimum_threshold: number;
+  alert_active: boolean;
+}
+
+export interface StockMovement {
+  id: string;
+  item_id: string;
+  item_name: string;
+  type: 'ENTRY' | 'EXIT' | 'RETURN';
+  quantity: number;
+  reason: string;
+  timestamp: string;
+  service_order_id?: string;
+}
+
+export interface LoyaltyProfile {
+  id: string;
+  client_id: string;
+  points_balance: number;
+  has_reserve_bike_access: boolean;
+}
+
+export interface ChecklistValidation {
+  id: string;
+  service_order_id: string;
+  uploaded_image_url: string; // reference to Supabase checklist_images bucket path
+  part_name: string;
+  pre_existing_damage: string; // "Banco rasgado", "Escapamento ralado", etc.
+  gemini_validation_response: {
+    part_recognized: string;
+    is_correct_part_for_order: boolean;
+    confidence_score: number;
+    visual_anomalies_detected: string[];
+    gemini_safety_rating: 'SAFE' | 'WARN' | 'DANGER';
+  } | null;
+  validated: boolean;
+  checked_at: string;
+}
+
+// Initial DB States for interactive Simulator
+export const INITIAL_USERS: UserProfile[] = [
+  { id: 'usr-client-1', name: 'Carol Silva', email: 'carol@b2c.com.br', phone: '(11) 98765-4321', role: 'client_b2c', created_at: '2026-06-01T10:00:00Z' },
+  { id: 'usr-client-2', name: 'Carlos Motoboy', email: 'carlos.entregas@gmail.com', phone: '(11) 91111-2222', role: 'client_b2c', created_at: '2026-06-02T12:00:00Z' },
+  { id: 'usr-b2b-1', name: 'Antônio Logística (RápidoSP)', email: 'antonio@rapidosp.com.br', phone: '(11) 94444-5555', role: 'client_b2b', created_at: '2026-06-03T08:30:00Z' },
+  { id: 'usr-mech-1', name: 'Danilo Mecânico', email: 'danilo.otto@ottomotos.com.br', phone: '(11) 97777-8888', role: 'mechanic', created_at: '2026-06-01T07:00:00Z' },
+  { id: 'usr-admin-1', name: 'Isabela Gestora', email: 'isabela@ottomotos.com.br', phone: '(11) 99999-0000', role: 'admin', created_at: '2026-05-15T09:00:00Z' }
+];
+
+export const INITIAL_SERVICES: ServiceItem[] = [
+  { id: 'srv-1', name: 'TROCAR ÓLEO DE MOTOR', type: 'Pronto Atendimento', estimated_time_m: 20, base_price_brl: 55.00 },
+  { id: 'srv-2', name: 'TROCA DA PASTILHA DE FREIO', type: 'Pronto Atendimento', estimated_time_m: 20, base_price_brl: 45.00 },
+  { id: 'srv-3', name: 'TROCAR KIT TRANSMISSÃO', type: 'Sob Agendamento', estimated_time_m: 30, base_price_brl: 180.00 },
+  { id: 'srv-4', name: 'REVISÃO GERAL PREVENTIVA', type: 'Sob Agendamento', estimated_time_m: 120, base_price_brl: 250.00 }
+];
+
+export const INITIAL_INVENTORY: InventoryItem[] = [
+  { id: 'inv-1', item_name: 'Óleo Motor Mobil Super Moto 10W30', quantity: 24, minimum_threshold: 10, alert_active: false },
+  { id: 'inv-2', item_name: 'Pastilha de Freio Traseira Cobreq (CG150/160)', quantity: 15, minimum_threshold: 8, alert_active: false },
+  { id: 'inv-3', item_name: 'Kit de Transmissão Completo Riffel (Bros 160)', quantity: 3, minimum_threshold: 5, alert_active: true },
+  { id: 'inv-4', item_name: 'Filtro de Ar de Alta Performance (Fazer 250)', quantity: 2, minimum_threshold: 4, alert_active: true }
+];
+
+export const INITIAL_LOYALTY: LoyaltyProfile[] = [
+  { id: 'loy-1', client_id: 'usr-client-1', points_balance: 150, has_reserve_bike_access: false },
+  { id: 'loy-2', client_id: 'usr-client-2', points_balance: 620, has_reserve_bike_access: true },
+  { id: 'loy-3', client_id: 'usr-b2b-1', points_balance: 1450, has_reserve_bike_access: true }
+];
+
+export const INITIAL_ORDERS: ServiceOrder[] = [
+  {
+    id: 'os-1001',
+    client_id: 'usr-client-1',
+    mechanic_id: 'usr-mech-1',
+    vehicle_plate: 'EON-7F52',
+    vehicle_model: 'Honda Biz 125cc',
+    start_time: '2026-06-09T01:10:00Z',
+    end_time: null,
+    attendance_model: 'Express',
+    status: 'IN_PROGRESS',
+    displacement_tax: 0,
+    ai_diagnostics: {
+      pred_maintenance: "Recomendar troca do fluido de freio em 3 meses com base no desgaste físico reportado pelo mecânico.",
+      anomaly_alerts: ["Risco médio no esticador de corrente"],
+      risk_level: "MEDIUM",
+      gemini_summary: "Moto apresenta nível correto durabilidade do óleo, mas o kit de transmissão está ligeiramente desalinhado."
+    },
+    created_at: '2026-06-09T01:10:00Z',
+    rework_required: false
+  },
+  {
+    id: 'os-1002',
+    client_id: 'usr-client-2',
+    mechanic_id: 'usr-mech-1',
+    vehicle_plate: 'GXB-3B19',
+    vehicle_model: 'Honda CG 160 Fan',
+    start_time: '2026-06-09T02:35:00Z',
+    end_time: null,
+    attendance_model: 'Station',
+    status: 'PENDING',
+    displacement_tax: 0,
+    ai_diagnostics: null,
+    created_at: '2026-06-09T02:35:00Z',
+    rework_required: false
+  },
+  {
+    id: 'os-1000',
+    client_id: 'usr-client-1',
+    mechanic_id: 'usr-mech-1',
+    vehicle_plate: 'ABC-1234',
+    vehicle_model: 'Yamaha Fazer 250cc',
+    start_time: '2026-06-08T10:00:00Z',
+    end_time: '2026-06-08T10:25:00Z',
+    attendance_model: 'Mobile',
+    status: 'COMPLETED',
+    displacement_tax: 0,
+    ai_diagnostics: {
+      gemini_summary: "Pastilhas de freio trocadas e validadas eletronicamente com sucesso."
+    },
+    created_at: '2026-06-08T10:00:00Z',
+    rating: 5,
+    feedback: "Atendimento excelente! O mecânico veio na van e resolveu super rápido.",
+    total_spent: 120.00,
+    rework_required: false
+  },
+  {
+    id: 'os-999',
+    client_id: 'usr-client-2',
+    mechanic_id: 'usr-mech-1',
+    vehicle_plate: 'DEF-5678',
+    vehicle_model: 'Honda CB 300R',
+    start_time: '2026-06-07T14:00:00Z',
+    end_time: '2026-06-07T14:45:00Z',
+    attendance_model: 'Station',
+    status: 'COMPLETED',
+    displacement_tax: 0,
+    ai_diagnostics: null,
+    created_at: '2026-06-07T14:00:00Z',
+    rating: 3,
+    feedback: "Faltou apertar a corrente direito na primeira vez, mas o mecânico voltou e resolveu sem cobrar.",
+    total_spent: 230.00,
+    rework_required: true
+  },
+  {
+    id: 'os-998',
+    client_id: 'usr-client-1',
+    mechanic_id: 'usr-mech-1',
+    vehicle_plate: 'XYZ-9876',
+    vehicle_model: 'Suzuki Burgman 125cc',
+    start_time: '2026-06-06T09:00:00Z',
+    end_time: '2026-06-06T09:40:00Z',
+    attendance_model: 'Mobile',
+    status: 'CANCELLED',
+    displacement_tax: 50.00,
+    ai_diagnostics: null,
+    created_at: '2026-06-06T09:00:00Z',
+    feedback: "Cancelei pois tive um imprevisto de agenda, mas a taxa de deslocamento cobrada é justa.",
+    total_spent: 50.00,
+    rework_required: false
+  },
+  {
+    id: 'os-997',
+    client_id: 'usr-b2b-1',
+    mechanic_id: 'usr-mech-1',
+    vehicle_plate: 'MNO-3456',
+    vehicle_model: 'Honda Cargo 160cc',
+    start_time: '2026-06-05T11:00:00Z',
+    end_time: '2026-06-05T11:20:00Z',
+    attendance_model: 'Express',
+    status: 'COMPLETED',
+    displacement_tax: 0,
+    ai_diagnostics: null,
+    created_at: '2026-06-05T11:00:00Z',
+    rating: 5,
+    feedback: "Troca de kit de transmissão rápida para nossa frota corporativa.",
+    total_spent: 180.00,
+    rework_required: false
+  },
+  {
+    id: 'os-996',
+    client_id: 'usr-client-1',
+    mechanic_id: 'usr-mech-1',
+    vehicle_plate: 'EON-7F52',
+    vehicle_model: 'Honda Biz 125cc',
+    start_time: '2026-06-04T15:30:00Z',
+    end_time: '2026-06-04T15:48:00Z',
+    attendance_model: 'Express',
+    status: 'COMPLETED',
+    displacement_tax: 0,
+    ai_diagnostics: null,
+    created_at: '2026-06-04T15:30:00Z',
+    rating: 4,
+    feedback: "Troca rápida de óleo de motor. Recomendo muito o pronto atendimento.",
+    total_spent: 55.00,
+    rework_required: false
+  }
+];
+
+export const INITIAL_VALIDATIONS: ChecklistValidation[] = [
+  {
+    id: 'val-1',
+    service_order_id: 'os-1001',
+    uploaded_image_url: 'checklist_images/os-1001/seat_damage.png',
+    part_name: 'Banco de Couro',
+    pre_existing_damage: 'Risco profundo na lateral esquerda do tecido do banco',
+    gemini_validation_response: {
+      part_recognized: "Assento de Motocicleta",
+      is_correct_part_for_order: true,
+      confidence_score: 98.4,
+      visual_anomalies_detected: ["Corte linear no couro sintético de 4cm"],
+      gemini_safety_rating: 'WARN'
+    },
+    validated: true,
+    checked_at: '2026-06-09T01:15:00Z'
+  }
+];
+
+// Generates custom SQL dynamically based on configuration variables
+export function getGeneratedSQL(config: {
+  cancelMinutes: number;
+  displacementTax: number;
+  pointsPerBrl: number;
+  enableRls: boolean;
+}): string {
+  return `-- ====================================================================
+-- OTTO MOTOS - BANCO DE DADOS INICIAL DA INFRAESTRUTURA (SUPABASE POSTGRESQL)
+-- Gerado dinamicamente para o portal de Engenharia OttoMotos
+-- Data de Criação: 2026-06-09 | Autor: Core Software Architect
+-- ====================================================================
+
+-- --------------------------------------------------------------------
+-- 0. EXTENSÕES & ENUMS
+-- --------------------------------------------------------------------
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+-- Define o tipo de modelo de serviço/atendimento
+CREATE TYPE service_model AS ENUM ('Express', 'Station', 'Mobile');
+
+-- Define o tipo de agendamento do catálogo
+CREATE TYPE service_schedule_type AS ENUM ('Pronto Atendimento', 'Sob Agendamento');
+
+-- Define o nível de permissão do usuário
+CREATE TYPE user_role AS ENUM ('client_b2c', 'client_b2b', 'mechanic', 'admin');
+
+-- Define o status da ordem de serviço
+CREATE TYPE order_status AS ENUM ('PENDING', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED');
+
+-- --------------------------------------------------------------------
+-- 1. TABELA: users_profiles (Perfis de Usuários Integrados ao Supabase Auth)
+-- --------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS public.users_profiles (
+    id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    phone VARCHAR(50),
+    role user_role NOT NULL DEFAULT 'client_b2c',
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
+);
+
+COMMENT ON TABLE public.users_profiles IS 'Dados estendidos de perfil integrados ao Supabase Auth.';
+
+-- --------------------------------------------------------------------
+-- 2. TABELA: services_catalog (Catálogo Simplificado de Serviços)
+-- --------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS public.services_catalog (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name VARCHAR(255) UNIQUE NOT NULL,
+    type service_schedule_type NOT NULL DEFAULT 'Pronto Atendimento',
+    estimated_time_m INT NOT NULL, -- tempo estipulado em minutos
+    base_price_brl NUMERIC(10, 2) NOT NULL DEFAULT 0.00,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Carga inicial requerida pela startup
+INSERT INTO public.services_catalog (name, type, estimated_time_m, base_price_brl)
+VALUES 
+('TROCAR ÓLEO DE MOTOR', 'Pronto Atendimento', 20, 55.00),
+('TROCA DA PASTILHA DE FREIO', 'Pronto Atendimento', 20, 45.00),
+('TROCAR KIT TRANSMISSÃO', 'Sob Agendamento', 30, 180.00)
+ON CONFLICT (name) DO UPDATE 
+SET type = EXCLUDED.type, estimated_time_m = EXCLUDED.estimated_time_m, base_price_brl = EXCLUDED.base_price_brl;
+
+-- --------------------------------------------------------------------
+-- 3. TABELA: service_orders (Gestão de Ordens de Serviço com Auditoria de Horário)
+-- --------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS public.service_orders (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    client_id UUID NOT NULL REFERENCES public.users_profiles(id),
+    mechanic_id UUID REFERENCES public.users_profiles(id),
+    vehicle_plate VARCHAR(12) NOT NULL,
+    vehicle_model VARCHAR(100) NOT NULL,
+    start_time TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    end_time TIMESTAMP WITH TIME ZONE,
+    attendance_model service_model NOT NULL DEFAULT 'Express',
+    status order_status NOT NULL DEFAULT 'PENDING',
+    displacement_tax NUMERIC(10, 2) NOT NULL DEFAULT 0.00,
+    ai_diagnostics JSONB DEFAULT '{}'::jsonb, -- Análises geradas posteriormente pelo Gemini AI
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Indexação para busca rápida de placas e filtros de status
+CREATE INDEX IF NOT EXISTS idx_so_vehicle_plate ON public.service_orders(vehicle_plate);
+CREATE INDEX IF NOT EXISTS idx_so_status ON public.service_orders(status);
+CREATE INDEX IF NOT EXISTS idx_so_client ON public.service_orders(client_id);
+
+-- --------------------------------------------------------------------
+-- 4. TABELA: inventory (Gestão de Estoque OttoMotos)
+-- --------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS public.inventory (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    item_name VARCHAR(255) UNIQUE NOT NULL,
+    quantity INT NOT NULL DEFAULT 0,
+    minimum_threshold INT NOT NULL DEFAULT 5,
+    last_restock TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Tabela para alertas de estoque gerados por trigger (Auditoria/Notificações)
+CREATE TABLE IF NOT EXISTS public.inventory_alerts (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    inventory_id UUID REFERENCES public.inventory(id) ON DELETE CASCADE,
+    item_name VARCHAR(255) NOT NULL,
+    current_quantity INT NOT NULL,
+    minimum_threshold INT NOT NULL,
+    alert_triggered_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- --------------------------------------------------------------------
+-- 5. TABELA: loyalty_program (Programa de Geração de Pontos e Benefícios)
+-- --------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS public.loyalty_program (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    client_id UUID UNIQUE NOT NULL REFERENCES public.users_profiles(id) ON DELETE CASCADE,
+    points_balance INT NOT NULL DEFAULT 0,
+    has_reserve_bike_access BOOLEAN NOT NULL DEFAULT FALSE,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- --------------------------------------------------------------------
+-- 6. TABELA: checklist_validations (Gestão de Storage & Validação Visual com Gemini AI)
+-- --------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS public.checklist_validations (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    service_order_id UUID NOT NULL REFERENCES public.service_orders(id) ON DELETE CASCADE,
+    uploaded_image_url VARCHAR(1024) NOT NULL, -- Caminho do Bucket "checklist_images"
+    part_name VARCHAR(255) NOT NULL, -- Peça informada (Ex: "Pastilha de freio")
+    pre_existing_damage TEXT, -- Observação do mecânico
+    gemini_validation_response JSONB DEFAULT '{}'::jsonb, -- Retorno estruturado do Gemini Vision
+    validated BOOLEAN NOT NULL DEFAULT FALSE, -- Identifica se o Gemini confirmou a peça correspondente
+    checked_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- ====================================================================
+-- TRIGGERS E FUNÇÕES (REGRAS DE NEGÓCIO CRÍTICAS NO BANCO)
+-- ====================================================================
+
+-- --------------------------------------------------------------------
+-- REGRA 1: Taxa de Deslocamento no Cancelamento após ${config.cancelMinutes} Minutos
+-- --------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION public.fn_process_order_cancellation()
+RETURNS TRIGGER AS $$
+DECLARE
+    elapsed_minutes INT;
+BEGIN
+    -- Verifica se o status mudou para CANCELLED
+    IF NEW.status = 'CANCELLED' AND OLD.status <> 'CANCELLED' THEN
+        -- Calcula os minutos decorridos entre start_time de atendimento e agora
+        elapsed_minutes := EXTRACT(EPOCH FROM (NOW() - NEW.start_time)) / 60;
+        
+        -- Se o cancelamento ocorrer após os ${config.cancelMinutes} minutos grátis
+        IF elapsed_minutes > ${config.cancelMinutes} THEN
+            -- Aplica a taxa padrão de deslocamento
+            NEW.displacement_tax := ${config.displacementTax}.00;
+        ELSE
+            NEW.displacement_tax := 0.00;
+        END IF;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE TRIGGER trg_order_cancellation
+BEFORE UPDATE ON public.service_orders
+FOR EACH ROW
+EXECUTE FUNCTION public.fn_process_order_cancellation();
+
+
+-- --------------------------------------------------------------------
+-- REGRA 2: Alerta Automático de Estoque Mínimo (Trigger do Inventário)
+-- --------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION public.fn_check_inventory_threshold()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Se a quantidade caiu e atingiu ou ficou abaixo do limite mínimo
+    IF NEW.quantity <= NEW.minimum_threshold AND (OLD.quantity IS NULL OR OLD.quantity > NEW.minimum_threshold) THEN
+        -- Registra um alerta na tabela de notificações de estoque
+        INSERT INTO public.inventory_alerts (inventory_id, item_name, current_quantity, minimum_threshold)
+        VALUES (NEW.id, NEW.item_name, NEW.quantity, NEW.minimum_threshold);
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE TRIGGER trg_inventory_low_alert
+AFTER UPDATE OR INSERT ON public.inventory
+FOR EACH ROW
+EXECUTE FUNCTION public.fn_check_inventory_threshold();
+
+
+-- --------------------------------------------------------------------
+-- BONUS REGRA 3: Geração automática de Perfis no Supabase SignUp
+-- --------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION public.handle_new_user_registration()
+RETURNS TRIGGER AS $$
+BEGIN
+  INSERT INTO public.users_profiles (id, name, email, role)
+  VALUES (
+    NEW.id,
+    COALESCE(NEW.raw_user_meta_data->>'name', 'Usuário OttoMotos'),
+    NEW.email,
+    COALESCE((NEW.raw_user_meta_data->>'role')::user_role, 'client_b2c'::user_role)
+  );
+
+  -- Cria também o registro opcional do programa de fidelidade do cliente
+  IF NEW.raw_user_meta_data->>'role' IS NULL OR NEW.raw_user_meta_data->>'role' IN ('client_b2c', 'client_b2b') THEN
+    INSERT INTO public.loyalty_program (client_id, points_balance, has_reserve_bike_access)
+    VALUES (NEW.id, 0, FALSE);
+  END IF;
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE TRIGGER trg_on_auth_signup
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user_registration();
+
+
+-- ====================================================================
+-- CONFIGURAÇÃO DE SEGURANÇA: ROW LEVEL SECURITY (RLS)
+-- ====================================================================
+
+${config.enableRls ? `ALTER TABLE public.users_profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.services_catalog ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.service_orders ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.inventory ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.inventory_alerts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.loyalty_program ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.checklist_validations ENABLE ROW LEVEL SECURITY;
+
+-- POLICIES: users_profiles
+CREATE POLICY "Qualquer pessoa autenticada visualiza perfis" 
+ON public.users_profiles FOR SELECT TO authenticated USING (true);
+
+CREATE POLICY "Usuários editam apenas o próprio perfil" 
+ON public.users_profiles FOR UPDATE TO authenticated USING (auth.uid() = id);
+
+-- POLICIES: services_catalog (Lido por todos, alterado apenas por administradores)
+CREATE POLICY "Qualquer nível acessa catálogo" 
+ON public.services_catalog FOR SELECT USING (true);
+
+CREATE POLICY "Administradores gerenciam catálogo" 
+ON public.services_catalog FOR ALL TO authenticated 
+USING (EXISTS (SELECT 1 FROM public.users_profiles WHERE id = auth.uid() AND role = 'admin'));
+
+-- POLICIES: service_orders (Filtro por papel do cliente B2C/B2B e mecânico)
+CREATE POLICY "Clientes visualizam as próprias OS" 
+ON public.service_orders FOR SELECT TO authenticated 
+USING (client_id = auth.uid() OR mechanic_id = auth.uid() OR EXISTS (
+    SELECT 1 FROM public.users_profiles WHERE id = auth.uid() AND role IN ('admin', 'mechanic')
+));
+
+CREATE POLICY "Mecânicos e Admins inserem/editam ordens de serviço" 
+ON public.service_orders FOR ALL TO authenticated 
+USING (EXISTS (
+    SELECT 1 FROM public.users_profiles WHERE id = auth.uid() AND role IN ('admin', 'mechanic')
+));
+
+-- POLICIES: inventory & alerts (Mecânicos e Admins)
+CREATE POLICY "Mecânicos e Admins monitoram estoque" 
+ON public.inventory FOR SELECT TO authenticated USING (true);
+
+CREATE POLICY "Apenas Admins atualizam estoque" 
+ON public.inventory FOR ALL TO authenticated 
+USING (EXISTS (SELECT 1 FROM public.users_profiles WHERE id = auth.uid() AND role = 'admin'));` : `-- RLS Desabilitado temporariamente para desenvolvimento rápido`}
+
+-- --------------------------------------------------------------------
+-- BUCKETS DE STORAGE (CONFIGURAÇÃO NO SUPABASE STORAGE)
+-- --------------------------------------------------------------------
+-- NOTA: O Supabase Storage exige inserções na tabela storage.buckets pelo painel ou DDL de sistema:
+-- INSERT INTO storage.buckets (id, name, public) VALUES ('checklist_images', 'checklist_images', true);
+--
+-- Exemplo de Política do Storage correspondente:
+-- CREATE POLICY "Apenas mecânicos e admins fazem upload para o bucket"
+-- ON storage.objects FOR INSERT TO authenticated
+-- WITH CHECK (bucket_id = 'checklist_images' AND EXISTS (
+--    SELECT 1 FROM public.users_profiles WHERE id = auth.uid() AND role IN ('mechanic', 'admin')
+-- ));
+`;
+}
+
+export const GITHUB_AND_VERCEL_STEPS = [
+  {
+    title: "1. Inicializar Repositório Local & Next.js",
+    desc: "Crie o projeto e configure a estrutura recomendada de pastas.",
+    commands: [
+      "# Criar novo projeto Next.js com TypeScript e App Router",
+      "npx create-next-web-app@latest ottomotos-frontend --use-npm --ts --src-dir --tailwind --app",
+      "cd ottomotos-frontend",
+      "",
+      "# Instalar dependências essenciais do Supabase e Gemini",
+      "npm install @supabase/supabase-js @supabase/auth-helpers-nextjs @google/genai lucide-react framer-motion"
+    ]
+  },
+  {
+    title: "2. Vincular ao Github & Primeiro Commit",
+    desc: "Inicialize o git local, crie o repositório privado ou público no GitHub e adicione a branch.",
+    commands: [
+      "# Inicializar git",
+      "git init",
+      "",
+      "# Adicionar arquivos e fazer a primeira consolidação",
+      "git add .",
+      "git commit -m 'feat: initial setup, supabase database schema and folder structure'",
+      "",
+      "# Configurar filial principal e conectar remote oficial",
+      "git branch -M main",
+      "git remote add origin https://github.com/RAIFRAN-DESENVOLVEDOR-PORTFOLIO/ottomotos.git",
+      "git push -u origin main"
+    ]
+  },
+  {
+    title: "3. CLI da Vercel (Login & Vinculação)",
+    desc: "Vincule o repositório local e faça o deploy inicial do Next.js via Vercel CLI.",
+    commands: [
+      "# Instalar a CLI global da Vercel para deploys rápidos",
+      "npm install -g vercel",
+      "",
+      "# Fazer login na conta da Vercel",
+      "vercel login",
+      "",
+      "# Iniciar projeto interativo de vinculação",
+      "vercel link",
+      "",
+      "# Realizar deploy inicial para staging",
+      "vercel"
+    ]
+  }
+];
+
+export const ENV_EXAMPLE_FILE_CONTENT = `# ====================================================================
+# CONFIGURAÇÕES DE AMBIENTE OTTO MOTOS (Coloque em .env.local)
+# ====================================================================
+
+# 1. CREDENCIAIS SUPABASE (Do painel Supabase > Settings > API)
+NEXT_PUBLIC_SUPABASE_URL="https://mnennrjxbgumiyarnxjc.supabase.co"
+NEXT_PUBLIC_SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1uZW5ucmp4Ymd1bWl5YXJueGpjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzMzE5NDAsImV4cCI6MjA5NjkwNzk0MH0.cmUcrzufzxEE6IJPVPDhVb2woBejArU2Rgu-5naeesQ"
+SUPABASE_SERVICE_ROLE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1uZW5ucmp4Ymd1bWl5YXJueGpjIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MTMzMTk0MCwiZXhwIjoyMDk2OTA3OTQwfQ.gO4EPNdPQyFtpnMH-JayqheuYofYuOoeGU7Yxm46bWA"
+
+# 2. INTELIGÊNCIA ARTIFICIAL: GOOGLE GEMINI (De AI Studio secrets)
+GEMINI_API_KEY="sua-api-key-do-gemini-ai-studio"
+
+# 3. CONEXÃO DIRETA POSTGRESQL (Para migrations do Prisma/Drizzle se aplicável)
+DATABASE_URL="postgresql://postgres:m5hWQ9s*%40%40%40@db.mnennrjxbgumiyarnxjc.supabase.co:5432/postgres"
+`;

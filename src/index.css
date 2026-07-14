@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,850;0,900;1,400&display=swap');
 @import "tailwindcss";
 
 @theme {
@@ -5,5 +6,6 @@
   --color-brand-orange-hover: #E04F00;
   --color-brand-orange-light: rgba(255, 90, 0, 0.1);
   --color-brand-orange-glow: rgba(255, 90, 0, 0.15);
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Montserrat", "Inter", ui-sans-serif, system-ui, sans-serif;
 }
+

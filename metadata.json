@@ -1,6 +1,6 @@
 {
-  "name": "OttoMotos Developer Portal & Database Modeler",
-  "description": "Initial infrastructure setup, Vercel/Next.js/Github guideline portal and interactive Supabase PostgreSQL database schemas & visual simulation environment for the OttoMotos startup.",
-  "requestFramePermissions": [],
+  "name": "OttoMotos - Reparo de Motos Sob Demanda",
+  "description": "Uma nova forma de prover serviços. Conveniência absoluta para motociclistas e frotistas, independência real para mecânicos parceiros com oficinas móveis (Vans).",
+  "requestFramePermissions": ["geolocation"],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
