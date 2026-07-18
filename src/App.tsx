@@ -54,6 +54,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import RoutingMap from './components/RoutingMap';
 import CustomerPortal from './components/CustomerPortal';
 import MechanicPortal from './components/MechanicPortal';
+import AdminPortal from './components/AdminPortal';
 
 // Resilient Brand Logo Component that renders polished HTML/CSS vector styling to guarantee instant loading, perfect sharpness, and zero external blocks
 const BrandLogo: React.FC<{ name: string; logoUrl: string }> = ({ name }) => {
@@ -267,6 +268,35 @@ export default function App() {
   // Navigation State
   const [workspaceMode, setWorkspaceMode] = useState<'institutional' | 'client' | 'mechanic' | 'admin'>('institutional');
   const [navMobileOpen, setNavMobileOpen] = useState(false);
+
+  // Hidden activation via secret triggers (no visible buttons)
+  const [logoClicks, setLogoClicks] = useState(0);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('admin') === 'true' || params.get('portal') === 'admin') {
+        setWorkspaceMode('admin');
+      }
+    }
+  }, []);
+
+  const handleLogoClick = () => {
+    setLogoClicks(prev => {
+      const next = prev + 1;
+      if (next >= 5) {
+        setWorkspaceMode('admin');
+        alert('🔑 Portal Administrativo OttoMotos Desbloqueado via Sequência de Cliques!');
+        return 0;
+      }
+      return next;
+    });
+    
+    if (logoClicks === 0) {
+      handleModeChange('institutional');
+    }
+  };
+
   const [mechanicViewMode, setMechanicViewMode] = useState<'marketing' | 'portal'>('portal'); // Default to 'portal' for direct functional access
   const [previewStep, setPreviewStep] = useState<number>(3); // Default to Step 3: Mecânico no Local
   
@@ -461,7 +491,7 @@ export default function App() {
           <div className="max-w-7xl mx-auto px-4 py-3 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
             
             {/* Logo element */}
-            <div className="flex items-center gap-2.5 sm:gap-3.5 cursor-pointer shrink-0 animate-fadeIn" onClick={() => handleModeChange('institutional')}>
+            <div className="flex items-center gap-2.5 sm:gap-3.5 cursor-pointer shrink-0 animate-fadeIn" onClick={handleLogoClick}>
               <svg className="h-11 sm:h-13 lg:h-15 w-auto shrink-0" viewBox="0 0 70 60" fill="none" xmlns="http://www.w3.org/2000/svg">
                 {/* Outer circle/ring (open at top-right) */}
                 <path d="M 41.5 20.5 A 13.5 13.5 0 1 0 43.5 35.5" stroke="#FF6B00" strokeWidth="7" strokeLinecap="round" fill="none" />
@@ -636,7 +666,7 @@ export default function App() {
                           window.scrollTo({ top: 0, behavior: 'smooth' });
                         }, 50);
                       }}
-                      className={`w-full py-3 px-3 rounded-xl text-center text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
+                      className={`w-full py-3 px-1 rounded-xl text-center text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer ${
                         workspaceMode === 'client' ? 'bg-brand-orange text-black font-extrabold shadow' : 'bg-zinc-900 text-zinc-300 hover:text-brand-orange'
                       }`}
                     >
@@ -650,7 +680,7 @@ export default function App() {
                           window.scrollTo({ top: 0, behavior: 'smooth' });
                         }, 50);
                       }}
-                      className={`w-full py-3 px-3 rounded-xl text-center text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
+                      className={`w-full py-3 px-1 rounded-xl text-center text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer ${
                         workspaceMode === 'mechanic' ? 'bg-brand-orange text-black font-extrabold shadow' : 'bg-zinc-900 text-zinc-300 hover:text-brand-orange'
                       }`}
                     >
@@ -707,8 +737,15 @@ export default function App() {
                   }}
                   className="w-full sm:w-1/2 bg-brand-orange hover:bg-brand-orange-hover text-black font-black text-sm py-3 px-6 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-brand-orange/10 hover:scale-[1.02] cursor-pointer"
                 >
-                  <Smartphone className="w-4 h-4" />
-                  Para Motociclista
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="5" cy="18" r="3" />
+                    <circle cx="19" cy="18" r="3" />
+                    <path d="M5 18l4-7h5l5 7M15 7l4 11" />
+                    <path d="M9 11l2-4h4" />
+                    <path d="M15 7l1-3h3" />
+                    <path d="M7 11h4" />
+                  </svg>
+                  Para Motociclistas
                 </button>
                 <button
                   onClick={() => {
@@ -719,7 +756,7 @@ export default function App() {
                   }}
                   className="w-full sm:w-1/2 bg-zinc-950 hover:bg-zinc-900 text-white font-black text-sm py-3 px-6 rounded-xl flex items-center justify-center gap-2 transition-all hover:scale-[1.02] cursor-pointer shadow-md"
                 >
-                  <Briefcase className="w-4 h-4 text-brand-orange" />
+                  <Wrench className="w-4 h-4 text-brand-orange" />
                   Para Mecânicos
                 </button>
               </div>
@@ -1483,213 +1520,7 @@ export default function App() {
             👑 PAINEL DO ADMINISTRADOR (ADMIN PORTAL)
             ========================================= */}
         {workspaceMode === 'admin' && (
-          <motion.div
-            key="workspace-admin"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="bg-zinc-950 text-white pb-24 min-h-screen pt-8"
-          >
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 text-left">
-              {/* Header */}
-              <div className="border-b border-zinc-900 pb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                <div>
-                  <span className="text-[10px] bg-brand-orange/10 text-brand-orange font-extrabold px-3 py-1 rounded-full uppercase tracking-widest border border-brand-orange/20 shadow-sm">
-                    Painel Geral de Controle
-                  </span>
-                  <h2 className="text-3xl font-black text-white tracking-tight mt-2">Administrador da Plataforma</h2>
-                  <p className="text-xs text-zinc-400 mt-1">
-                    Monitore a geolocalização dos mecânicos ativos, ajuste o raio de despacho e configure regras operacionais em tempo real.
-                  </p>
-                </div>
-                
-                {/* System status widget */}
-                <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 flex items-center gap-4">
-                  <div className="w-2.5 h-2.5 bg-green-500 rounded-full animate-ping"></div>
-                  <div>
-                    <span className="text-[10px] text-zinc-500 font-mono block">STATUS DO SERVIDOR</span>
-                    <span className="text-xs font-black text-white">ONLINE & OPERANTE</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Grid of Stats Cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 space-y-2">
-                  <span className="text-[10px] text-zinc-500 font-bold uppercase">Mecânicos Disponíveis</span>
-                  <p className="text-3xl font-black text-brand-orange">3 / 3 Ativos</p>
-                  <p className="text-[10px] text-zinc-400">Trabalhando em furgões-oficina</p>
-                </div>
-                <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 space-y-2">
-                  <span className="text-[10px] text-zinc-500 font-bold uppercase">Raio Operacional Atual</span>
-                  <p className="text-3xl font-black text-white">{adminRadius} km</p>
-                  <p className="text-[10px] text-zinc-400">Abrangência para novos orçamentos</p>
-                </div>
-                <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 space-y-2">
-                  <span className="text-[10px] text-zinc-500 font-bold uppercase">Orçamentos Enviados</span>
-                  <p className="text-3xl font-black text-white">42 Hoje</p>
-                  <p className="text-[10px] text-zinc-400">Taxa de conversão de 89.4%</p>
-                </div>
-                <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 space-y-2">
-                  <span className="text-[10px] text-zinc-500 font-bold uppercase">Tempo de Resposta Médio</span>
-                  <p className="text-3xl font-black text-brand-orange">&lt; 45s</p>
-                  <p className="text-[10px] text-zinc-400">Envio automático de propostas</p>
-                </div>
-              </div>
-
-              {/* Main operational settings block */}
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                
-                {/* Radius configuration */}
-                <div className="lg:col-span-1 bg-zinc-900 border border-zinc-800 rounded-3xl p-6 space-y-6">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-brand-orange/10 text-brand-orange flex items-center justify-center border border-brand-orange/20">
-                      <Sliders className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <h3 className="text-sm font-black text-white uppercase tracking-wider">Definição do Raio</h3>
-                      <p className="text-[10px] text-zinc-500">Parâmetro de busca de furgões</p>
-                    </div>
-                  </div>
-
-                  <div className="space-y-4 pt-2">
-                    <div className="flex justify-between items-center text-xs">
-                      <span className="text-zinc-400 font-bold">Raio de Busca</span>
-                      <span className="text-brand-orange font-mono font-black text-sm">{adminRadius} km</span>
-                    </div>
-
-                    <input
-                      type="range"
-                      min="5"
-                      max="50"
-                      step="1"
-                      value={adminRadius}
-                      onChange={(e) => setAdminRadius(Number(e.target.value))}
-                      className="w-full h-1.5 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-brand-orange"
-                    />
-
-                    <div className="flex justify-between text-[10px] text-zinc-500 font-mono">
-                      <span>5 km</span>
-                      <span>25 km</span>
-                      <span>50 km</span>
-                    </div>
-
-                    <div className="bg-zinc-950 border border-zinc-850 p-4 rounded-xl space-y-2 text-[11px] text-zinc-400 leading-normal">
-                      <p className="font-bold text-zinc-300">💡 Como funciona esta regra?</p>
-                      <p>
-                        Quando um cliente solicita um orçamento através de seu carrinho, o sistema geolocaliza a moto e despacha o pedido **apenas** para as vans ativas que estiverem em um raio de até <strong className="text-brand-orange">{adminRadius} km</strong>.
-                      </p>
-                      <p>
-                        Aumentar o raio de busca garante maior disponibilidade de mecânicos, mas pode aumentar o tempo médio de deslocamento até o local do reparo.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Fleet monitoring (Active mechanics and their status) */}
-                <div className="lg:col-span-2 bg-zinc-900 border border-zinc-800 rounded-3xl p-6 space-y-6">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-brand-orange/10 text-brand-orange flex items-center justify-center border border-brand-orange/20">
-                        <Truck className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <h3 className="text-sm font-black text-white uppercase tracking-wider">Frota de Furgões-Oficina Ativos</h3>
-                        <p className="text-[10px] text-zinc-500">Status dos mecânicos da região de Campinas</p>
-                      </div>
-                    </div>
-                    <span className="text-[10px] bg-green-500/10 text-green-400 border border-green-500/20 font-mono px-2 py-0.5 rounded-full">
-                      3 Mecânicos Ativos
-                    </span>
-                  </div>
-
-                  <div className="space-y-4">
-                    {/* Danilo */}
-                    <div className="bg-zinc-950 border border-zinc-850 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                      <div className="flex items-start gap-3.5">
-                        <div className="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center font-bold text-brand-orange">
-                          D
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <h4 className="text-xs font-black text-white">Danilo Silva</h4>
-                            <span className="text-[9px] bg-brand-orange/10 text-brand-orange border border-brand-orange/25 px-1.5 py-0.2 rounded font-mono">OttoVan #02</span>
-                          </div>
-                          <p className="text-[10px] text-zinc-500 mt-0.5">Honda Biz & Scooters • Campinas Centro • Distância: 3.5 km</p>
-                          <div className="flex items-center gap-2 mt-1 text-[10px] text-zinc-400">
-                            <span>⭐ 4.9 (240 ordens)</span>
-                            <span className="text-zinc-600">•</span>
-                            <span className={3.5 <= adminRadius ? "text-green-400 font-bold" : "text-red-400 font-bold"}>
-                              {3.5 <= adminRadius ? "Dentro do Raio (Disponível)" : "Fora do Raio"}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2 self-end sm:self-auto">
-                        <span className="w-2 h-2 rounded-full bg-green-500"></span>
-                        <span className="text-[10px] font-bold text-zinc-400">Mecanismo Ativo / Trabalhando</span>
-                      </div>
-                    </div>
-
-                    {/* Carlos */}
-                    <div className="bg-zinc-950 border border-zinc-850 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                      <div className="flex items-start gap-3.5">
-                        <div className="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center font-bold text-brand-orange">
-                          C
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <h4 className="text-xs font-black text-white">Carlos Santos</h4>
-                            <span className="text-[9px] bg-brand-orange/10 text-brand-orange border border-brand-orange/25 px-1.5 py-0.2 rounded font-mono">OttoVan #03</span>
-                          </div>
-                          <p className="text-[10px] text-zinc-500 mt-0.5">Motos Esportivas & Alta Cilindrada • Cambuí • Distância: 5.1 km</p>
-                          <div className="flex items-center gap-2 mt-1 text-[10px] text-zinc-400">
-                            <span>⭐ 4.8 (110 ordens)</span>
-                            <span className="text-zinc-600">•</span>
-                            <span className={5.1 <= adminRadius ? "text-green-400 font-bold" : "text-red-400 font-bold"}>
-                              {5.1 <= adminRadius ? "Dentro do Raio (Disponível)" : "Fora do Raio"}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2 self-end sm:self-auto">
-                        <span className="w-2 h-2 rounded-full bg-green-500"></span>
-                        <span className="text-[10px] font-bold text-zinc-400">Mecanismo Ativo / Trabalhando</span>
-                      </div>
-                    </div>
-
-                    {/* João */}
-                    <div className="bg-zinc-950 border border-zinc-850 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                      <div className="flex items-start gap-3.5">
-                        <div className="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center font-bold text-brand-orange">
-                          J
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <h4 className="text-xs font-black text-white">João Victor</h4>
-                            <span className="text-[9px] bg-brand-orange/10 text-brand-orange border border-brand-orange/25 px-1.5 py-0.2 rounded font-mono">OttoVan #01</span>
-                          </div>
-                          <p className="text-[10px] text-zinc-500 mt-0.5">Moto de Carga & Entregadores • Taquaral • Distância: 1.8 km</p>
-                          <div className="flex items-center gap-2 mt-1 text-[10px] text-zinc-400">
-                            <span>⭐ 5.0 (420 ordens)</span>
-                            <span className="text-zinc-600">•</span>
-                            <span className={1.8 <= adminRadius ? "text-green-400 font-bold" : "text-red-400 font-bold"}>
-                              {1.8 <= adminRadius ? "Dentro do Raio (Disponível)" : "Fora do Raio"}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2 self-end sm:self-auto">
-                        <span className="w-2 h-2 rounded-full bg-green-500"></span>
-                        <span className="text-[10px] font-bold text-zinc-400">Mecanismo Ativo / Trabalhando</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-            </div>
-          </motion.div>
+          <AdminPortal />
         )}
 
         {/* =========================================

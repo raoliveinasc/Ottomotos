@@ -339,7 +339,7 @@ const SERVICES_CATALOG: Service[] = [
   },
   {
     id: 'srv-32',
-    name: 'REAPERTO GERAL MECÂNICO (REVISAO)',
+    name: 'REAPERTO GERAL MECÂNICO (REVISÃO)',
     formaAtendimento: 'Sob Agendamento',
     time: 60,
     category: 'Mais Pedidos',
@@ -348,7 +348,7 @@ const SERVICES_CATALOG: Service[] = [
   },
   {
     id: 'srv-33',
-    name: 'REAPERTO DOS CONECTORES (ELETRICOS)',
+    name: 'REAPERTO DOS CONECTORES (ELÉTRICOS)',
     formaAtendimento: 'Sob Agendamento',
     time: 30,
     category: 'Mecânica Rápida',
