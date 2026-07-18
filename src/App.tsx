@@ -23,6 +23,7 @@ import {
   Minus,
   Check,
   X,
+  Menu,
   Send,
   Info,
   Heart,
@@ -265,6 +266,7 @@ const SERVICES_CATALOG: Service[] = [
 export default function App() {
   // Navigation State
   const [workspaceMode, setWorkspaceMode] = useState<'institutional' | 'client' | 'mechanic' | 'admin'>('institutional');
+  const [navMobileOpen, setNavMobileOpen] = useState(false);
   const [mechanicViewMode, setMechanicViewMode] = useState<'marketing' | 'portal'>('portal'); // Default to 'portal' for direct functional access
   const [previewStep, setPreviewStep] = useState<number>(3); // Default to Step 3: Mecânico no Local
   
@@ -360,6 +362,7 @@ export default function App() {
   // Update mode triggers conversion tracking
   const handleModeChange = (mode: 'institutional' | 'client' | 'mechanic' | 'admin') => {
     setWorkspaceMode(mode);
+    setNavMobileOpen(false);
     logEvent('Google Analytics', 'gtag("event", "tab_switch")', { target_mode: mode });
     logEvent('Meta Pixel', 'fbq("trackCustom", "TabSwitch")', { mode });
   };
@@ -453,104 +456,216 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-white text-zinc-900 font-sans selection:bg-brand-orange selection:text-black antialiased">
-       <nav id="navbar" className="sticky top-0 z-40 bg-zinc-950 text-white border-b border-zinc-900 shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 py-3 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-3">
-          
-          {/* Logo element */}
-          <div className="flex items-center gap-2.5 cursor-pointer shrink-0 animate-fadeIn" onClick={() => handleModeChange('institutional')}>
-            <svg className="h-9 md:h-10 w-auto shrink-0" viewBox="0 0 70 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-              {/* Outer circle/ring (open at top-right) */}
-              <path d="M 41.5 20.5 A 13.5 13.5 0 1 0 43.5 35.5" stroke="#FF6B00" strokeWidth="7" strokeLinecap="round" fill="none" />
-              {/* Central solid circle */}
-              <circle cx="32" cy="30" r="5.5" fill="#FF6B00" />
-              {/* Droplet pointing up-right */}
-              <path d="M 40.5 21.5 C 43.5 17, 46.5 15.5, 49.5 16 C 52.5 16.5, 51.5 20.5, 47.5 23.5 C 44.5 25.5, 42 24.5, 40.5 21.5 Z" fill="#FF6B00" />
-              {/* Separate dot at top-right */}
-              <circle cx="56" cy="15" r="4.5" fill="#FF6B00" />
-            </svg>
-            <div className="flex flex-col justify-center -space-y-1">
-              <div className="flex items-center text-lg md:text-xl font-sans tracking-tight leading-none select-none">
-                <span className="text-white font-extrabold">Otto</span>
-                <span className="text-zinc-200 font-light ml-0.5">Motos</span>
+      <div className="sticky top-0 z-50 w-full">
+        <nav id="navbar" className="bg-zinc-950 text-white border-b border-zinc-900 shadow-lg">
+          <div className="max-w-7xl mx-auto px-4 py-3 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
+            
+            {/* Logo element */}
+            <div className="flex items-center gap-2.5 sm:gap-3.5 cursor-pointer shrink-0 animate-fadeIn" onClick={() => handleModeChange('institutional')}>
+              <svg className="h-11 sm:h-13 lg:h-15 w-auto shrink-0" viewBox="0 0 70 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                {/* Outer circle/ring (open at top-right) */}
+                <path d="M 41.5 20.5 A 13.5 13.5 0 1 0 43.5 35.5" stroke="#FF6B00" strokeWidth="7" strokeLinecap="round" fill="none" />
+                {/* Central solid circle */}
+                <circle cx="32" cy="30" r="5.5" fill="#FF6B00" />
+                {/* Droplet pointing up-right */}
+                <path d="M 40.5 21.5 C 43.5 17, 46.5 15.5, 49.5 16 C 52.5 16.5, 51.5 20.5, 47.5 23.5 C 44.5 25.5, 42 24.5, 40.5 21.5 Z" fill="#FF6B00" />
+                {/* Separate dot at top-right */}
+                <circle cx="56" cy="15" r="4.5" fill="#FF6B00" />
+              </svg>
+              <div className="flex flex-col justify-center -space-y-1 sm:-space-y-1.5 text-left">
+                <div className="flex items-center text-xl sm:text-2xl lg:text-3xl font-sans tracking-tight leading-none select-none">
+                  <span className="text-white font-extrabold">Otto</span>
+                  <span className="text-zinc-200 font-light ml-0.5">Motos</span>
+                </div>
+                <span className="text-[9px] sm:text-[10.5px] lg:text-[12px] font-black tracking-[0.22em] text-brand-orange uppercase leading-none font-sans block select-none">
+                  SERVIÇOS
+                </span>
               </div>
-              <span className="text-[8px] md:text-[9.5px] font-black tracking-[0.22em] text-brand-orange uppercase leading-none font-sans block select-none">
-                SERVIÇOS
-              </span>
             </div>
+
+            {/* Centralized text navigation with no heavy buttons - Hidden on mobile/iPad, Visible on Desktop */}
+            <div className="hidden lg:flex items-center gap-6 text-xs font-bold">
+              <button
+                onClick={() => {
+                  handleModeChange('institutional');
+                  setTimeout(() => {
+                    const target = document.getElementById('como-funciona');
+                    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }, 100);
+                }}
+                className="text-zinc-300 hover:text-brand-orange px-2 py-1.5 cursor-pointer transition-all"
+              >
+                Como Funciona
+              </button>
+              <button
+                onClick={() => {
+                  handleModeChange('institutional');
+                  setTimeout(() => {
+                    const target = document.getElementById('quem-somos');
+                    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }, 100);
+                }}
+                className="text-zinc-300 hover:text-brand-orange px-2 py-1.5 cursor-pointer transition-all"
+              >
+                Quem Somos / Sobre Nós
+              </button>
+              <button
+                onClick={() => {
+                  handleModeChange('institutional');
+                  setTimeout(() => {
+                    const target = document.getElementById('contato-suporte');
+                    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }, 100);
+                }}
+                className="text-zinc-300 hover:text-brand-orange px-2 py-1.5 cursor-pointer transition-all"
+              >
+                Contato / Suporte
+              </button>
+            </div>
+
+            {/* Action portals: Clean text links/tabs - Hidden on mobile, Visible on iPad & Desktop */}
+            <div className="hidden md:flex items-center gap-2.5 text-xs font-bold">
+              <button
+                onClick={() => {
+                  handleModeChange('client');
+                  setTimeout(() => {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }, 50);
+                }}
+                className={`px-3 py-2 rounded-xl transition-colors cursor-pointer ${
+                  workspaceMode === 'client' ? 'bg-brand-orange text-black font-extrabold shadow-md' : 'text-zinc-300 hover:text-brand-orange hover:bg-zinc-900'
+                }`}
+              >
+                MyOttomotos 🛠️
+              </button>
+              <button
+                onClick={() => {
+                  handleModeChange('mechanic');
+                  setTimeout(() => {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }, 50);
+                }}
+                className={`px-3 py-2 rounded-xl transition-colors cursor-pointer ${
+                  workspaceMode === 'mechanic' ? 'bg-brand-orange text-black font-extrabold shadow-md' : 'text-zinc-300 hover:text-brand-orange hover:bg-zinc-900'
+                }`}
+              >
+                Área do Mecânico 🚐
+              </button>
+            </div>
+
+            {/* Menu toggle for mobile/iPad viewports */}
+            <div className="flex lg:hidden items-center">
+              <button
+                onClick={() => setNavMobileOpen(!navMobileOpen)}
+                className="p-2 text-zinc-300 hover:text-white bg-zinc-900 hover:bg-zinc-850 rounded-xl transition-all cursor-pointer border border-zinc-800"
+                aria-label="Toggle Menu"
+              >
+                {navMobileOpen ? <X className="w-5 h-5 text-brand-orange" /> : <Menu className="w-5 h-5" />}
+              </button>
+            </div>
+
           </div>
 
-          {/* Centralized text navigation with no heavy buttons */}
-          <div className="flex flex-wrap justify-center items-center gap-4 text-xs font-bold">
-            <button
-              onClick={() => {
-                handleModeChange('institutional');
-                setTimeout(() => {
-                  const target = document.getElementById('como-funciona');
-                  if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }, 100);
-              }}
-              className="text-zinc-300 hover:text-brand-orange px-2 py-1.5 cursor-pointer transition-all"
-            >
-              Como Funciona
-            </button>
-            <button
-              onClick={() => {
-                handleModeChange('institutional');
-                setTimeout(() => {
-                  const target = document.getElementById('quem-somos');
-                  if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }, 100);
-              }}
-              className="text-zinc-300 hover:text-brand-orange px-2 py-1.5 cursor-pointer transition-all"
-            >
-              Quem Somos / Sobre Nós
-            </button>
-            <button
-              onClick={() => {
-                handleModeChange('institutional');
-                setTimeout(() => {
-                  const target = document.getElementById('contato-suporte');
-                  if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }, 100);
-              }}
-              className="text-zinc-300 hover:text-brand-orange px-2 py-1.5 cursor-pointer transition-all"
-            >
-              Contato / Suporte
-            </button>
-          </div>
+          {/* Collapsible Mobile Menu Drawer with AnimatePresence */}
+          <AnimatePresence>
+            {navMobileOpen && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.2 }}
+                className="lg:hidden border-t border-zinc-900 bg-zinc-950 px-4 py-5 space-y-4 text-left overflow-hidden"
+              >
+                {/* Secondary navigation links */}
+                <div className="flex flex-col gap-1">
+                  <span className="text-[9px] text-zinc-500 font-mono tracking-widest uppercase font-black block mb-1 px-3">
+                    Navegação do Site
+                  </span>
+                  <button
+                    onClick={() => {
+                      setNavMobileOpen(false);
+                      handleModeChange('institutional');
+                      setTimeout(() => {
+                        const target = document.getElementById('como-funciona');
+                        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                      }, 100);
+                    }}
+                    className="w-full text-left text-zinc-300 hover:text-brand-orange py-2.5 px-3 rounded-xl hover:bg-zinc-900/50 text-xs font-bold transition-all cursor-pointer"
+                  >
+                    Como Funciona
+                  </button>
+                  <button
+                    onClick={() => {
+                      setNavMobileOpen(false);
+                      handleModeChange('institutional');
+                      setTimeout(() => {
+                        const target = document.getElementById('quem-somos');
+                        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                      }, 100);
+                    }}
+                    className="w-full text-left text-zinc-300 hover:text-brand-orange py-2.5 px-3 rounded-xl hover:bg-zinc-900/50 text-xs font-bold transition-all cursor-pointer"
+                  >
+                    Quem Somos / Sobre Nós
+                  </button>
+                  <button
+                    onClick={() => {
+                      setNavMobileOpen(false);
+                      handleModeChange('institutional');
+                      setTimeout(() => {
+                        const target = document.getElementById('contato-suporte');
+                        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                      }, 100);
+                    }}
+                    className="w-full text-left text-zinc-300 hover:text-brand-orange py-2.5 px-3 rounded-xl hover:bg-zinc-900/50 text-xs font-bold transition-all cursor-pointer"
+                  >
+                    Contato / Suporte
+                  </button>
+                </div>
 
-          {/* Action portals: Clean text links/tabs */}
-          <div className="flex items-center gap-2 text-xs font-bold">
-            <button
-              onClick={() => {
-                handleModeChange('client');
-                setTimeout(() => {
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }, 50);
-              }}
-              className={`px-3 py-1.5 rounded-lg transition-colors cursor-pointer ${
-                workspaceMode === 'client' ? 'bg-brand-orange text-black font-extrabold' : 'text-zinc-300 hover:text-brand-orange hover:bg-zinc-900'
-              }`}
-            >
-              MyOttomotos 🛠️
-            </button>
-            <button
-              onClick={() => {
-                handleModeChange('mechanic');
-                setTimeout(() => {
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }, 50);
-              }}
-              className={`px-3 py-1.5 rounded-lg transition-colors cursor-pointer ${
-                workspaceMode === 'mechanic' ? 'bg-brand-orange text-black font-extrabold' : 'text-zinc-300 hover:text-brand-orange hover:bg-zinc-900'
-              }`}
-            >
-              Área do Mecânico 🚐
-            </button>
-          </div>
+                {/* Portals selection */}
+                <div className="flex flex-col gap-2 pt-3 border-t border-zinc-900">
+                  <span className="text-[9px] text-zinc-500 font-mono tracking-widest uppercase font-black block mb-1 px-3">
+                    Acessar Portais
+                  </span>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      onClick={() => {
+                        setNavMobileOpen(false);
+                        handleModeChange('client');
+                        setTimeout(() => {
+                          window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }, 50);
+                      }}
+                      className={`w-full py-3 px-3 rounded-xl text-center text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
+                        workspaceMode === 'client' ? 'bg-brand-orange text-black font-extrabold shadow' : 'bg-zinc-900 text-zinc-300 hover:text-brand-orange'
+                      }`}
+                    >
+                      Piloto 🛠️
+                    </button>
+                    <button
+                      onClick={() => {
+                        setNavMobileOpen(false);
+                        handleModeChange('mechanic');
+                        setTimeout(() => {
+                          window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }, 50);
+                      }}
+                      className={`w-full py-3 px-3 rounded-xl text-center text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
+                        workspaceMode === 'mechanic' ? 'bg-brand-orange text-black font-extrabold shadow' : 'bg-zinc-900 text-zinc-300 hover:text-brand-orange'
+                      }`}
+                    >
+                      Oficina 🚐
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-        </div>
-      </nav>
+        </nav>
+        {/* Splitting orange bar right underneath top menu */}
+        <div className="h-2 bg-brand-orange w-full shadow-md relative z-30" />
+      </div>
 
       {/* 1. INSTITUTIONAL PAGE VIEW */}
       {workspaceMode === 'institutional' && (
@@ -593,7 +708,7 @@ export default function App() {
                   className="w-full sm:w-1/2 bg-brand-orange hover:bg-brand-orange-hover text-black font-black text-sm py-3 px-6 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-brand-orange/10 hover:scale-[1.02] cursor-pointer"
                 >
                   <Smartphone className="w-4 h-4" />
-                  Para Pilotos
+                  Para Motociclista
                 </button>
                 <button
                   onClick={() => {
@@ -605,7 +720,7 @@ export default function App() {
                   className="w-full sm:w-1/2 bg-zinc-950 hover:bg-zinc-900 text-white font-black text-sm py-3 px-6 rounded-xl flex items-center justify-center gap-2 transition-all hover:scale-[1.02] cursor-pointer shadow-md"
                 >
                   <Briefcase className="w-4 h-4 text-brand-orange" />
-                  Para Oficinas
+                  Para Mecânicos
                 </button>
               </div>
 

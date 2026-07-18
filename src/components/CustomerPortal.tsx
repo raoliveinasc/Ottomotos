@@ -64,7 +64,7 @@ const SERVICES_CATALOG: Service[] = [
     formaAtendimento: 'Pronto Atendimento',
     time: 15,
     category: 'Mais Pedidos',
-    image: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&q=80&w=400',
+    image: '/src/assets/images/troca_oleo_motor_1784374619776.jpg',
     description: 'Substituição completa do óleo com lubrificante premium Mobil para prolongar a vida útil do motor.'
   },
   {
@@ -73,7 +73,7 @@ const SERVICES_CATALOG: Service[] = [
     formaAtendimento: 'Sob Agendamento',
     time: 40,
     category: 'Transmissão & Freios',
-    image: 'https://images.unsplash.com/photo-1609630875171-b1321377ee65?auto=format&fit=crop&q=80&w=400',
+    image: '/src/assets/images/kit_transmissao_moto_1784375082487.jpg',
     description: 'Troca de corrente, coroa e pinhão novos com regulagem profissional e lubrificação técnica.'
   },
   {
@@ -435,7 +435,7 @@ export default function CustomerPortal({
     points: number;
   } | null>(null);
 
-  const [clientActiveTab, setClientActiveTab] = useState<'dashboard' | 'catalog' | 'tracking' | 'fidelidade'>('dashboard');
+  const [clientActiveTab, setClientActiveTab] = useState<'dashboard' | 'catalog' | 'tracking' | 'fidelidade'>('catalog');
   const [adminQuoteExpiryMinutes, setAdminQuoteExpiryMinutes] = useState(5);
 
   // Real-time mechanic quote bidding state
@@ -830,7 +830,7 @@ export default function CustomerPortal({
       setCheckoutAddress('Rua Barão de Jaguara, 800 - Cambuí, Campinas - SP');
       setActiveTracking(true);
     }
-    setClientActiveTab('dashboard');
+    setClientActiveTab('catalog');
     triggerToast('Conectado com sucesso no perfil de teste!');
   };
 
@@ -888,7 +888,7 @@ export default function CustomerPortal({
       setCheckoutMoto('Honda CG 160 Titan');
       setCheckoutAddress('Av. Brasil, 500 - Jardim Guanabara, Campinas - SP');
     }
-    setClientActiveTab('dashboard');
+    setClientActiveTab('catalog');
     triggerToast('Sua conta foi criada e você está conectado!');
   };
 
@@ -1220,17 +1220,6 @@ export default function CustomerPortal({
           {/* Sub-tab navigation */}
           <div className="flex border-b border-zinc-200 mb-8 overflow-x-auto gap-2 pb-1 scrollbar-none text-left">
             <button
-              onClick={() => setClientActiveTab('dashboard')}
-              className={`py-3 px-5 font-black text-xs md:text-sm border-b-2 whitespace-nowrap transition-all flex items-center gap-1.5 ${
-                clientActiveTab === 'dashboard'
-                  ? 'border-brand-orange text-brand-orange'
-                  : 'border-transparent text-zinc-500 hover:text-zinc-900'
-              }`}
-            >
-              <Sliders className="w-4 h-4" />
-              Painel Geral (Garagem)
-            </button>
-            <button
               onClick={() => setClientActiveTab('catalog')}
               className={`py-3 px-5 font-black text-xs md:text-sm border-b-2 whitespace-nowrap transition-all flex items-center gap-1.5 ${
                 clientActiveTab === 'catalog'
@@ -1262,6 +1251,17 @@ export default function CustomerPortal({
             >
               <Award className="w-4 h-4" />
               Fidelidade & Prêmios
+            </button>
+            <button
+              onClick={() => setClientActiveTab('dashboard')}
+              className={`py-3 px-5 font-black text-xs md:text-sm border-b-2 whitespace-nowrap transition-all flex items-center gap-1.5 ${
+                clientActiveTab === 'dashboard'
+                  ? 'border-brand-orange text-brand-orange'
+                  : 'border-transparent text-zinc-500 hover:text-zinc-900'
+              }`}
+            >
+              <Sliders className="w-4 h-4" />
+              Painel Geral (Garagem)
             </button>
           </div>
 
@@ -1871,7 +1871,7 @@ export default function CustomerPortal({
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6 text-left">
               <div className="text-center max-w-2xl mx-auto space-y-3 mb-4">
                 <span className="text-xs bg-brand-orange-light text-brand-orange font-bold px-3 py-1 rounded-full uppercase tracking-widest border border-brand-orange/20">
-                  Cardápio de Serviços OttoMotos
+                  Catálogo de Serviços
                 </span>
                 <h3 className="text-2xl font-black text-zinc-950 tracking-tight">
                   Selecione as manutenções para solicitar orçamentos
@@ -1956,6 +1956,7 @@ export default function CustomerPortal({
                           src={srv.image} 
                           alt={srv.name} 
                           className="w-full h-full object-cover transition-transform duration-500 hover:scale-103"
+                          style={srv.id === 'srv-1' ? { objectPosition: '50% 82%' } : undefined}
                           referrerPolicy="no-referrer"
                         />
                       </div>
