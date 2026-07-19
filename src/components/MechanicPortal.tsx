@@ -39,6 +39,14 @@ import {
 
 interface MechanicPortalProps {
   onBackToLanding?: () => void;
+  mechanicUser?: {
+    id: string;
+    name: string;
+    email: string;
+    meName: string;
+    meCnpj: string;
+    cnh: string;
+  } | null;
 }
 
 interface ServiceOrderSim {
@@ -53,7 +61,7 @@ interface ServiceOrderSim {
   status: 'PENDING' | 'IN_ROUTE' | 'CHECKED_IN' | 'REPAIRING' | 'CLOSING' | 'COMPLETED';
 }
 
-export default function MechanicPortal({ onBackToLanding }: MechanicPortalProps) {
+export default function MechanicPortal({ onBackToLanding, mechanicUser }: MechanicPortalProps) {
   // Sidebar states
   const [activeTab, setActiveTab] = useState<'shift' | 'dashboard' | 'me-data' | 'performance'>('dashboard');
   // Navigation sub-view to switch easily between the active OS progress and the overall queue list
@@ -82,9 +90,9 @@ export default function MechanicPortal({ onBackToLanding }: MechanicPortalProps)
   }, [isShiftActive]);
 
   // ME (Microenterprise) state
-  const [meName, setMeName] = useState('Danilo Mecânica ME');
-  const [meCnpj, setMeCnpj] = useState('45.289.112/0001-89');
-  const [meOwner, setMeOwner] = useState('Danilo Otto dos Santos');
+  const [meName, setMeName] = useState(mechanicUser?.meName || 'Danilo Mecânica ME');
+  const [meCnpj, setMeCnpj] = useState(mechanicUser?.meCnpj || '45.289.112/0001-89');
+  const [meOwner, setMeOwner] = useState(mechanicUser?.name || 'Danilo Otto dos Santos');
   const [meStatus, setMeStatus] = useState<'Approved' | 'Pending'>('Approved');
   const [isEditingMe, setIsEditingMe] = useState(false);
 
@@ -299,7 +307,7 @@ export default function MechanicPortal({ onBackToLanding }: MechanicPortalProps)
               className={`w-full flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all ${
                 activeTab === 'shift' 
                   ? 'bg-zinc-900 text-white shadow-sm' 
-                  : 'text-zinc-450 hover:text-zinc-200 hover:bg-zinc-900/40'
+                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/40'
               }`}
               id="tab-btn-shift"
             >
@@ -322,7 +330,7 @@ export default function MechanicPortal({ onBackToLanding }: MechanicPortalProps)
               } ${
                 activeTab === 'dashboard' 
                   ? 'bg-zinc-900 text-white shadow-sm' 
-                  : 'text-zinc-450 hover:text-zinc-200 hover:bg-zinc-900/40'
+                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/40'
               }`}
               id="tab-btn-dashboard"
             >
@@ -342,7 +350,7 @@ export default function MechanicPortal({ onBackToLanding }: MechanicPortalProps)
               className={`w-full flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all ${
                 activeTab === 'performance' 
                   ? 'bg-zinc-900 text-white shadow-sm' 
-                  : 'text-zinc-450 hover:text-zinc-200 hover:bg-zinc-900/40'
+                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/40'
               }`}
               id="tab-btn-performance"
             >
@@ -355,7 +363,7 @@ export default function MechanicPortal({ onBackToLanding }: MechanicPortalProps)
               className={`w-full flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-semibold transition-all ${
                 activeTab === 'me-data' 
                   ? 'bg-zinc-900 text-white shadow-sm' 
-                  : 'text-zinc-450 hover:text-zinc-200 hover:bg-zinc-900/40'
+                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/40'
               }`}
               id="tab-btn-me-data"
             >
@@ -379,14 +387,14 @@ export default function MechanicPortal({ onBackToLanding }: MechanicPortalProps)
             <div className="flex items-center gap-2.5 overflow-hidden">
               <div className="relative shrink-0">
                 <div className="w-8 h-8 rounded-full bg-brand-orange flex items-center justify-center font-black text-black font-sans text-xs shadow-inner">
-                  DO
+                  {meOwner.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
                 </div>
                 <span className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border border-zinc-950 ${
                   isShiftActive ? 'bg-emerald-500' : 'bg-zinc-500'
                 }`}></span>
               </div>
               <div className="text-left overflow-hidden">
-                <strong className="text-zinc-200 text-xs block font-semibold truncate leading-tight">Danilo Otto</strong>
+                <strong className="text-zinc-200 text-xs block font-semibold truncate leading-tight">{meOwner}</strong>
                 <button
                   onClick={handleToggleShift}
                   className={`text-[9px] font-mono block uppercase transition-colors text-left font-semibold ${
@@ -421,7 +429,7 @@ export default function MechanicPortal({ onBackToLanding }: MechanicPortalProps)
             <div className="flex items-center gap-1.5 text-[10px] text-zinc-400 uppercase tracking-widest font-bold font-mono">
               <span>Painel</span>
               <ChevronRight className="w-2.5 h-2.5 text-zinc-350" />
-              <span>Danilo Otto</span>
+              <span>{meOwner}</span>
               <ChevronRight className="w-2.5 h-2.5 text-zinc-350" />
               <span className="text-brand-orange">
                 {activeTab === 'shift' && 'Configuração de Turno'}
@@ -509,7 +517,7 @@ export default function MechanicPortal({ onBackToLanding }: MechanicPortalProps)
               </div>
               <div>
                 <h5 className="font-extrabold text-zinc-900 text-sm uppercase font-sans tracking-tight">Alerta de Término de Expediente!</h5>
-                <p className="text-xs text-zinc-650 mt-1 leading-relaxed">
+                <p className="text-xs text-zinc-600 mt-1 leading-relaxed">
                   Faltam apenas 15 minutos para o encerramento planejado do seu expediente às <strong className="text-zinc-950 font-bold">{shiftEnd}</strong>. Deseja estender sua janela de atendimento para continuar recebendo novas ordens de serviço?
                 </p>
               </div>
@@ -696,7 +704,7 @@ export default function MechanicPortal({ onBackToLanding }: MechanicPortalProps)
                       className={`px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 ${
                         dashboardSubView === 'os'
                           ? 'bg-brand-orange text-black font-extrabold shadow-sm'
-                          : 'bg-zinc-100 text-zinc-650 hover:bg-zinc-200 hover:text-black font-bold'
+                          : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200 hover:text-black font-bold'
                       }`}
                       id="subview-btn-os"
                     >
@@ -708,7 +716,7 @@ export default function MechanicPortal({ onBackToLanding }: MechanicPortalProps)
                       className={`px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 ${
                         dashboardSubView === 'list'
                           ? 'bg-zinc-950 text-white font-extrabold shadow-sm'
-                          : 'bg-zinc-100 text-zinc-650 hover:bg-zinc-200 hover:text-black font-bold'
+                          : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200 hover:text-black font-bold'
                       }`}
                       id="subview-btn-list"
                     >
@@ -741,7 +749,7 @@ export default function MechanicPortal({ onBackToLanding }: MechanicPortalProps)
                         </div>
                         <div className="text-left font-sans">
                           <h4 className="text-xs font-black text-zinc-900 uppercase">1. Roteamento</h4>
-                          <span className="text-[10px] text-zinc-450 block font-mono">Deslocamento GPS</span>
+                          <span className="text-[10px] text-zinc-500 block font-mono">Deslocamento GPS</span>
                         </div>
                       </div>
 
@@ -761,7 +769,7 @@ export default function MechanicPortal({ onBackToLanding }: MechanicPortalProps)
                         </div>
                         <div className="text-left font-sans">
                           <h4 className="text-xs font-black text-zinc-900 uppercase">2. Vistoria</h4>
-                          <span className="text-[10px] text-zinc-450 block font-mono">Fotos & Checklist</span>
+                          <span className="text-[10px] text-zinc-500 block font-mono">Fotos & Checklist</span>
                         </div>
                       </div>
 
@@ -781,7 +789,7 @@ export default function MechanicPortal({ onBackToLanding }: MechanicPortalProps)
                         </div>
                         <div className="text-left font-sans">
                           <h4 className="text-xs font-black text-zinc-900 uppercase">3. Reparo Ativo</h4>
-                          <span className="text-[10px] text-zinc-450 block font-mono">Cronômetro & Câmera</span>
+                          <span className="text-[10px] text-zinc-500 block font-mono">Cronômetro & Câmera</span>
                         </div>
                       </div>
 
@@ -799,7 +807,7 @@ export default function MechanicPortal({ onBackToLanding }: MechanicPortalProps)
                         </div>
                         <div className="text-left font-sans">
                           <h4 className="text-xs font-black text-zinc-900 uppercase">4. Auditoria</h4>
-                          <span className="text-[10px] text-zinc-450 block font-mono">Logística Reversa</span>
+                          <span className="text-[10px] text-zinc-500 block font-mono">Logística Reversa</span>
                         </div>
                       </div>
                     </div>
@@ -874,7 +882,7 @@ export default function MechanicPortal({ onBackToLanding }: MechanicPortalProps)
                                 <td className="py-4 px-4">
                                   <div className="text-xs">
                                     <strong className="text-zinc-800 font-medium block">{os.motoModel}</strong>
-                                    <span className="text-[10px] bg-zinc-100 border border-zinc-250 px-1.5 py-0.5 rounded font-mono text-zinc-650 font-bold mt-1 inline-block">
+                                    <span className="text-[10px] bg-zinc-100 border border-zinc-250 px-1.5 py-0.5 rounded font-mono text-zinc-600 font-bold mt-1 inline-block">
                                       Placa: {os.motoPlate}
                                     </span>
                                   </div>
@@ -936,7 +944,7 @@ export default function MechanicPortal({ onBackToLanding }: MechanicPortalProps)
                       <div className="p-12 text-center text-zinc-400 bg-zinc-50 border border-dashed border-zinc-200 rounded-2xl">
                         <Activity className="w-8 h-8 text-zinc-350 mx-auto mb-2 animate-pulse" />
                         <p className="text-xs font-bold font-sans uppercase">Fila Vazia de Despacho</p>
-                        <p className="text-[10px] text-zinc-550 mt-1">
+                        <p className="text-[10px] text-zinc-500 mt-1">
                           Nenhuma ordem geolocalizada aguardando no momento.
                         </p>
                       </div>
@@ -1177,7 +1185,7 @@ export default function MechanicPortal({ onBackToLanding }: MechanicPortalProps)
                             <span className="text-[10px] text-zinc-500 uppercase tracking-wider font-mono font-bold block">2. Evidência Fotográfica</span>
                             
                             <div className="space-y-3">
-                              <span className="text-[10px] text-zinc-550 block font-semibold leading-normal">Foto panorâmica lateral da moto para o arquivo da rede:</span>
+                              <span className="text-[10px] text-zinc-500 block font-semibold leading-normal">Foto panorâmica lateral da moto para o arquivo da rede:</span>
                               <div className="flex items-center gap-3.5">
                                 <div className="w-20 h-20 rounded-2xl overflow-hidden border border-zinc-200 shadow-sm relative shrink-0">
                                   <img src={uploadedPhotos[0]} alt="Checklist damage" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
@@ -1189,7 +1197,7 @@ export default function MechanicPortal({ onBackToLanding }: MechanicPortalProps)
                                   }}
                                   className="bg-white hover:bg-zinc-100 border border-zinc-250 text-zinc-700 font-extrabold text-2xs uppercase tracking-wider py-3 px-4 rounded-xl flex items-center gap-1.5 shadow-sm transition-all font-mono cursor-pointer"
                                 >
-                                  <Camera className="w-4 h-4 text-zinc-550" /> Fotografar Avaria
+                                  <Camera className="w-4 h-4 text-zinc-500" /> Fotografar Avaria
                                 </button>
                               </div>
                             </div>
@@ -1284,9 +1292,9 @@ export default function MechanicPortal({ onBackToLanding }: MechanicPortalProps)
                             <span className="text-[9px] text-zinc-400 uppercase font-bold font-mono">Canal Transmissão Interna 01</span>
                             
                             <span className={`flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider ${
-                              cameraOn ? 'bg-red-950 text-red-400 border border-red-900/40' : 'bg-zinc-950 text-zinc-550 border border-zinc-850'
+                              cameraOn ? 'bg-red-950 text-red-400 border border-red-900/40' : 'bg-zinc-950 text-zinc-400 border border-zinc-850'
                             }`}>
-                              <span className={`w-1.5 h-1.5 rounded-full ${cameraOn ? 'bg-red-500 animate-ping' : 'bg-zinc-550'}`}></span>
+                              <span className={`w-1.5 h-1.5 rounded-full ${cameraOn ? 'bg-red-500 animate-ping' : 'bg-zinc-500'}`}></span>
                               {cameraOn ? 'AO VIVO PARA O CLIENTE' : 'CAMERA MUTADA'}
                             </span>
                           </div>
@@ -1316,7 +1324,7 @@ export default function MechanicPortal({ onBackToLanding }: MechanicPortalProps)
                       {/* STEP-BY-STEP REPLACEMENT TASKS */}
                       <div className="space-y-4 bg-zinc-50 p-5 rounded-2xl border border-zinc-200/60">
                         <div className="flex justify-between items-center pb-2 border-b border-zinc-200/80">
-                          <span className="text-[10px] text-zinc-550 uppercase tracking-wider font-mono font-bold block">Checklist Técnico do Conserto</span>
+                          <span className="text-[10px] text-zinc-500 uppercase tracking-wider font-mono font-bold block">Checklist Técnico do Conserto</span>
                           <span className="text-[10px] bg-zinc-200 border border-zinc-350 px-2.5 py-0.5 rounded text-zinc-700 font-bold font-mono">
                             {tasks.filter(t => t.done).length} de {tasks.length} concluídas
                           </span>
@@ -1466,7 +1474,7 @@ export default function MechanicPortal({ onBackToLanding }: MechanicPortalProps)
                                 />
                                 <div className="space-y-1">
                                   <strong className="text-xs font-bold text-zinc-900 block">Declaro Logística Reversa Concluída</strong>
-                                  <span className="text-[10px] text-zinc-550 leading-relaxed block font-mono">
+                                  <span className="text-[10px] text-zinc-600 leading-relaxed block font-mono">
                                     O óleo lubrificante antigo e o filtro retirado foram devidamente alocados no reservatório ecológico da OttoVan para logística reversa.
                                   </span>
                                 </div>
@@ -1768,21 +1776,21 @@ export default function MechanicPortal({ onBackToLanding }: MechanicPortalProps)
                 <div className="flex-1 flex justify-around items-end h-full pl-16">
                   {/* Sem 1 */}
                   <div className="flex flex-col items-center gap-2 group w-12 cursor-pointer">
-                    <span className="text-[9px] font-mono font-bold text-zinc-650 opacity-0 group-hover:opacity-100 transition-opacity">R$ 750</span>
+                    <span className="text-[9px] font-mono font-bold text-zinc-500 opacity-0 group-hover:opacity-100 transition-opacity">R$ 750</span>
                     <div className="bg-zinc-900 group-hover:bg-brand-orange w-full h-24 rounded-t-lg transition-all duration-200 shadow-sm"></div>
                     <span className="text-2xs font-bold text-zinc-500 font-sans uppercase">Sem 1</span>
                   </div>
 
                   {/* Sem 2 */}
                   <div className="flex flex-col items-center gap-2 group w-12 cursor-pointer">
-                    <span className="text-[9px] font-mono font-bold text-zinc-650 opacity-0 group-hover:opacity-100 transition-opacity">R$ 900</span>
+                    <span className="text-[9px] font-mono font-bold text-zinc-500 opacity-0 group-hover:opacity-100 transition-opacity">R$ 900</span>
                     <div className="bg-zinc-900 group-hover:bg-brand-orange w-full h-28 rounded-t-lg transition-all duration-200 shadow-sm"></div>
                     <span className="text-2xs font-bold text-zinc-500 font-sans uppercase">Sem 2</span>
                   </div>
 
                   {/* Sem 3 */}
                   <div className="flex flex-col items-center gap-2 group w-12 cursor-pointer">
-                    <span className="text-[9px] font-mono font-bold text-zinc-650 opacity-0 group-hover:opacity-100 transition-opacity">R$ 1.125</span>
+                    <span className="text-[9px] font-mono font-bold text-zinc-500 opacity-0 group-hover:opacity-100 transition-opacity">R$ 1.125</span>
                     <div className="bg-zinc-900 group-hover:bg-brand-orange w-full h-36 rounded-t-lg transition-all duration-200 shadow-sm"></div>
                     <span className="text-2xs font-bold text-zinc-500 font-sans uppercase">Sem 3</span>
                   </div>

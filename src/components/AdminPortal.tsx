@@ -594,16 +594,41 @@ export default function AdminPortal() {
   ]);
 
   // Módulo 3: Mecânicos Onboarding & KPIs
-  const [pendingOnboardings, setPendingOnboardings] = useState([
-    { id: 'mcn-201', name: 'Sandro Souza', phone: '(19) 99311-2288', meicnpj: '44.512.102/0001-99', cnh: 'Categoria A - Definitiva', bgCheck: 'Aprovado (Nenhum antecedente)', exp: '5 anos de oficina autorizada Honda' },
-    { id: 'mcn-202', name: 'Maurício Lima', phone: '(19) 98711-4433', meicnpj: '52.190.412/0001-23', cnh: 'Categoria AB - Definitiva', bgCheck: 'Aprovado (Nenhum antecedente)', exp: '3 anos de mecânico autônomo e frotas' }
-  ]);
+  const [pendingOnboardings, setPendingOnboardings] = useState(() => {
+    try {
+      const saved = localStorage.getItem('otto_pending_onboardings');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {
+      console.error(e);
+    }
+    return [
+      { id: 'mcn-201', name: 'Sandro Souza', phone: '(19) 99311-2288', meicnpj: '44.512.102/0001-99', cnh: 'Categoria A - Definitiva', bgCheck: 'Aprovado (Nenhum antecedente)', exp: '5 anos de oficina autorizada Honda' },
+      { id: 'mcn-202', name: 'Maurício Lima', phone: '(19) 98711-4433', meicnpj: '52.190.412/0001-23', cnh: 'Categoria AB - Definitiva', bgCheck: 'Aprovado (Nenhum antecedente)', exp: '3 anos de mecânico autônomo e frotas' }
+    ];
+  });
 
-  const [approvedMechanics, setApprovedMechanics] = useState([
-    { id: 'mcn-01', name: 'Danilo Silva', unit: 'OttoVan #02', status: 'Em Atendimento', rating: 4.9, sla: '98.5%', rework: '0.4%' },
-    { id: 'mcn-02', name: 'Carlos Santos', unit: 'OttoVan #03', status: 'Disponível', rating: 4.8, sla: '96.2%', rework: '1.2%' },
-    { id: 'mcn-03', name: 'João Victor', unit: 'OttoVan #01', status: 'Disponível', rating: 5.0, sla: '99.1%', rework: '0.0%' }
-  ]);
+  const [approvedMechanics, setApprovedMechanics] = useState(() => {
+    try {
+      const saved = localStorage.getItem('otto_approved_mechanics');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {
+      console.error(e);
+    }
+    return [
+      { id: 'mcn-01', name: 'Danilo Silva', unit: 'OttoVan #02', status: 'Em Atendimento', rating: 4.9, sla: '98.5%', rework: '0.4%' },
+      { id: 'mcn-02', name: 'Carlos Santos', unit: 'OttoVan #03', status: 'Disponível', rating: 4.8, sla: '96.2%', rework: '1.2%' },
+      { id: 'mcn-03', name: 'João Victor', unit: 'OttoVan #01', status: 'Disponível', rating: 5.0, sla: '99.1%', rework: '0.0%' }
+    ];
+  });
+
+  // Keep pending onboardings and approved list synchronized
+  useEffect(() => {
+    localStorage.setItem('otto_pending_onboardings', JSON.stringify(pendingOnboardings));
+  }, [pendingOnboardings]);
+
+  useEffect(() => {
+    localStorage.setItem('otto_approved_mechanics', JSON.stringify(approvedMechanics));
+  }, [approvedMechanics]);
 
   // Módulo 4: Lojistas e Fornecedores
   const [suppliers, setSuppliers] = useState([

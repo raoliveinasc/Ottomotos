@@ -1596,7 +1596,7 @@ export default function CustomerPortal({
                                       <h6 className="font-extrabold text-xs text-zinc-900">
                                         O mecânico detectou: <strong className="text-amber-700">{os.additionalTitle}</strong>
                                       </h6>
-                                      <p className="text-[11px] text-zinc-650 leading-relaxed">
+                                      <p className="text-[11px] text-zinc-600 leading-relaxed">
                                         Para garantir a segurança mecânica da sua moto, recomendamos a substituição adicional desta peça. A van já tem o item em estoque e a substituição é imediata.
                                       </p>
                                       <p className="text-xs pt-1">
@@ -1855,7 +1855,7 @@ export default function CustomerPortal({
                         ))}
                       </div>
                     ) : (
-                      <p className="text-xs text-zinc-450 py-6 text-center bg-zinc-50 rounded-2xl border border-dashed border-zinc-200">
+                      <p className="text-xs text-zinc-500 py-6 text-center bg-zinc-50 rounded-2xl border border-dashed border-zinc-200">
                         Nenhum reparo concluído registrado anteriormente nesta moto.
                       </p>
                     )}
@@ -2258,7 +2258,7 @@ export default function CustomerPortal({
                                 </div>
                                 <div>
                                   <h5 className="text-xs font-bold text-white">{selectedProposal?.mechanicName || 'Danilo Silva'}</h5>
-                                  <p className="text-[10px] text-zinc-450">Franqueado OttoMotos Ativo • Conectado</p>
+                                  <p className="text-[10px] text-zinc-400">Franqueado OttoMotos Ativo • Conectado</p>
                                 </div>
                               </div>
                               <span className="text-[10px] bg-zinc-800 text-zinc-300 font-mono px-2 py-0.5 rounded-full">
@@ -2703,7 +2703,7 @@ export default function CustomerPortal({
             >
               <button
                 onClick={() => setShowCheckoutModal(false)}
-                className="absolute top-4 right-4 p-1.5 rounded-lg hover:bg-zinc-100 text-zinc-450 hover:text-zinc-900"
+                className="absolute top-4 right-4 p-1.5 rounded-lg hover:bg-zinc-100 text-zinc-400 hover:text-zinc-900"
               >
                 <X className="w-5 h-5" />
               </button>

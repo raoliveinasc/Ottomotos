@@ -54,6 +54,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import RoutingMap from './components/RoutingMap';
 import CustomerPortal from './components/CustomerPortal';
 import MechanicPortal from './components/MechanicPortal';
+import MechanicAuthPortal from './components/MechanicAuthPortal';
 import AdminPortal from './components/AdminPortal';
 
 // Resilient Brand Logo Component that renders polished HTML/CSS vector styling to guarantee instant loading, perfect sharpness, and zero external blocks
@@ -298,6 +299,24 @@ export default function App() {
   };
 
   const [mechanicViewMode, setMechanicViewMode] = useState<'marketing' | 'portal'>('portal'); // Default to 'portal' for direct functional access
+  const [mechanicUser, setMechanicUser] = useState<{
+    id: string;
+    name: string;
+    email: string;
+    meName: string;
+    meCnpj: string;
+    cnh: string;
+  } | null>(() => {
+    const saved = localStorage.getItem('otto_active_mechanic_user');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    return null;
+  });
   const [previewStep, setPreviewStep] = useState<number>(3); // Default to Step 3: Mecânico no Local
   
   // Admin radius setting (determined in the platform admin panel)
@@ -722,8 +741,8 @@ export default function App() {
                 Prover <span className="text-brand-orange">Serviços</span>
               </h1>
 
-              <p className="text-zinc-650 text-xs sm:text-sm md:text-base max-w-2xl mx-auto leading-relaxed font-medium">
-                A OttoMotos Serviços combina tecnologia móvel de ponta, vans super-equipadas e mecânicos de elite para entregar conveniência extrema, transparência radical e orçamentos fechados sem surpresas, diretamente na sua localização.
+              <p className="text-zinc-600 text-xs sm:text-sm md:text-base max-w-2xl mx-auto leading-relaxed font-medium">
+                A OttoMotos combina inteligência digital, veículos superaquipados e mecânicos altamente treinados. Entregamos agilidade, precisão e total transparência, garantindo serviços de conveniência e máxima qualidade diretamente na sua localização, sem surpresas.
               </p>
 
               {/* CTAs Principais Harmonizados */}
@@ -762,8 +781,8 @@ export default function App() {
               </div>
 
               {/* Linha discreta de métrica de prova social */}
-              <p className="text-zinc-550 text-[11px] font-medium font-mono pt-1">
-                ⭐ <span className="text-zinc-850 font-bold">4.9/5 estrelas</span> baseado em mais de <span className="text-zinc-850 font-bold">12.000 atendimentos</span> com transparência total em todo o Brasil.
+              <p className="text-zinc-500 text-[11px] font-medium font-mono pt-1">
+                ⭐ <span className="text-zinc-700 font-bold">4.9/5 estrelas</span> baseado em mais de <span className="text-zinc-700 font-bold">12.000 atendimentos</span> com transparência total em todo o Brasil.
               </p>
             </div>
           </section>
@@ -794,7 +813,7 @@ export default function App() {
                       <span className="w-3 h-3 bg-red-650 rounded-full animate-pulse"></span>
                       Dilema dos Proprietários de Motos
                     </h3>
-                    <p className="text-zinc-450 text-xs font-semibold font-sans">
+                    <p className="text-zinc-300 text-xs font-semibold font-sans">
                       A difícil escolha entre o amadorismo perigoso e os valores abusivos das concessionárias convencionais.
                     </p>
                     
@@ -853,7 +872,7 @@ export default function App() {
                       <span className="w-3 h-3 bg-red-650 rounded-full animate-pulse"></span>
                       Dilema dos Mecânicos de Motos
                     </h3>
-                    <p className="text-zinc-450 text-xs font-semibold font-sans">
+                    <p className="text-zinc-300 text-xs font-semibold font-sans">
                       A barreira financeira extrema para alcançar a formalização e gerenciar uma oficina estável e lucrativa.
                     </p>
                     
@@ -932,7 +951,7 @@ export default function App() {
                       <span className="w-6 h-6 rounded-full bg-brand-orange text-black font-black text-xs flex items-center justify-center shrink-0">1</span>
                       <div>
                         <h4 className="font-bold text-sm text-zinc-900">Acesso Inicial, Orçamento e Agendamento (Pré-Venda)</h4>
-                        <p className="text-xs text-zinc-650">O cliente acessa o site ou o aplicativo celular, seleciona o serviço desejado em um catálogo digital, solicita o orçamento e agenda a visita da unidade de atendimento móvel (Van) no local de sua preferência.</p>
+                        <p className="text-xs text-zinc-600">O cliente acessa o site ou o aplicativo celular, seleciona o serviço desejado em um catálogo digital, solicita o orçamento e agenda a visita da unidade de atendimento móvel (Van) no local de sua preferência.</p>
                       </div>
                     </div>
                     
@@ -940,7 +959,7 @@ export default function App() {
                       <span className="w-6 h-6 rounded-full bg-brand-orange text-black font-black text-xs flex items-center justify-center shrink-0">2</span>
                       <div>
                         <h4 className="font-bold text-sm text-zinc-900">Recepção e Preparação</h4>
-                        <p className="text-xs text-zinc-650">Ao encontrar a unidade móvel, é realizado o check-in e um checklist completo da moto para registrar o estado inicial do veículo antes do início dos serviços.</p>
+                        <p className="text-xs text-zinc-600">Ao encontrar a unidade móvel, é realizado o check-in e um checklist completo da moto para registrar o estado inicial do veículo antes do início dos serviços.</p>
                       </div>
                     </div>
 
@@ -948,7 +967,7 @@ export default function App() {
                       <span className="w-6 h-6 rounded-full bg-brand-orange text-black font-black text-xs flex items-center justify-center shrink-0">3</span>
                       <div>
                         <h4 className="font-bold text-sm text-zinc-900">Execução e Monitoramento ao Vivo</h4>
-                        <p className="text-xs text-zinc-650">O serviço é executado sob rigoroso controle de tempo (cronometrado) e o cliente pode acompanhar todo o reparo de sua moto em tempo real, através de câmeras online conectadas ao aplicativo.</p>
+                        <p className="text-xs text-zinc-600">O serviço é executado sob rigoroso controle de tempo (cronometrado) e o cliente pode acompanhar todo o reparo de sua moto em tempo real, através de câmeras online conectadas ao aplicativo.</p>
                       </div>
                     </div>
 
@@ -956,7 +975,7 @@ export default function App() {
                       <span className="w-6 h-6 rounded-full bg-brand-orange text-black font-black text-xs flex items-center justify-center shrink-0">4</span>
                       <div>
                         <h4 className="font-bold text-sm text-zinc-900">Conclusão e Entrega</h4>
-                        <p className="text-xs text-zinc-650">Após a execução, é feito um checklist rigoroso de revisão dos apertos de segurança. O pagamento eletrônico pode ser realizado de forma rápida e segura via Pix ou Cartões de Crédito e Débito, e a moto é entregue pronta.</p>
+                        <p className="text-xs text-zinc-600">Após a execução, é feito um checklist rigoroso de revisão dos apertos de segurança. O pagamento eletrônico pode ser realizado de forma rápida e segura via Pix ou Cartões de Crédito e Débito, e a moto é entregue pronta.</p>
                       </div>
                     </div>
 
@@ -964,7 +983,7 @@ export default function App() {
                       <span className="w-6 h-6 rounded-full bg-brand-orange text-black font-black text-xs flex items-center justify-center shrink-0">5</span>
                       <div>
                         <h4 className="font-bold text-sm text-zinc-900">Benefícios Futuros (Fidelização)</h4>
-                        <p className="text-xs text-zinc-650">A jornada contínua no pós-venda, onde o cliente acumula pontos por meio do programa de fidelidade do aplicativo, garantindo descontos, vantagens exclusivas para os próximos serviços e bônus por indicações.</p>
+                        <p className="text-xs text-zinc-600">A jornada contínua no pós-venda, onde o cliente acumula pontos por meio do programa de fidelidade do aplicativo, garantindo descontos, vantagens exclusivas para os próximos serviços e bônus por indicações.</p>
                       </div>
                     </div>
                   </div>
@@ -984,7 +1003,7 @@ export default function App() {
                       <span className="w-6 h-6 rounded-full bg-zinc-200 text-zinc-700 font-black text-xs flex items-center justify-center shrink-0">1</span>
                       <div>
                         <h4 className="font-bold text-sm text-zinc-900">Cadastro para Qualificação</h4>
-                        <p className="text-xs text-zinc-650">Preenchimento de formulário cadastral completo e envio de documentos necessários (CNH categoria A/B, comprovante de residência, antecedentes criminais e certificados técnicos de cursos de mecânica).</p>
+                        <p className="text-xs text-zinc-600">Preenchimento de formulário cadastral completo e envio de documentos necessários (CNH categoria A/B, comprovante de residência, antecedentes criminais e certificados técnicos de cursos de mecânica).</p>
                       </div>
                     </div>
 
@@ -992,7 +1011,7 @@ export default function App() {
                       <span className="w-6 h-6 rounded-full bg-zinc-200 text-zinc-700 font-black text-xs flex items-center justify-center shrink-0">2</span>
                       <div>
                         <h4 className="font-bold text-sm text-zinc-900">Triagem Técnica e Admissão</h4>
-                        <p className="text-xs text-zinc-650">Análise de currículo, antecedentes e uma rigorosa prova prática avaliando diagnóstico elétrico e mecânico.</p>
+                        <p className="text-xs text-zinc-600">Análise de currículo, antecedentes e uma rigorosa prova prática avaliando diagnóstico elétrico e mecânico.</p>
                       </div>
                     </div>
 
@@ -1000,7 +1019,7 @@ export default function App() {
                       <span className="w-6 h-6 rounded-full bg-zinc-200 text-zinc-700 font-black text-xs flex items-center justify-center shrink-0">3</span>
                       <div>
                         <h4 className="font-bold text-sm text-zinc-900">Treinamento e Mentoria Pro</h4>
-                        <p className="text-xs text-zinc-650">Capacitação sobre procedimentos de segurança, diagnóstico unificado OBD e atendimento ao cliente.</p>
+                        <p className="text-xs text-zinc-600">Capacitação sobre procedimentos de segurança, diagnóstico unificado OBD e atendimento ao cliente.</p>
                       </div>
                     </div>
 
@@ -1008,7 +1027,7 @@ export default function App() {
                       <span className="w-6 h-6 rounded-full bg-zinc-200 text-zinc-700 font-black text-xs flex items-center justify-center shrink-0">4</span>
                       <div>
                         <h4 className="font-bold text-sm text-zinc-900">Ativação da Microfranquia</h4>
-                        <p className="text-xs text-zinc-650">O profissional assume o comando de uma furgão-oficina OttoVan própria, repleta de ferramentas profissionais.</p>
+                        <p className="text-xs text-zinc-600">O profissional assume o comando de uma furgão-oficina OttoVan própria, repleta de ferramentas profissionais.</p>
                       </div>
                     </div>
 
@@ -1016,7 +1035,7 @@ export default function App() {
                       <span className="w-6 h-6 rounded-full bg-zinc-200 text-zinc-700 font-black text-xs flex items-center justify-center shrink-0">5</span>
                       <div>
                         <h4 className="font-bold text-sm text-zinc-900">Execução & Independência</h4>
-                        <p className="text-xs text-zinc-650">Atenda serviços agendados diretamente no tablet da van, receba de 70% a 85% do valor da OS e controle sua agenda.</p>
+                        <p className="text-xs text-zinc-600">Atenda serviços agendados diretamente no tablet da van, receba de 70% a 85% do valor da OS e controle sua agenda.</p>
                       </div>
                     </div>
                   </div>
@@ -1049,7 +1068,7 @@ export default function App() {
                       <Shield className="w-5 h-5 text-brand-orange" />
                     </div>
                     <h4 className="font-extrabold text-base text-zinc-950 font-sans">Credibilidade</h4>
-                    <ul className="space-y-2.5 text-xs text-zinc-650 leading-relaxed font-sans">
+                    <ul className="space-y-2.5 text-xs text-zinc-600 leading-relaxed font-sans">
                       <li>
                         <strong className="text-zinc-900 block font-bold">Profissionais Qualificados</strong>
                         Técnicos altamente capacitados com treinamento regular nas mais recentes ferramentas e tipos de veículos.
@@ -1069,7 +1088,7 @@ export default function App() {
                       <Eye className="w-5 h-5 text-brand-orange" />
                     </div>
                     <h4 className="font-extrabold text-base text-zinc-950 font-sans">Transparência</h4>
-                    <ul className="space-y-2.5 text-xs text-zinc-650 leading-relaxed font-sans">
+                    <ul className="space-y-2.5 text-xs text-zinc-600 leading-relaxed font-sans">
                       <li>
                         <strong className="text-zinc-900 block font-bold">Acompanhamento Online</strong>
                         Acompanhe o percurso em tempo real e monitore a execução do serviço ao vivo pelo app.
@@ -1089,7 +1108,7 @@ export default function App() {
                       <Truck className="w-5 h-5 text-brand-orange" />
                     </div>
                     <h4 className="font-extrabold text-base text-zinc-950 font-sans">Conveniência</h4>
-                    <ul className="space-y-2.5 text-xs text-zinc-650 leading-relaxed font-sans">
+                    <ul className="space-y-2.5 text-xs text-zinc-600 leading-relaxed font-sans">
                       <li>
                         <strong className="text-zinc-900 block font-bold">Atendimento no Local</strong>
                         Serviço prático de "leva e traz" ou manutenção rápida feita diretamente onde você estiver.
@@ -1113,7 +1132,7 @@ export default function App() {
                       <Smartphone className="w-5 h-5 text-brand-orange" />
                     </div>
                     <h4 className="font-extrabold text-base text-zinc-950 font-sans">Inovação</h4>
-                    <ul className="space-y-2.5 text-xs text-zinc-650 leading-relaxed font-sans">
+                    <ul className="space-y-2.5 text-xs text-zinc-600 leading-relaxed font-sans">
                       <li>
                         <strong className="text-zinc-900 block font-bold">Pagamento Digital</strong>
                         Transações seguras, criptografadas e imediatas via Pix ou cartões diretamente pelo smartphone.
@@ -1137,7 +1156,7 @@ export default function App() {
                       <Leaf className="w-5 h-5 text-brand-orange" />
                     </div>
                     <h4 className="font-extrabold text-base text-zinc-950 font-sans">Sustentabilidade</h4>
-                    <ul className="space-y-2.5 text-xs text-zinc-650 leading-relaxed font-sans">
+                    <ul className="space-y-2.5 text-xs text-zinc-600 leading-relaxed font-sans">
                       <li>
                         <strong className="text-zinc-900 block font-bold">Descarte Ecológico</strong>
                         Logística reversa e descarte certificado de óleo lubrificante e resíduos metálicos nocivos.
@@ -1226,7 +1245,7 @@ export default function App() {
                 <h2 className="text-3xl sm:text-4xl font-black text-zinc-950 tracking-tight font-sans">
                   Nossa Trajetoria e o que nos move
                 </h2>
-                <p className="text-zinc-650 text-sm sm:text-base max-w-2xl mx-auto text-center font-sans">
+                <p className="text-zinc-600 text-sm sm:text-base max-w-2xl mx-auto text-center font-sans">
                   Construindo confiança técnica, transparência operacional e relevância social de forma estruturada.
                 </p>
               </div>
@@ -1246,7 +1265,7 @@ export default function App() {
                   <div className="space-y-2">
                     <h3 className="text-xl font-bold text-zinc-950 font-sans">Nossa Missão</h3>
                     <p className="text-zinc-600 text-xs sm:text-sm leading-relaxed">
-                      Prover conveniência técnica absoluta para quem pilota, gerando transparência radical de ponta a ponta e viabilizando a independência financeira de mecânicos por meio de microfranquias móveis conectadas e integradas.
+                      Nossa missão é conectar motociclistas a profissionais qualificados através da tecnologia. Entregamos serviços de forma conveniente, transparente e diferenciada direto na localização do cliente, enquanto empoderamos mecânicos com a infraestrutura para gerenciarem seus próprios negócios de forma independente.
                     </p>
                   </div>
 
@@ -1260,10 +1279,10 @@ export default function App() {
                   <div className="space-y-2">
                     <h3 className="text-xl font-bold text-zinc-950 font-sans">Nossos Valores</h3>
                     <ul className="text-zinc-600 text-xs sm:text-sm leading-relaxed space-y-2 list-disc pl-4">
-                      <li><strong className="text-brand-orange font-bold">Transparência Radical:</strong> Diagnósticos honestos com acompanhamento por vídeo em tempo real.</li>
-                      <li><strong className="text-brand-orange font-bold">Conveniência Absoluta:</strong> Atendimento ágil e sob demanda diretamente no seu local, sem perda de tempo.</li>
-                      <li><strong className="text-brand-orange font-bold">Valorização do Profissional:</strong> Capacitação técnica contínua e microfranquias prósperas para os parceiros.</li>
-                      <li><strong className="text-brand-orange font-bold">Segurança em Primeiro Lugar:</strong> Padrão rigoroso com ferramentas de ponta, peças certificadas e auditoria visual.</li>
+                      <li><strong className="text-brand-orange font-bold">Compromisso:</strong> Entrega de serviços mecânicos com máxima excelência, integridade e transparência de ponta a ponta.</li>
+                      <li><strong className="text-brand-orange font-bold">Inclusão:</strong> Fomento social que empodera e capacita mecânicos parceiros, dando suporte para sua independência financeira.</li>
+                      <li><strong className="text-brand-orange font-bold">Inovação:</strong> Soluções inteligentes guiadas por inteligência digital e tecnologia móvel para simplificar o cotidiano dos pilotos.</li>
+                      <li><strong className="text-brand-orange font-bold">Sustentabilidade:</strong> Otimização contínua de rotas e fomento de práticas ecológicas voltadas para um futuro de mobilidade limpa.</li>
                     </ul>
                   </div>
                 </div>
@@ -1293,7 +1312,7 @@ export default function App() {
                        <div className="space-y-1">
                          <h4 className="font-extrabold text-sm text-zinc-950">Raifran Oliveira</h4>
                          <p className="text-[10px] text-brand-orange font-bold uppercase tracking-wide">Sócio Investidor</p>
-                         <p className="text-xs text-zinc-650 leading-relaxed font-sans">
+                         <p className="text-xs text-zinc-600 leading-relaxed font-sans">
                            +30 anos de experiência na área de TI. Bacharel em Ciências da Computação pela UNICSUL, com especializações em Gestão de Projetos pela FGV/RJ, Gestão de Negócios e Finanças Internacionais pela FIA-USP e Inteligência Artificial pela Universidade de Stanford/USA, com vivência internacional em indústrias Financeira, de Seguros, Varejo, Distribuição e Automobilística. Apaixonado por Big Trails, conhece bem os desafios diários dos usuários de duas rodas.
                          </p>
                        </div>
@@ -1310,14 +1329,14 @@ export default function App() {
                              e.currentTarget.style.display = 'none';
                            }}
                          />
-                         <div className="absolute inset-0 w-16 h-16 rounded-full bg-zinc-100 text-zinc-750 font-black flex items-center justify-center font-sans text-lg border border-zinc-200 shadow-sm">
+                         <div className="absolute inset-0 w-16 h-16 rounded-full bg-zinc-100 text-zinc-700 font-black flex items-center justify-center font-sans text-lg border border-zinc-200 shadow-sm">
                            AM
                          </div>
                        </div>
                        <div className="space-y-1">
                          <h4 className="font-extrabold text-sm text-zinc-950">Alexandre Marcolino</h4>
                          <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wide">Sócio Operador</p>
-                         <p className="text-xs text-zinc-650 leading-relaxed font-sans">
+                         <p className="text-xs text-zinc-600 leading-relaxed font-sans">
                            +25 anos na área de Logística, Transporte e Tráfego, tendo atuado em empresas de Transporte Escolar, Executivo, Socorro Mecânico, Operadoras de Vias (CCR) e na CET. Possui especialização em Cargas Perigosas, Manuseio de Maquinários, Direção Defensiva e Segurança de Trânsito. Apaixonado por Choppers, possui profundo conhecimento prãtico das necessidades dos motociclistas urbanos.
                          </p>
                        </div>
@@ -1527,8 +1546,27 @@ export default function App() {
             🔧 AREA DO MECÂNICO: INTERFACE ESTILO UBER 
             ========================================= */}
         {workspaceMode === 'mechanic' && (
-          mechanicViewMode === 'portal' ? (
-            <MechanicPortal onBackToLanding={() => handleModeChange('institutional')} />
+          mechanicUser === null ? (
+            <MechanicAuthPortal
+              onLoginSuccess={(user) => {
+                setMechanicUser(user);
+                localStorage.setItem('otto_active_mechanic_user', JSON.stringify(user));
+                setMechanicViewMode('portal');
+                setTimeout(() => {
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }, 50);
+              }}
+              onBackToLanding={() => handleModeChange('institutional')}
+            />
+          ) : mechanicViewMode === 'portal' ? (
+            <MechanicPortal
+              mechanicUser={mechanicUser}
+              onBackToLanding={() => {
+                setMechanicUser(null);
+                localStorage.removeItem('otto_active_mechanic_user');
+                handleModeChange('institutional');
+              }}
+            />
           ) : (
             <motion.div
               key="workspace-mechanic"
@@ -1663,7 +1701,7 @@ export default function App() {
                     Quanto eu posso faturar operando uma OttoVan?
                   </h3>
                   
-                  <p className="text-xs sm:text-sm text-zinc-450 leading-relaxed">
+                  <p className="text-xs sm:text-sm text-zinc-300 leading-relaxed">
                     Ajuste os parâmetros de atendimentos diários e dias de trabalho semanais abaixo para simular sua margem bruta bruta média baseada na taxa tabelada de serviço de R$ 75,00 por job.
                   </p>
 
@@ -1948,7 +1986,7 @@ export default function App() {
 
 
       {/* FOOTER */}
-      <footer className="bg-zinc-950 text-zinc-450 border-t border-zinc-900 py-12 text-xs font-medium text-left">
+      <footer className="bg-zinc-950 text-zinc-400 border-t border-zinc-900 py-12 text-xs font-medium text-left">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
