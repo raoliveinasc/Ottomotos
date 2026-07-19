@@ -755,16 +755,16 @@ export default function App() {
               </span>
 
               <h1 className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight leading-[1.08] max-w-4xl mx-auto text-zinc-950">
-                Uma Nova Forma de <br className="hidden sm:inline" />
-                Prover <span className="text-brand-orange">Serviços</span>
+                Oficina Mecânica de Motos <br className="hidden sm:inline" />
+                Delivery na sua <span className="text-brand-orange">Localização</span>
               </h1>
 
               <p className="text-zinc-600 text-xs sm:text-sm md:text-base max-w-2xl mx-auto leading-relaxed font-medium">
-                A OttoMotos combina inteligência digital, veículos superaquipados e mecânicos altamente treinados. Entregamos agilidade, precisão e total transparência, garantindo serviços de conveniência e máxima qualidade diretamente na sua localização, sem surpresas.
+                Chame um mecânico qualificado de motocicletas até você em minutos. Economize tempo e evite empurrar sua moto quebrada até uma oficina física tradicional — atendimento rápido e preço transparente.
               </p>
 
               {/* CTAs Principais Harmonizados */}
-              <div className="flex flex-col sm:flex-row justify-center items-center gap-4 pt-2 max-w-md mx-auto w-full">
+              <div className="flex flex-col sm:flex-row justify-center items-center gap-4 pt-2 max-w-xl mx-auto w-full">
                 <button
                   onClick={() => {
                     handleModeChange('client');
@@ -772,9 +772,9 @@ export default function App() {
                       window.scrollTo({ top: 0, behavior: 'smooth' });
                     }, 50);
                   }}
-                  className="w-full sm:w-1/2 bg-brand-orange hover:bg-brand-orange-hover text-black font-black text-sm py-3 px-6 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-brand-orange/10 hover:scale-[1.02] cursor-pointer"
+                  className="w-full sm:w-auto bg-brand-orange hover:bg-brand-orange-hover text-black font-black text-sm py-4 px-8 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-brand-orange/20 hover:scale-[1.02] cursor-pointer"
                 >
-                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <circle cx="5" cy="18" r="3" />
                     <circle cx="19" cy="18" r="3" />
                     <path d="M5 18l4-7h5l5 7M15 7l4 11" />
@@ -782,7 +782,7 @@ export default function App() {
                     <path d="M15 7l1-3h3" />
                     <path d="M7 11h4" />
                   </svg>
-                  Para Motociclistas
+                  Agendar Serviço Agora
                 </button>
                 <button
                   onClick={() => {
@@ -791,17 +791,38 @@ export default function App() {
                       window.scrollTo({ top: 0, behavior: 'smooth' });
                     }, 50);
                   }}
-                  className="w-full sm:w-1/2 bg-zinc-950 hover:bg-zinc-900 text-white font-black text-sm py-3 px-6 rounded-xl flex items-center justify-center gap-2 transition-all hover:scale-[1.02] cursor-pointer shadow-md"
+                  className="w-full sm:w-auto bg-zinc-950 hover:bg-zinc-900 text-white font-black text-sm py-4 px-8 rounded-xl flex items-center justify-center gap-2 transition-all hover:scale-[1.02] cursor-pointer shadow-md"
                 >
                   <Wrench className="w-4 h-4 text-brand-orange" />
-                  Para Mecânicos
+                  Área do Mecânico (MyOttoVan)
                 </button>
               </div>
 
-              {/* Linha discreta de métrica de prova social */}
-              <p className="text-zinc-500 text-[11px] font-medium font-mono pt-1">
-                ⭐ <span className="text-zinc-700 font-bold">4.9/5 estrelas</span> baseado em mais de <span className="text-zinc-700 font-bold">12.000 atendimentos</span> com transparência total em todo o Brasil.
-              </p>
+              {/* Prova Social & Depoimento Real Destacado */}
+              <div className="pt-4 max-w-2xl mx-auto space-y-5">
+                <div className="bg-zinc-50 border border-zinc-200 rounded-2xl p-4 flex flex-col sm:flex-row items-center gap-4 text-left shadow-sm">
+                  <div className="flex -space-x-2 shrink-0">
+                    <div className="w-10 h-10 rounded-full bg-zinc-200 border-2 border-white flex items-center justify-center font-bold text-xs text-zinc-700">TS</div>
+                    <div className="w-10 h-10 rounded-full bg-brand-orange text-black border-2 border-white flex items-center justify-center font-bold text-xs">⭐</div>
+                  </div>
+                  <div>
+                    <p className="text-xs text-zinc-700 italic font-medium leading-relaxed">
+                      "Minha moto quebrou a caminho do trabalho. Em minutos o mecânico da OttoMotos chegou com a van e resolveu. Muito prático e o preço foi super justo!"
+                    </p>
+                    <span className="text-[10px] text-zinc-500 block mt-1 font-bold">
+                      Thiago Silva — Honda CG 160 • Há 2 dias • ⭐⭐⭐⭐⭐ Verificado
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap items-center justify-center gap-y-2 gap-x-6 text-[10px] font-mono text-zinc-500">
+                  <span className="flex items-center gap-1">🛡️ Preço fixado no app</span>
+                  <span className="hidden sm:inline text-zinc-300">•</span>
+                  <span className="flex items-center gap-1">✅ Peças com garantia original</span>
+                  <span className="hidden sm:inline text-zinc-300">•</span>
+                  <span className="flex items-center gap-1">⭐ 4.9/5 estrelas (12k+ avaliações)</span>
+                </div>
+              </div>
             </div>
           </section>
 
@@ -1460,58 +1481,7 @@ export default function App() {
             </div>
           </section>
 
-          {/* POLÍTICAS DE PRIVACIDADE & TERMOS DE USO (PREMIUM DARK) */}
-          <section id="politicas-privacidade" className="py-20 px-4 bg-zinc-950 border-b border-zinc-900">
-            <div className="max-w-5xl mx-auto space-y-12 font-sans text-left">
-              <div className="text-center space-y-3">
-                <span className="text-xs bg-zinc-900 border border-zinc-800 text-brand-orange font-bold px-3 py-1 rounded-full uppercase tracking-wider">
-                  Conformidade Legal (LGPD)
-                </span>
-                <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight font-sans">
-                  Políticas de Privacidade & Termos
-                </h2>
-                <p className="text-zinc-400 text-sm sm:text-base max-w-2xl mx-auto text-center font-sans">
-                  Como protegemos, processamos e tratamos seus dados de geolocalização, veículo e pagamentos com total transparência e segurança jurídica.
-                </p>
-              </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-zinc-900/40 border border-zinc-800 rounded-2xl p-6 space-y-3 shadow-sm hover:border-zinc-700/60 transition-colors duration-200">
-                  <div className="w-10 h-10 rounded-xl bg-brand-orange/10 text-brand-orange flex items-center justify-center border border-brand-orange/15">
-                    <MapPin className="w-5 h-5" />
-                  </div>
-                  <h4 className="font-extrabold text-base text-white font-sans">Dados de Geolocalização</h4>
-                  <p className="text-zinc-400 text-xs leading-relaxed font-sans">
-                    A geolocalização em tempo real do seu dispositivo ou endereço inserido é utilizada única e exclusivamente para calcular a rota ideal do furgão-oficina até o local desejado e monitorar a aproximação da van. Não compartilhamos ou comercializamos seu histórico de localização com terceiros.
-                  </p>
-                </div>
-
-                <div className="bg-zinc-900/40 border border-zinc-800 rounded-2xl p-6 space-y-3 shadow-sm hover:border-zinc-700/60 transition-colors duration-200">
-                  <div className="w-10 h-10 rounded-xl bg-brand-orange/10 text-brand-orange flex items-center justify-center border border-brand-orange/15">
-                    <Smartphone className="w-5 h-5" />
-                  </div>
-                  <h4 className="font-extrabold text-base text-white font-sans">Dados Técnicos do Veículo</h4>
-                  <p className="text-zinc-400 text-xs leading-relaxed font-sans">
-                    Armazenamos dados cadastrais da sua moto (modelo, cilindrada, placa e quilometragem declarada) de forma segura em conformidade com a LGPD. Esses dados são usados apenas para garantir compatibilidade exata de peças e gerenciar o histórico de revisões.
-                  </p>
-                </div>
-
-                <div className="bg-zinc-900/40 border border-zinc-800 rounded-2xl p-6 space-y-3 shadow-sm hover:border-zinc-700/60 transition-colors duration-200">
-                  <div className="w-10 h-10 rounded-xl bg-brand-orange/10 text-brand-orange flex items-center justify-center border border-brand-orange/15">
-                    <Award className="w-5 h-5" />
-                  </div>
-                  <h4 className="font-extrabold text-base text-white font-sans">Segurança de Pagamento</h4>
-                  <p className="text-zinc-400 text-xs leading-relaxed font-sans">
-                    Não retemos ou processamos internamente dados de cartões de crédito ou chaves Pix. Toda transação é intermediada por adquirentes homologados sob rígidos critérios de conformidade PCI-DSS. Suas informações de pagamento são protegidas por criptografia de ponta a ponta.
-                  </p>
-                </div>
-              </div>
-
-              <div className="bg-zinc-900/40 border border-zinc-800 rounded-2xl p-5 text-xs text-zinc-400 leading-normal text-center font-mono">
-                ℹ️ Em conformidade direta com a Lei Geral de Proteção de Dados (Lei nº 13.709 - LGPD) no Brasil. Para exclusão permanente de seus dados da nossa base, entre em contato com nosso Encarregado pelo e-mail <strong className="text-white">lgpd@ottomotos.com</strong>.
-              </div>
-            </div>
-          </section>
         </motion.div>
       )}
 
