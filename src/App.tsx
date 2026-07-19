@@ -581,11 +581,19 @@ export default function App() {
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                   }, 50);
                 }}
-                className={`px-3 py-2 rounded-xl transition-colors cursor-pointer ${
+                className={`px-3 py-2 rounded-xl transition-colors cursor-pointer flex items-center gap-1.5 ${
                   workspaceMode === 'client' ? 'bg-brand-orange text-black font-extrabold shadow-md' : 'text-zinc-300 hover:text-brand-orange hover:bg-zinc-900'
                 }`}
               >
-                MyOttomotos 🛠️
+                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="5" cy="18" r="3" />
+                  <circle cx="19" cy="18" r="3" />
+                  <path d="M5 18l4-7h5l5 7M15 7l4 11" />
+                  <path d="M9 11l2-4h4" />
+                  <path d="M15 7l1-3h3" />
+                  <path d="M7 11h4" />
+                </svg>
+                MyOttomotos
               </button>
               <button
                 onClick={() => {
@@ -594,11 +602,12 @@ export default function App() {
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                   }, 50);
                 }}
-                className={`px-3 py-2 rounded-xl transition-colors cursor-pointer ${
+                className={`px-3 py-2 rounded-xl transition-colors cursor-pointer flex items-center gap-1.5 ${
                   workspaceMode === 'mechanic' ? 'bg-brand-orange text-black font-extrabold shadow-md' : 'text-zinc-300 hover:text-brand-orange hover:bg-zinc-900'
                 }`}
               >
-                Área do Mecânico 🚐
+                <Wrench className="w-3.5 h-3.5" />
+                MyOttoVan
               </button>
             </div>
 
@@ -676,7 +685,7 @@ export default function App() {
                   <span className="text-[9px] text-zinc-500 font-mono tracking-widest uppercase font-black block mb-1 px-3">
                     Acessar Portais
                   </span>
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-2 gap-2 text-[10px] font-black uppercase tracking-wider">
                     <button
                       onClick={() => {
                         setNavMobileOpen(false);
@@ -685,11 +694,19 @@ export default function App() {
                           window.scrollTo({ top: 0, behavior: 'smooth' });
                         }, 50);
                       }}
-                      className={`w-full py-3 px-1 rounded-xl text-center text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer ${
+                      className={`w-full py-3 px-1 rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                         workspaceMode === 'client' ? 'bg-brand-orange text-black font-extrabold shadow' : 'bg-zinc-900 text-zinc-300 hover:text-brand-orange'
                       }`}
                     >
-                      Piloto 🛠️
+                      <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="5" cy="18" r="3" />
+                        <circle cx="19" cy="18" r="3" />
+                        <path d="M5 18l4-7h5l5 7M15 7l4 11" />
+                        <path d="M9 11l2-4h4" />
+                        <path d="M15 7l1-3h3" />
+                        <path d="M7 11h4" />
+                      </svg>
+                      MyOttomotos
                     </button>
                     <button
                       onClick={() => {
@@ -699,11 +716,12 @@ export default function App() {
                           window.scrollTo({ top: 0, behavior: 'smooth' });
                         }, 50);
                       }}
-                      className={`w-full py-3 px-1 rounded-xl text-center text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer ${
+                      className={`w-full py-3 px-1 rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                         workspaceMode === 'mechanic' ? 'bg-brand-orange text-black font-extrabold shadow' : 'bg-zinc-900 text-zinc-300 hover:text-brand-orange'
                       }`}
                     >
-                      Oficina 🚐
+                      <Wrench className="w-3.5 h-3.5 shrink-0" />
+                      MyOttoVan
                     </button>
                   </div>
                 </div>

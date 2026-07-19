@@ -296,30 +296,25 @@ export default function MechanicAuthPortal({ onLoginSuccess, onBackToLanding }: 
       <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-zinc-200/50 rounded-full blur-[100px] pointer-events-none"></div>
 
       <div className="w-full z-10 space-y-8 my-auto transition-all duration-300">
-        {/* LOGO & HERO SECTION */}
-        <div className="text-center space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-white border border-zinc-200 rounded-full text-xs text-brand-orange font-bold uppercase tracking-wider shadow-sm">
-            <Wrench className="w-3.5 h-3.5 animate-pulse" /> Expansão de Rede OttoMotos
-          </div>
-          <h1 className="text-3xl sm:text-4xl font-black text-zinc-950 tracking-tight font-sans">
-            ÁREA DO <span className="text-brand-orange">MECÂNICO PARCEIRO</span>
-          </h1>
-          <p className="text-xs sm:text-sm text-zinc-500 max-w-xl mx-auto">
-            Seja dono do seu tempo operando uma unidade móvel de alta tecnologia (OttoVan) com faturamento recorrente de 70% a 85% do valor do serviço.
-          </p>
-        </div>
-
         {/* MAIN COMPONENT BOX */}
         <motion.div
           layout
           transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-          className="mx-auto w-full bg-white border border-zinc-200 rounded-3xl overflow-hidden shadow-xl text-left text-zinc-900 transition-all duration-300"
+          className="mx-auto w-full bg-white border border-zinc-200 rounded-3xl overflow-hidden shadow-xl text-left text-zinc-900 transition-all duration-300 pt-6"
           style={{ maxWidth: activeTab === 'login' ? '460px' : '780px' }}
         >
           {!registerSuccess ? (
             <div>
+              {/* BRANDING HEADER - MyOttoVan Style */}
+              <div className="text-center space-y-2 pb-4 px-6">
+                <h2 className="text-3xl font-black text-zinc-950 tracking-tight">MyOttoVan</h2>
+                <p className="text-sm font-extrabold text-brand-orange tracking-tight">
+                  "Seja o dono da sua rota e do seu sucesso"
+                </p>
+              </div>
+
               {/* TABS HEADER - MyOttomotos Style */}
-              <div className="flex border-b border-zinc-200 bg-zinc-50/50 px-4 pt-4">
+              <div className="flex border-b border-zinc-200 bg-zinc-50/50 px-4">
                 <button
                   type="button"
                   onClick={() => setActiveTab('login')}
@@ -356,12 +351,6 @@ export default function MechanicAuthPortal({ onLoginSuccess, onBackToLanding }: 
                       transition={{ duration: 0.2 }}
                       className="space-y-6"
                     >
-                      <div className="text-center space-y-2 pb-2">
-                        <h2 className="text-2xl font-black text-zinc-950 tracking-tight">OttoMotos Pro</h2>
-                        <p className="text-sm font-extrabold text-brand-orange tracking-tight">
-                          "Seja dono do seu tempo e da sua própria oficina móvel"
-                        </p>
-                      </div>
 
                       {loginError && (
                         <div className="bg-red-50 border border-red-200 text-red-600 p-3.5 rounded-xl text-xs text-left font-semibold">
