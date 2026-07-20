@@ -763,6 +763,22 @@ export default function App() {
                 Receba atendimento especializado para sua moto ou frota direto na sua localização, com preço fixo e acompanhamento em tempo real.
               </p>
 
+              {/* Prova Social de Confiança próxima da ação */}
+              <div className="max-w-xl mx-auto bg-zinc-50 border border-zinc-200 rounded-2xl p-4 flex flex-col sm:flex-row items-center gap-4 text-left shadow-sm">
+                <div className="flex -space-x-2 shrink-0">
+                  <div className="w-10 h-10 rounded-full bg-zinc-200 border-2 border-white flex items-center justify-center font-bold text-xs text-zinc-700">TS</div>
+                  <div className="w-10 h-10 rounded-full bg-brand-orange text-black border-2 border-white flex items-center justify-center font-bold text-xs">⭐</div>
+                </div>
+                <div>
+                  <p className="text-xs text-zinc-700 italic font-medium leading-relaxed">
+                    "Minha moto quebrou a caminho do trabalho. Em minutos o mecânico da OttoMotos chegou com a van e resolveu. Muito prático e o preço foi super justo!"
+                  </p>
+                  <span className="text-[10px] text-zinc-500 block mt-1 font-bold">
+                    Thiago Silva — Honda CG 160 • Há 2 dias • ⭐⭐⭐⭐⭐ Verificado • Mais de 12.000 atendimentos
+                  </span>
+                </div>
+              </div>
+
               {/* CTA Único e Proeminente com Alívios */}
               <div className="space-y-4 pt-2 max-w-md mx-auto w-full">
                 <button
@@ -774,7 +790,7 @@ export default function App() {
                   }}
                   className="w-full bg-brand-orange hover:bg-brand-orange-hover text-black font-black text-base py-4.5 px-8 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-brand-orange/30 hover:scale-[1.02] cursor-pointer uppercase tracking-wider"
                 >
-                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <circle cx="5" cy="18" r="3" />
                     <circle cx="19" cy="18" r="3" />
                     <path d="M5 18l4-7h5l5 7M15 7l4 11" />
@@ -782,17 +798,16 @@ export default function App() {
                     <path d="M15 7l1-3h3" />
                     <path d="M7 11h4" />
                   </svg>
-                  Solicitar Mecânico Agora
+                  SOLICITAR MECÂNICO AGORA
                 </button>
                 
-                {/* Micro-cópia de Alívio */}
-                <p className="text-zinc-500 text-xs font-semibold">
-                  Preço fixo direto no aplicativo • Atendimento a domicílio
+                {/* Linha de Reforço de Confiança (Garantia e Credibilidade) */}
+                <p className="text-zinc-600 text-xs font-bold">
+                  🛡️ Preço fixo, sem surpresas • Mais de 12.000 atendimentos realizados
                 </p>
 
-                {/* Filtro de Persona Secundária */}
-                <p className="text-zinc-500 text-xs pt-2">
-                  Quer trabalhar de forma independente?{' '}
+                {/* CTA Secundário para Parceiros */}
+                <div className="pt-2">
                   <button
                     onClick={() => {
                       handleModeChange('mechanic');
@@ -800,36 +815,11 @@ export default function App() {
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                       }, 50);
                     }}
-                    className="text-brand-orange hover:underline font-bold cursor-pointer transition-all bg-transparent border-none p-0 inline"
+                    className="inline-flex items-center justify-center gap-1.5 border border-zinc-300 hover:border-zinc-400 text-zinc-700 bg-transparent hover:bg-zinc-50 font-bold text-xs py-2 px-4 rounded-lg transition-all cursor-pointer"
                   >
-                    Seja um Parceiro (MyOttoVan)
+                    <Wrench className="w-3.5 h-3.5 text-brand-orange shrink-0" />
+                    É mecânico? Abra sua franquia
                   </button>
-                </p>
-              </div>
-
-              {/* Prova Social & Depoimento Real Destacado */}
-              <div className="pt-4 max-w-2xl mx-auto space-y-5">
-                <div className="bg-zinc-50 border border-zinc-200 rounded-2xl p-4 flex flex-col sm:flex-row items-center gap-4 text-left shadow-sm">
-                  <div className="flex -space-x-2 shrink-0">
-                    <div className="w-10 h-10 rounded-full bg-zinc-200 border-2 border-white flex items-center justify-center font-bold text-xs text-zinc-700">TS</div>
-                    <div className="w-10 h-10 rounded-full bg-brand-orange text-black border-2 border-white flex items-center justify-center font-bold text-xs">⭐</div>
-                  </div>
-                  <div>
-                    <p className="text-xs text-zinc-700 italic font-medium leading-relaxed">
-                      "Minha moto quebrou a caminho do trabalho. Em minutos o mecânico da OttoMotos chegou com a van e resolveu. Muito prático e o preço foi super justo!"
-                    </p>
-                    <span className="text-[10px] text-zinc-500 block mt-1 font-bold">
-                      Thiago Silva — Honda CG 160 • Há 2 dias • ⭐⭐⭐⭐⭐ Verificado
-                    </span>
-                  </div>
-                </div>
-
-                <div className="flex flex-wrap items-center justify-center gap-y-2 gap-x-6 text-[10px] font-mono text-zinc-500">
-                  <span className="flex items-center gap-1">🛡️ Preço fixado no app</span>
-                  <span className="hidden sm:inline text-zinc-300">•</span>
-                  <span className="flex items-center gap-1">✅ Peças com garantia original</span>
-                  <span className="hidden sm:inline text-zinc-300">•</span>
-                  <span className="flex items-center gap-1">⭐ 4.9/5 estrelas (12k+ avaliações)</span>
                 </div>
               </div>
             </div>
@@ -983,11 +973,11 @@ export default function App() {
                 </p>
               </div>
 
-              {/* Grid Responsivo de 4 Passos */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {/* Grid Responsivo de 5 Passos */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
                 
                 {/* Passo 1 */}
-                <div className="bg-zinc-50 border border-zinc-200/80 rounded-2xl p-6 space-y-4 hover:border-brand-orange/30 hover:scale-[1.02] transition-all duration-300 flex flex-col justify-between">
+                <div className="bg-zinc-50 border border-zinc-200/80 rounded-2xl p-5 space-y-4 hover:border-brand-orange/30 hover:scale-[1.02] transition-all duration-300 flex flex-col justify-between">
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
                       <div className="w-10 h-10 rounded-xl bg-brand-orange/10 flex items-center justify-center border border-brand-orange/20">
@@ -995,31 +985,31 @@ export default function App() {
                       </div>
                       <span className="text-xs font-black font-mono text-zinc-400 bg-zinc-200/50 px-2 py-0.5 rounded-md">PASSO 01</span>
                     </div>
-                    <h3 className="font-extrabold text-base text-zinc-900 text-left">Solicite no App</h3>
-                    <p className="text-xs text-zinc-600 leading-relaxed text-left">
-                      Escolha o serviço como troca de óleo ou pneu e peça o orçamento direto pelo smartphone.
+                    <h3 className="font-extrabold text-sm sm:text-base text-zinc-900 text-left">Baixe o App ou Acesse</h3>
+                    <p className="text-[11px] text-zinc-600 leading-relaxed text-left">
+                      Baixe o aplicativo móvel ou acesse pelo site para ter acesso imediato a todos os nossos serviços.
                     </p>
                   </div>
                 </div>
 
                 {/* Passo 2 */}
-                <div className="bg-zinc-50 border border-zinc-200/80 rounded-2xl p-6 space-y-4 hover:border-brand-orange/30 hover:scale-[1.02] transition-all duration-300 flex flex-col justify-between">
+                <div className="bg-zinc-50 border border-zinc-200/80 rounded-2xl p-5 space-y-4 hover:border-brand-orange/30 hover:scale-[1.02] transition-all duration-300 flex flex-col justify-between">
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
                       <div className="w-10 h-10 rounded-xl bg-brand-orange/10 flex items-center justify-center border border-brand-orange/20">
-                        <Truck className="w-5 h-5 text-brand-orange" />
+                        <DollarSign className="w-5 h-5 text-brand-orange" />
                       </div>
                       <span className="text-xs font-black font-mono text-zinc-400 bg-zinc-200/50 px-2 py-0.5 rounded-md">PASSO 02</span>
                     </div>
-                    <h3 className="font-extrabold text-base text-zinc-900 text-left">Localize a Van</h3>
-                    <p className="text-xs text-zinc-600 leading-relaxed text-left">
-                      O sistema inteligente encontra a Loja Volante da OttoMotos mais próxima de você em tempo real.
+                    <h3 className="font-extrabold text-sm sm:text-base text-zinc-900 text-left">Solicite um Orçamento</h3>
+                    <p className="text-[11px] text-zinc-600 leading-relaxed text-left">
+                      Escolha o serviço desejado ou descreva o problema da sua moto e veja o valor exato, sem custos ocultos.
                     </p>
                   </div>
                 </div>
 
                 {/* Passo 3 */}
-                <div className="bg-zinc-50 border border-zinc-200/80 rounded-2xl p-6 space-y-4 hover:border-brand-orange/30 hover:scale-[1.02] transition-all duration-300 flex flex-col justify-between">
+                <div className="bg-zinc-50 border border-zinc-200/80 rounded-2xl p-5 space-y-4 hover:border-brand-orange/30 hover:scale-[1.02] transition-all duration-300 flex flex-col justify-between">
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
                       <div className="w-10 h-10 rounded-xl bg-brand-orange/10 flex items-center justify-center border border-brand-orange/20">
@@ -1027,25 +1017,41 @@ export default function App() {
                       </div>
                       <span className="text-xs font-black font-mono text-zinc-400 bg-zinc-200/50 px-2 py-0.5 rounded-md">PASSO 03</span>
                     </div>
-                    <h3 className="font-extrabold text-base text-zinc-900 text-left">Agende a Visita</h3>
-                    <p className="text-xs text-zinc-600 leading-relaxed text-left">
-                      Escolha o dia, horário e local ideais para o seu atendimento, sem precisar interromper sua rotina.
+                    <h3 className="font-extrabold text-sm sm:text-base text-zinc-900 text-left">Agende uma Visita</h3>
+                    <p className="text-[11px] text-zinc-600 leading-relaxed text-left">
+                      Selecione o melhor dia, horário e local de sua preferência para receber o nosso furgão-oficina.
                     </p>
                   </div>
                 </div>
 
                 {/* Passo 4 */}
-                <div className="bg-zinc-50 border border-zinc-200/80 rounded-2xl p-6 space-y-4 hover:border-brand-orange/30 hover:scale-[1.02] transition-all duration-300 flex flex-col justify-between">
+                <div className="bg-zinc-50 border border-zinc-200/80 rounded-2xl p-5 space-y-4 hover:border-brand-orange/30 hover:scale-[1.02] transition-all duration-300 flex flex-col justify-between">
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="w-10 h-10 rounded-xl bg-brand-orange/10 flex items-center justify-center border border-brand-orange/20">
+                        <Eye className="w-5 h-5 text-brand-orange" />
+                      </div>
+                      <span className="text-xs font-black font-mono text-zinc-400 bg-zinc-200/50 px-2 py-0.5 rounded-md">PASSO 04</span>
+                    </div>
+                    <h3 className="font-extrabold text-sm sm:text-base text-zinc-900 text-left">Serviço & Acompanhamento</h3>
+                    <p className="text-[11px] text-zinc-600 leading-relaxed text-left">
+                      Acompanhe a execução do conserto online e receba checklists detalhados em tempo real diretamente pelo app.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Passo 5 */}
+                <div className="bg-zinc-50 border border-zinc-200/80 rounded-2xl p-5 space-y-4 hover:border-brand-orange/30 hover:scale-[1.02] transition-all duration-300 flex flex-col justify-between">
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
                       <div className="w-10 h-10 rounded-xl bg-brand-orange/10 flex items-center justify-center border border-brand-orange/20">
                         <Award className="w-5 h-5 text-brand-orange" />
                       </div>
-                      <span className="text-xs font-black font-mono text-zinc-400 bg-zinc-200/50 px-2 py-0.5 rounded-md">PASSO 04</span>
+                      <span className="text-xs font-black font-mono text-zinc-400 bg-zinc-200/50 px-2 py-0.5 rounded-md">PASSO 05</span>
                     </div>
-                    <h3 className="font-extrabold text-base text-zinc-900 text-left">Avalie e Pontue</h3>
-                    <p className="text-xs text-zinc-600 leading-relaxed text-left">
-                      Pague pelo aplicativo de forma 100% segura, acumule pontos de fidelidade e ganhe descontos exclusivos.
+                    <h3 className="font-extrabold text-sm sm:text-base text-zinc-900 text-left">Avalie e Pontue</h3>
+                    <p className="text-[11px] text-zinc-600 leading-relaxed text-left">
+                      Avalie o mecânico, acumule pontos de fidelidade e ganhe descontos exclusivos para seus próximos atendimentos.
                     </p>
                   </div>
                 </div>
