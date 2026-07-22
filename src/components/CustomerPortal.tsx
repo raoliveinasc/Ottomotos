@@ -41,17 +41,25 @@ import {
   Share2,
   LogOut,
   FolderTree,
-  FileCode
+  FileCode,
+  Quote,
+  FileText,
+  AlertTriangle
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import RoutingMap from './RoutingMap';
 
 // Custom Services list for Client Section (iFood Style)
+export type ServiceCategory =
+  | '⚡ Socorro & Pronta Entrega'
+  | '📅 Manutenção Preventiva & Agendada'
+  | '🛠️ Mecânica Complexa & Diagnóstico';
+
 interface Service {
   id: string;
   name: string;
   time: number;
-  category: 'Mais Pedidos' | 'Mecânica Rápida' | 'Transmissão & Freios';
+  category: ServiceCategory;
   image: string;
   description: string;
   formaAtendimento: 'Pronto Atendimento' | 'Sob Agendamento';
@@ -63,7 +71,7 @@ const SERVICES_CATALOG: Service[] = [
     name: 'TROCAR ÓLEO DE MOTOR',
     formaAtendimento: 'Pronto Atendimento',
     time: 15,
-    category: 'Mais Pedidos',
+    category: '⚡ Socorro & Pronta Entrega',
     image: '/src/assets/images/troca_oleo_motor_1784374619776.jpg',
     description: 'Substituição completa do óleo com lubrificante premium Mobil para prolongar a vida útil do motor.'
   },
@@ -72,7 +80,7 @@ const SERVICES_CATALOG: Service[] = [
     name: 'TROCAR KIT TRANSMISSAO (RELAÇÃO)',
     formaAtendimento: 'Sob Agendamento',
     time: 40,
-    category: 'Transmissão & Freios',
+    category: '📅 Manutenção Preventiva & Agendada',
     image: '/src/assets/images/kit_transmissao_moto_1784375082487.jpg',
     description: 'Troca de corrente, coroa e pinhão novos com regulagem profissional e lubrificação técnica.'
   },
@@ -81,7 +89,7 @@ const SERVICES_CATALOG: Service[] = [
     name: 'TROCA DE FILTRO DE OLEO',
     formaAtendimento: 'Pronto Atendimento',
     time: 10,
-    category: 'Mecânica Rápida',
+    category: '⚡ Socorro & Pronta Entrega',
     image: 'https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&q=80&w=400',
     description: 'Instalação de novo filtro de óleo de alta eficiência para manter a lubrificação do motor sempre purificada.'
   },
@@ -90,7 +98,7 @@ const SERVICES_CATALOG: Service[] = [
     name: 'TROCA DA PASTILHA DE FREIO',
     formaAtendimento: 'Pronto Atendimento',
     time: 20,
-    category: 'Mais Pedidos',
+    category: '📅 Manutenção Preventiva & Agendada',
     image: 'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&q=80&w=400',
     description: 'Substituição das pastilhas de freio dianteiras ou traseiras Cobreq com lixamento técnico do disco.'
   },
@@ -99,7 +107,7 @@ const SERVICES_CATALOG: Service[] = [
     name: 'TROCA DA LONA DE FREIO',
     formaAtendimento: 'Pronto Atendimento',
     time: 25,
-    category: 'Transmissão & Freios',
+    category: '📅 Manutenção Preventiva & Agendada',
     image: 'https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&q=80&w=400',
     description: 'Substituição completa das sapatas/lonas de freio traseiras para sistemas de tambor mecânico.'
   },
@@ -108,7 +116,7 @@ const SERVICES_CATALOG: Service[] = [
     name: 'RETROVISORES',
     formaAtendimento: 'Pronto Atendimento',
     time: 10,
-    category: 'Mecânica Rápida',
+    category: '⚡ Socorro & Pronta Entrega',
     image: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&q=80&w=400',
     description: 'Instalação e ajuste de espelhos retrovisores reforçados anti-vibração para garantir segurança.'
   },
@@ -117,7 +125,7 @@ const SERVICES_CATALOG: Service[] = [
     name: 'REPARO CAMARA PNEU DIANTEIRO/TRASEIRO',
     formaAtendimento: 'Pronto Atendimento',
     time: 25,
-    category: 'Mecânica Rápida',
+    category: '⚡ Socorro & Pronta Entrega',
     image: 'https://images.unsplash.com/photo-1615887023516-9b6bcd559e87?auto=format&fit=crop&q=80&w=400',
     description: 'Reparo profissional de furo ou vulcanização completa de câmara de ar de moto.'
   },
@@ -126,7 +134,7 @@ const SERVICES_CATALOG: Service[] = [
     name: 'REPARO PNEU SEM DIANTEIRO/TRASEIRO',
     formaAtendimento: 'Pronto Atendimento',
     time: 15,
-    category: 'Mais Pedidos',
+    category: '⚡ Socorro & Pronta Entrega',
     image: 'https://images.unsplash.com/photo-1582266255765-fa5cf1a1d501?auto=format&fit=crop&q=80&w=400',
     description: 'Remoção de objeto perfurante e remendo rápido do tipo macarrão vulcanizado para pneu tubeless.'
   },
@@ -135,7 +143,7 @@ const SERVICES_CATALOG: Service[] = [
     name: 'TROCA DE FILTRO AR',
     formaAtendimento: 'Pronto Atendimento',
     time: 15,
-    category: 'Mecânica Rápida',
+    category: '📅 Manutenção Preventiva & Agendada',
     image: 'https://images.unsplash.com/photo-1449426468159-d96dbf08f19f?auto=format&fit=crop&q=80&w=400',
     description: 'Substituição do filtro de ar para melhorar o rendimento e reduzir o consumo de combustível.'
   },
@@ -144,7 +152,7 @@ const SERVICES_CATALOG: Service[] = [
     name: 'TROCA DO LAMPADAS',
     formaAtendimento: 'Pronto Atendimento',
     time: 15,
-    category: 'Mecânica Rápida',
+    category: '⚡ Socorro & Pronta Entrega',
     image: 'https://images.unsplash.com/photo-1508898578281-774ac4893c0c?auto=format&fit=crop&q=80&w=400',
     description: 'Substituição de lâmpadas queimadas de farol principal, piscas auxiliares ou lanterna de freio.'
   },
@@ -153,7 +161,7 @@ const SERVICES_CATALOG: Service[] = [
     name: 'TROCAR VELA DE IGNIÇÃO',
     formaAtendimento: 'Pronto Atendimento',
     time: 15,
-    category: 'Mecânica Rápida',
+    category: '⚡ Socorro & Pronta Entrega',
     image: 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?auto=format&fit=crop&q=80&w=400',
     description: 'Instalação de vela de ignição NGK nova para garantir partidas rápidas e queima eficiente.'
   },
@@ -162,7 +170,7 @@ const SERVICES_CATALOG: Service[] = [
     name: 'TROCA DE MANETE',
     formaAtendimento: 'Pronto Atendimento',
     time: 15,
-    category: 'Mecânica Rápida',
+    category: '⚡ Socorro & Pronta Entrega',
     image: 'https://images.unsplash.com/photo-1558981285-6f0c94958bb6?auto=format&fit=crop&q=80&w=400',
     description: 'Instalação de manete de freio ou embreagem esportivo ou original em alumínio.'
   },
@@ -171,7 +179,7 @@ const SERVICES_CATALOG: Service[] = [
     name: 'TROCA CAMARA PNEU DIANTEIRO/TRASEIRO',
     formaAtendimento: 'Pronto Atendimento',
     time: 30,
-    category: 'Mecânica Rápida',
+    category: '⚡ Socorro & Pronta Entrega',
     image: 'https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&q=80&w=400',
     description: 'Substituição completa da câmara de ar avariada por uma nova reforçada Metzeler.'
   },
@@ -180,7 +188,7 @@ const SERVICES_CATALOG: Service[] = [
     name: 'TROCA PNEU SEM DIANTEIRO/TRASEIRO',
     formaAtendimento: 'Pronto Atendimento',
     time: 30,
-    category: 'Mecânica Rápida',
+    category: '⚡ Socorro & Pronta Entrega',
     image: 'https://images.unsplash.com/photo-1578844251758-2f71da64c96f?auto=format&fit=crop&q=80&w=400',
     description: 'Troca completa de pneu convencional ou esportivo sem câmara de ar (tubeless).'
   },
@@ -189,16 +197,16 @@ const SERVICES_CATALOG: Service[] = [
     name: 'TROCA DE FUSIVEL',
     formaAtendimento: 'Pronto Atendimento',
     time: 10,
-    category: 'Mecânica Rápida',
+    category: '⚡ Socorro & Pronta Entrega',
     image: 'https://images.unsplash.com/photo-1486006920555-c77dce18193b?auto=format&fit=crop&q=80&w=400',
     description: 'Avaliação do sistema elétrico e troca de fusível principal ou secundário queimado.'
   },
   {
     id: 'srv-16',
     name: 'TROCAR TENSOR DA CORRENTE DE COMANDO',
-    formaAtendimento: 'Pronto Atendimento',
+    formaAtendimento: 'Sob Agendamento',
     time: 25,
-    category: 'Mecânica Rápida',
+    category: '🛠️ Mecânica Complexa & Diagnóstico',
     image: 'https://images.unsplash.com/photo-1508962914676-134849a727f0?auto=format&fit=crop&q=80&w=400',
     description: 'Substituição do acionador/tensor mecânico ou hidráulico da corrente de comando.'
   },
@@ -207,7 +215,7 @@ const SERVICES_CATALOG: Service[] = [
     name: 'TROCA DO CABO DE ACELERADOR',
     formaAtendimento: 'Pronto Atendimento',
     time: 20,
-    category: 'Mecânica Rápida',
+    category: '⚡ Socorro & Pronta Entrega',
     image: 'https://images.unsplash.com/photo-1542282088-fe8426682b8f?auto=format&fit=crop&q=80&w=400',
     description: 'Substituição dos cabos de acelerador A e B por cabos novos lubrificados.'
   },
@@ -216,7 +224,7 @@ const SERVICES_CATALOG: Service[] = [
     name: 'TROCA DO CABO DE EMBREAGEM',
     formaAtendimento: 'Pronto Atendimento',
     time: 15,
-    category: 'Mecânica Rápida',
+    category: '⚡ Socorro & Pronta Entrega',
     image: 'https://images.unsplash.com/photo-1616422285623-13ff0162193c?auto=format&fit=crop&q=80&w=400',
     description: 'Substituição do cabo de embreagem por novo modelo com ajuste ideal de folga.'
   },
@@ -225,7 +233,7 @@ const SERVICES_CATALOG: Service[] = [
     name: 'TROCAR CABO DE FREIO (FREIO TAMBOR DIANTEIRO)',
     formaAtendimento: 'Pronto Atendimento',
     time: 15,
-    category: 'Transmissão & Freios',
+    category: '⚡ Socorro & Pronta Entrega',
     image: 'https://images.unsplash.com/photo-1506015391300-4802dc74de2e?auto=format&fit=crop&q=80&w=400',
     description: 'Substituição do cabo de freio dianteiro em motos com sistema a tambor de alta resistência.'
   },
@@ -234,7 +242,7 @@ const SERVICES_CATALOG: Service[] = [
     name: 'TROCAR CABO VELOCIMETRO',
     formaAtendimento: 'Pronto Atendimento',
     time: 15,
-    category: 'Mecânica Rápida',
+    category: '⚡ Socorro & Pronta Entrega',
     image: 'https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?auto=format&fit=crop&q=80&w=400',
     description: 'Substituição do cabo de velocímetro para manter a marcação correta de velocidade.'
   },
@@ -243,16 +251,16 @@ const SERVICES_CATALOG: Service[] = [
     name: 'TROCA DE CABO DE VELA E CACHIMBO',
     formaAtendimento: 'Pronto Atendimento',
     time: 15,
-    category: 'Mecânica Rápida',
+    category: '⚡ Socorro & Pronta Entrega',
     image: 'https://images.unsplash.com/photo-1517524206127-48bbd363f3d7?auto=format&fit=crop&q=80&w=400',
     description: 'Instalação de novo terminal supressor de ruídos (cachimbo) e cabo de alta tensão.'
   },
   {
     id: 'srv-22',
     name: 'TROCAR ROLAMENTO RODA DIANTEIRA/TRASEIRA',
-    formaAtendimento: 'Pronto Atendimento',
+    formaAtendimento: 'Sob Agendamento',
     time: 30,
-    category: 'Transmissão & Freios',
+    category: '🛠️ Mecânica Complexa & Diagnóstico',
     image: 'https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&q=80&w=400',
     description: 'Substituição técnica de rolamento de cubo de roda de moto com alinhamento.'
   },
@@ -261,7 +269,7 @@ const SERVICES_CATALOG: Service[] = [
     name: 'LUBRIFICAR E E AJUSTAR CORRENTE',
     formaAtendimento: 'Pronto Atendimento',
     time: 10,
-    category: 'Mais Pedidos',
+    category: '⚡ Socorro & Pronta Entrega',
     image: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&q=80&w=400',
     description: 'Ajuste fino de tensão da corrente de transmissão secundária com lubrificação técnica Motul.'
   },
@@ -270,7 +278,7 @@ const SERVICES_CATALOG: Service[] = [
     name: 'TROCAR BATERIA',
     formaAtendimento: 'Pronto Atendimento',
     time: 15,
-    category: 'Mais Pedidos',
+    category: '⚡ Socorro & Pronta Entrega',
     image: 'https://images.unsplash.com/photo-1542282088-fe8426682b8f?auto=format&fit=crop&q=80&w=400',
     description: 'Substituição completa de bateria de moto com teste de carga do estator/regulador.'
   },
@@ -279,7 +287,7 @@ const SERVICES_CATALOG: Service[] = [
     name: 'TROCAR RELE SETA',
     formaAtendimento: 'Pronto Atendimento',
     time: 10,
-    category: 'Mecânica Rápida',
+    category: '⚡ Socorro & Pronta Entrega',
     image: 'https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&q=80&w=400',
     description: 'Substituição de relé eletrônico de piscas auxiliares (setas) danificado.'
   },
@@ -288,7 +296,7 @@ const SERVICES_CATALOG: Service[] = [
     name: 'TROCA DE FILTRO DE COMBUSTIVEL E MANGUEIRAS',
     formaAtendimento: 'Pronto Atendimento',
     time: 15,
-    category: 'Mecânica Rápida',
+    category: '⚡ Socorro & Pronta Entrega',
     image: 'https://images.unsplash.com/photo-1538333581680-9561853a4837?auto=format&fit=crop&q=80&w=400',
     description: 'Substituição de filtro de linha de combustível e mangueiras ressecadas de alimentação.'
   },
@@ -297,7 +305,7 @@ const SERVICES_CATALOG: Service[] = [
     name: 'TROCAR RELE PARTIDA',
     formaAtendimento: 'Pronto Atendimento',
     time: 15,
-    category: 'Mecânica Rápida',
+    category: '⚡ Socorro & Pronta Entrega',
     image: 'https://images.unsplash.com/photo-1518135839073-4e71539c5704?auto=format&fit=crop&q=80&w=400',
     description: 'Instalação de novo relé de partida elétrica para acionamento correto do motor de arranque.'
   },
@@ -306,34 +314,34 @@ const SERVICES_CATALOG: Service[] = [
     name: 'TROCAR FLUÍDO DE FREIO',
     formaAtendimento: 'Pronto Atendimento',
     time: 20,
-    category: 'Transmissão & Freios',
+    category: '📅 Manutenção Preventiva & Agendada',
     image: 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?auto=format&fit=crop&q=80&w=400',
-    description: 'Sangria completa e substituição de fluído de freio hidraulico por especificação DOT-4 ou DOT-5.1 Varga.'
+    description: 'Sangria completa e substituição de fluído de freio hidráulico por especificação DOT-4 Varga.'
   },
   {
     id: 'srv-29',
     name: 'TROCAR FLEXIVEL DE FREIO',
     formaAtendimento: 'Sob Agendamento',
     time: 30,
-    category: 'Transmissão & Freios',
+    category: '🛠️ Mecânica Complexa & Diagnóstico',
     image: 'https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&q=80&w=400',
-    description: 'Substituição do flexível de freio de borracha convencional por novo flexível.'
+    description: 'Substituição do flexível de freio de borracha convencional por novo aeroquip/flexível.'
   },
   {
     id: 'srv-30',
-    name: 'TROCAR REGULADOR',
+    name: 'TROCAR REGULADOR DE VOLTAGEM',
     formaAtendimento: 'Sob Agendamento',
     time: 30,
-    category: 'Mecânica Rápida',
+    category: '🛠️ Mecânica Complexa & Diagnóstico',
     image: 'https://images.unsplash.com/photo-1486006920555-c77dce18193b?auto=format&fit=crop&q=80&w=400',
-    description: 'Substituição de retificador/regulador de voltagem do sistema elétrico.'
+    description: 'Substituição do retificador/regulador de voltagem e checagem de sobrecarga elétrica.'
   },
   {
     id: 'srv-31',
     name: 'TROCAR AMORTECEDOR TRASEIRO',
     formaAtendimento: 'Sob Agendamento',
     time: 45,
-    category: 'Transmissão & Freios',
+    category: '🛠️ Mecânica Complexa & Diagnóstico',
     image: 'https://images.unsplash.com/photo-1615887023516-9b6bcd559e87?auto=format&fit=crop&q=80&w=400',
     description: 'Troca completa de amortecedor(es) traseiro(s) monochoque ou bichoque Cofap.'
   },
@@ -342,18 +350,45 @@ const SERVICES_CATALOG: Service[] = [
     name: 'REAPERTO GERAL MECÂNICO (REVISÃO)',
     formaAtendimento: 'Sob Agendamento',
     time: 60,
-    category: 'Mais Pedidos',
+    category: '📅 Manutenção Preventiva & Agendada',
     image: 'https://images.unsplash.com/photo-1500628550463-c8881a54d4d4?auto=format&fit=crop&q=80&w=400',
     description: 'Reaperto geral com torquímetro de parafusos de chassi, motor, suspensão e suportes.'
   },
   {
     id: 'srv-33',
-    name: 'REAPERTO DOS CONECTORES (ELÉTRICOS)',
+    name: 'REAPERTO E DIAGNÓSTICO DE CONECTORES ELÉTRICOS',
     formaAtendimento: 'Sob Agendamento',
     time: 30,
-    category: 'Mecânica Rápida',
+    category: '🛠️ Mecânica Complexa & Diagnóstico',
     image: 'https://images.unsplash.com/photo-1518135839073-4e71539c5704?auto=format&fit=crop&q=80&w=400',
-    description: 'Limpeza de oxidação com limpa-contato de conectores principais e reaperto técnico.'
+    description: 'Limpeza de oxidação com limpa-contato de conectores principais e reparo do chicote.'
+  },
+  {
+    id: 'srv-34',
+    name: 'REVISÃO PERIÓDICA COMPLETA POR KM',
+    formaAtendimento: 'Sob Agendamento',
+    time: 45,
+    category: '📅 Manutenção Preventiva & Agendada',
+    image: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&q=80&w=400',
+    description: 'Check-up preventivo de 21 itens, regulagem de cabos, freios, suspensão e fluidos por quilometragem.'
+  },
+  {
+    id: 'srv-35',
+    name: 'LIMPEZA DE CARBURADOR / INJEÇÃO ELETRÔNICA',
+    formaAtendimento: 'Sob Agendamento',
+    time: 50,
+    category: '🛠️ Mecânica Complexa & Diagnóstico',
+    image: 'https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&q=80&w=400',
+    description: 'Higienização em cuba ultrassônica de bicos injetores ou giclês de carburador com regulagem.'
+  },
+  {
+    id: 'srv-36',
+    name: 'SUBSTITUIÇÃO DOS DISCOS DE EMBREAGEM',
+    formaAtendimento: 'Sob Agendamento',
+    time: 60,
+    category: '🛠️ Mecânica Complexa & Diagnóstico',
+    image: 'https://images.unsplash.com/photo-1609630875171-b1321377ee65?auto=format&fit=crop&q=80&w=400',
+    description: 'Troca de discos de fricção, separadores e mola com óleo novo e regulagem do cabo.'
   }
 ];
 
@@ -435,7 +470,7 @@ export default function CustomerPortal({
     points: number;
   } | null>(null);
 
-  const [clientActiveTab, setClientActiveTab] = useState<'dashboard' | 'catalog' | 'tracking' | 'fidelidade'>('catalog');
+  const [clientActiveTab, setClientActiveTab] = useState<'garagem' | 'catalog' | 'os' | 'tracking'>('garagem');
   const [adminQuoteExpiryMinutes, setAdminQuoteExpiryMinutes] = useState(5);
 
   // Real-time mechanic quote bidding state
@@ -578,10 +613,18 @@ export default function CustomerPortal({
 
   const [localToast, setLocalToast] = useState<string | null>(null);
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
-  const [activeCategory, setActiveCategory] = useState<string>('Todos os Serviços');
+  const [activeCategory, setActiveCategory] = useState<string>('⚡ Socorro & Pronta Entrega');
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [filterCatalogType, setFilterCatalogType] = useState<'all' | 'pronto' | 'agendado'>('all');
   const [checkoutPayment, setCheckoutPayment] = useState<'cartao' | 'pix'>('pix');
+
+  // Service Scheduling Date & Time state
+  const [checkoutDate, setCheckoutDate] = useState<string>(() => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow.toISOString().split('T')[0];
+  });
+  const [checkoutTime, setCheckoutTime] = useState<string>('14:00');
 
   useEffect(() => {
     if (quoteStatus === 'searching') {
@@ -830,7 +873,7 @@ export default function CustomerPortal({
       setCheckoutAddress('Rua Barão de Jaguara, 800 - Cambuí, Campinas - SP');
       setActiveTracking(true);
     }
-    setClientActiveTab('catalog');
+    setClientActiveTab('garagem');
     triggerToast('Conectado com sucesso no perfil de teste!');
   };
 
@@ -888,7 +931,7 @@ export default function CustomerPortal({
       setCheckoutMoto('Honda CG 160 Titan');
       setCheckoutAddress('Av. Brasil, 500 - Jardim Guanabara, Campinas - SP');
     }
-    setClientActiveTab('catalog');
+    setClientActiveTab('garagem');
     triggerToast('Sua conta foi criada e você está conectado!');
   };
 
@@ -994,7 +1037,7 @@ export default function CustomerPortal({
 
   // Filter Catalog
   const filteredServices = SERVICES_CATALOG.filter(srv => {
-    if (activeCategory !== 'Todos os Serviços' && srv.category !== activeCategory) return false;
+    if (srv.category !== activeCategory) return false;
     if (filterCatalogType === 'pronto') {
       return srv.formaAtendimento === 'Pronto Atendimento';
     }
@@ -1007,172 +1050,570 @@ export default function CustomerPortal({
   return (
     <div className="bg-white text-zinc-900 pb-20 relative font-sans">
       
-      {/* 1. AUTHENTICATION VIEW */}
+      {/* 1. AUTHENTICATION & LANDING PAGE VIEW FOR MYOTTOMOTOS */}
       {!clientUser ? (
-        <div className="max-w-md mx-auto px-4 py-16">
-          <div className="bg-zinc-50 border border-zinc-200 rounded-3xl p-6 md:p-8 space-y-4 shadow-xl text-left">
-            <div className="text-center space-y-2 pb-2">
-              <h2 className="text-3xl font-black text-zinc-950 tracking-tight">MyOttomotos</h2>
+        <div className="bg-zinc-950 text-white min-h-screen font-sans">
+          
+          {/* A. HERO SECTION SPECIFIC FOR MYOTTOMOTOS */}
+          <section className="relative overflow-hidden pt-12 pb-16 sm:pt-20 sm:pb-24 border-b border-zinc-900 bg-gradient-to-b from-zinc-950 via-zinc-900 to-zinc-950">
+            {/* Ambient Background Radial Glow */}
+            <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] sm:w-[800px] h-[350px] bg-brand-orange/10 blur-[140px] rounded-full pointer-events-none" />
+
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center space-y-8">
               
-              {/* Highlighted Slogan */}
-              <p className="text-sm font-extrabold text-brand-orange tracking-tight">
-                "Uma nova forma de prover serviços"
+              {/* Main Headline */}
+              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-[1.08]">
+                Sua Moto Sempre Pronta.{' '}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange via-orange-400 to-amber-300 block mt-2">
+                  Atendimento Mecânico Onde Você Estiver.
+                </span>
+              </h1>
+
+              {/* Body Text */}
+              <p className="text-zinc-300 text-sm sm:text-base lg:text-lg font-medium leading-relaxed max-w-2xl mx-auto">
+                Solicite socorro de emergência ou agende manutenções preventivas com furgões oficina móveis super equipados.
+                Siga o mecânico no mapa, acompanhe o reparo ao vivo e receba laudos e checklists detalhados em tempo real.
               </p>
-            </div>
 
-            {/* Manual Form Tabs */}
-            <div className="flex border-b border-zinc-200">
-              <button
-                onClick={() => setIsLoginTab(true)}
-                className={`flex-1 pb-3 text-xs font-bold border-b-2 text-center transition-colors ${
-                  isLoginTab ? 'border-brand-orange text-brand-orange' : 'border-transparent text-zinc-400'
-                }`}
-              >
-                Fazer Login
-              </button>
-              <button
-                onClick={() => setIsLoginTab(false)}
-                className={`flex-1 pb-3 text-xs font-bold border-b-2 text-center transition-colors ${
-                  !isLoginTab ? 'border-brand-orange text-brand-orange' : 'border-transparent text-zinc-400'
-                }`}
-              >
-                Criar Conta
-              </button>
-            </div>
+              {/* Hero Main Action CTAs */}
+              <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 pt-2">
+                <a
+                  href="#auth-section"
+                  onClick={() => setIsLoginTab(true)}
+                  className="bg-brand-orange hover:bg-brand-orange-hover text-black font-black px-7 py-4 rounded-xl shadow-lg shadow-brand-orange/20 transition-all text-xs sm:text-sm flex items-center gap-2 cursor-pointer"
+                >
+                  <span>Entrar no MyOttomotos</span>
+                  <ChevronRight className="w-4 h-4" />
+                </a>
 
-            <form onSubmit={handleManualLoginSubmit} className="space-y-4 text-xs">
-              {!isLoginTab && (
-                <>
-                  {/* Tax Designation Toggle */}
-                  <div className="space-y-1">
-                    <label className="text-zinc-500 block font-bold">Tipo de Cliente</label>
-                    <div className="grid grid-cols-2 gap-2 p-1 bg-zinc-100 rounded-xl border border-zinc-200">
-                      <button
-                        type="button"
-                        onClick={() => setAuthForm(prev => ({ ...prev, type: 'PF' }))}
-                        className={`py-1.5 text-[10px] font-black uppercase rounded-lg transition-all ${
-                          authForm.type === 'PF' ? 'bg-white text-zinc-950 shadow-sm' : 'text-zinc-500 hover:text-zinc-900'
-                        }`}
-                      >
-                        Pessoa Física (CPF)
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setAuthForm(prev => ({ ...prev, type: 'PJ' }))}
-                        className={`py-1.5 text-[10px] font-black uppercase rounded-lg transition-all ${
-                          authForm.type === 'PJ' ? 'bg-white text-zinc-950 shadow-sm' : 'text-zinc-500 hover:text-zinc-900'
-                        }`}
-                      >
-                        Pessoa Jurídica (CNPJ)
-                      </button>
+                <a
+                  href="#auth-section"
+                  onClick={() => setIsLoginTab(false)}
+                  className="bg-zinc-900 hover:bg-zinc-800 text-white font-bold px-7 py-4 rounded-xl border border-zinc-700 transition-all text-xs sm:text-sm flex items-center gap-2 cursor-pointer"
+                >
+                  <User className="w-4 h-4 text-brand-orange" />
+                  <span>Criar Conta Grátis</span>
+                </a>
+              </div>
+
+            </div>
+          </section>
+
+          {/* B. PASSO A PASSO SPECIFIC FOR MYOTTOMOTOS (5 STEPS) */}
+          <section className="py-16 sm:py-20 bg-white border-b border-zinc-200 text-zinc-900">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-left space-y-12">
+              
+              <div className="text-center max-w-3xl mx-auto space-y-3">
+                <span className="text-xs font-black text-brand-orange uppercase tracking-widest bg-orange-50 border border-brand-orange/30 px-3.5 py-1 rounded-full">
+                  Como Funciona o Serviço
+                </span>
+                <h2 className="text-2xl sm:text-4xl font-black text-zinc-950 tracking-tight">
+                  Passo a Passo Simples e Transparente
+                </h2>
+                <p className="text-zinc-600 text-xs sm:text-sm font-medium">
+                  Entenda rapidamente como usar nossos serviços pelo aplicativo ou site em apenas 5 passos:
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-5">
+                
+                {/* Step 1 */}
+                <div className="bg-zinc-50 border border-zinc-200 hover:border-brand-orange rounded-2xl p-5 relative flex flex-col justify-between transition-all group shadow-sm hover:shadow-md">
+                  <div className="space-y-3.5">
+                    <div className="flex justify-between items-center">
+                      <div className="w-11 h-11 rounded-xl bg-orange-100 border border-brand-orange/30 flex items-center justify-center text-brand-orange group-hover:bg-brand-orange group-hover:text-black transition-all">
+                        <Smartphone className="w-5 h-5" />
+                      </div>
+                      <span className="text-2xl font-black text-zinc-300 group-hover:text-brand-orange transition-all">01</span>
                     </div>
+                    <div>
+                      <span className="text-[10px] font-mono uppercase font-black text-brand-orange tracking-wider block mb-1">PASSO 01</span>
+                      <h3 className="text-sm font-black text-zinc-950 leading-snug">Baixe o App ou Acesse pelo site</h3>
+                    </div>
+                    <p className="text-[11px] text-zinc-600 leading-relaxed font-medium">
+                      Através da Apple/Google Store baixe o App MyOttomotos ou pelo site <span className="text-zinc-900 font-bold">www.myottomotos.com.br</span> e faça o seu cadastro para ter acesso imediato a todos os nossos serviços.
+                    </p>
+                  </div>
+                  <div className="mt-5 pt-3 border-t border-zinc-200 text-[10px] font-bold text-brand-orange flex items-center gap-1">
+                    <span>Acesso Imediato</span>
+                  </div>
+                </div>
+
+                {/* Step 2 */}
+                <div className="bg-zinc-50 border border-zinc-200 hover:border-brand-orange rounded-2xl p-5 relative flex flex-col justify-between transition-all group shadow-sm hover:shadow-md">
+                  <div className="space-y-3.5">
+                    <div className="flex justify-between items-center">
+                      <div className="w-11 h-11 rounded-xl bg-orange-100 border border-brand-orange/30 flex items-center justify-center text-brand-orange group-hover:bg-brand-orange group-hover:text-black transition-all">
+                        <DollarSign className="w-5 h-5" />
+                      </div>
+                      <span className="text-2xl font-black text-zinc-300 group-hover:text-brand-orange transition-all">02</span>
+                    </div>
+                    <div>
+                      <span className="text-[10px] font-mono uppercase font-black text-brand-orange tracking-wider block mb-1">PASSO 02</span>
+                      <h3 className="text-sm font-black text-zinc-950 leading-snug">Solicite um Orçamento</h3>
+                    </div>
+                    <p className="text-[11px] text-zinc-600 leading-relaxed font-medium">
+                      Escolha o serviço desejado ou descreva o problema da sua moto e veja o valor exato, sem custos ocultos.
+                    </p>
+                  </div>
+                  <div className="mt-5 pt-3 border-t border-zinc-200 text-[10px] font-bold text-brand-orange flex items-center gap-1">
+                    <span>Valores Transparentes</span>
+                  </div>
+                </div>
+
+                {/* Step 3 */}
+                <div className="bg-zinc-50 border border-zinc-200 hover:border-brand-orange rounded-2xl p-5 relative flex flex-col justify-between transition-all group shadow-sm hover:shadow-md">
+                  <div className="space-y-3.5">
+                    <div className="flex justify-between items-center">
+                      <div className="w-11 h-11 rounded-xl bg-orange-100 border border-brand-orange/30 flex items-center justify-center text-brand-orange group-hover:bg-brand-orange group-hover:text-black transition-all">
+                        <Calendar className="w-5 h-5" />
+                      </div>
+                      <span className="text-2xl font-black text-zinc-300 group-hover:text-brand-orange transition-all">03</span>
+                    </div>
+                    <div>
+                      <span className="text-[10px] font-mono uppercase font-black text-brand-orange tracking-wider block mb-1">PASSO 03</span>
+                      <h3 className="text-sm font-black text-zinc-950 leading-snug">Aprove o Orçamento e Agende seu Atendimento</h3>
+                    </div>
+                    <p className="text-[11px] text-zinc-600 leading-relaxed font-medium">
+                      Selecione o melhor dia, horário e local de sua preferência para receber o nosso furgão-oficina.
+                    </p>
+                  </div>
+                  <div className="mt-5 pt-3 border-t border-zinc-200 text-[10px] font-bold text-brand-orange flex items-center gap-1">
+                    <span>Furgão-Oficina no Local</span>
+                  </div>
+                </div>
+
+                {/* Step 4 */}
+                <div className="bg-zinc-50 border border-zinc-200 hover:border-brand-orange rounded-2xl p-5 relative flex flex-col justify-between transition-all group shadow-sm hover:shadow-md">
+                  <div className="space-y-3.5">
+                    <div className="flex justify-between items-center">
+                      <div className="w-11 h-11 rounded-xl bg-orange-100 border border-brand-orange/30 flex items-center justify-center text-brand-orange group-hover:bg-brand-orange group-hover:text-black transition-all">
+                        <Clock className="w-5 h-5" />
+                      </div>
+                      <span className="text-2xl font-black text-zinc-300 group-hover:text-brand-orange transition-all">04</span>
+                    </div>
+                    <div>
+                      <span className="text-[10px] font-mono uppercase font-black text-brand-orange tracking-wider block mb-1">PASSO 04</span>
+                      <h3 className="text-sm font-black text-zinc-950 leading-snug">Acompanhe o Serviço</h3>
+                    </div>
+                    <p className="text-[11px] text-zinc-600 leading-relaxed font-medium">
+                      Acompanhe a execução do conserto online e receba checklists detalhados em tempo real diretamente pelo app.
+                    </p>
+                  </div>
+                  <div className="mt-5 pt-3 border-t border-zinc-200 text-[10px] font-bold text-brand-orange flex items-center gap-1">
+                    <span>Acompanhamento Online</span>
+                  </div>
+                </div>
+
+                {/* Step 5 */}
+                <div className="bg-zinc-50 border border-zinc-200 hover:border-brand-orange rounded-2xl p-5 relative flex flex-col justify-between transition-all group shadow-sm hover:shadow-md">
+                  <div className="space-y-3.5">
+                    <div className="flex justify-between items-center">
+                      <div className="w-11 h-11 rounded-xl bg-orange-100 border border-brand-orange/30 flex items-center justify-center text-brand-orange group-hover:bg-brand-orange group-hover:text-black transition-all">
+                        <Star className="w-5 h-5" />
+                      </div>
+                      <span className="text-2xl font-black text-zinc-300 group-hover:text-brand-orange transition-all">05</span>
+                    </div>
+                    <div>
+                      <span className="text-[10px] font-mono uppercase font-black text-brand-orange tracking-wider block mb-1">PASSO 05</span>
+                      <h3 className="text-sm font-black text-zinc-950 leading-snug">Avalie e Pontue</h3>
+                    </div>
+                    <p className="text-[11px] text-zinc-600 leading-relaxed font-medium">
+                      Após concluído o serviço, avalie o serviço e o mecânico, acumule pontos de fidelidade e ganhe descontos exclusivos para seus próximos atendimentos.
+                    </p>
+                  </div>
+                  <div className="mt-5 pt-3 border-t border-zinc-200 text-[10px] font-bold text-brand-orange flex items-center gap-1">
+                    <span>Pontos & Descontos Exclusivos</span>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </section>
+
+          {/* C. BENEFÍCIOS B2C E B2B */}
+          <section className="py-16 sm:py-20 bg-zinc-950 border-b border-zinc-900">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-left space-y-10">
+              
+              <div className="text-center max-w-2xl mx-auto space-y-2">
+                <span className="text-xs font-black text-brand-orange uppercase tracking-widest bg-brand-orange/10 px-3 py-1 rounded-full">
+                  Soluções Sob Medida
+                </span>
+                <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+                  Feito para Motociclistas e Frotas Corporativas
+                </h2>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                {/* B2C Card */}
+                <div className="bg-gradient-to-br from-zinc-900 to-zinc-950 border border-zinc-800 rounded-3xl p-6 sm:p-8 space-y-5 relative overflow-hidden shadow-2xl">
+                  <div className="absolute top-0 right-0 p-6 opacity-10 pointer-events-none">
+                    <User className="w-36 h-36 text-brand-orange" />
+                  </div>
+                  <div className="inline-flex items-center gap-2 bg-brand-orange/10 text-brand-orange border border-brand-orange/20 px-3 py-1 rounded-full text-xs font-black uppercase">
+                    <User className="w-3.5 h-3.5" />
+                    <span>Para Você e Sua Moto (B2C)</span>
+                  </div>
+                  <h3 className="text-xl sm:text-2xl font-black text-white">Sem filas, sem perda de tempo</h3>
+                  <ul className="space-y-3 text-xs text-zinc-300 font-medium">
+                    <li className="flex items-start gap-2.5">
+                      <CheckCircle className="w-4 h-4 text-brand-orange shrink-0 mt-0.5" />
+                      <span>Atendimento no conforto da sua residência, trabalho ou no local da pane.</span>
+                    </li>
+                    <li className="flex items-start gap-2.5">
+                      <CheckCircle className="w-4 h-4 text-brand-orange shrink-0 mt-0.5" />
+                      <span>Peças originais com garantia direto de fábrica (Mobil, NGK, Cobreq, Cofap, D.I.D).</span>
+                    </li>
+                    <li className="flex items-start gap-2.5">
+                      <CheckCircle className="w-4 h-4 text-brand-orange shrink-0 mt-0.5" />
+                      <span>Clube de Vantagens OttoClub com regalia exclusiva de Moto Reserva.</span>
+                    </li>
+                  </ul>
+                </div>
+
+                {/* B2B Card */}
+                <div className="bg-gradient-to-br from-zinc-900 to-zinc-950 border border-zinc-800 rounded-3xl p-6 sm:p-8 space-y-5 relative overflow-hidden shadow-2xl">
+                  <div className="absolute top-0 right-0 p-6 opacity-10 pointer-events-none">
+                    <Building2 className="w-36 h-36 text-purple-400" />
+                  </div>
+                  <div className="inline-flex items-center gap-2 bg-purple-500/10 text-purple-400 border border-purple-500/20 px-3 py-1 rounded-full text-xs font-black uppercase">
+                    <Building2 className="w-3.5 h-3.5" />
+                    <span>Para Frotas Corporativas & Entregas (B2B PJ)</span>
+                  </div>
+                  <h3 className="text-xl sm:text-2xl font-black text-white">Sua Frota de Motos Rodando Sem Parar</h3>
+                  <ul className="space-y-3 text-xs text-zinc-300 font-medium">
+                    <li className="flex items-start gap-2.5">
+                      <CheckCircle className="w-4 h-4 text-purple-400 shrink-0 mt-0.5" />
+                      <span>Painel de gestão unificado para controlar a manutenção de dezenas de motos.</span>
+                    </li>
+                    <li className="flex items-start gap-2.5">
+                      <CheckCircle className="w-4 h-4 text-purple-400 shrink-0 mt-0.5" />
+                      <span>Faturamento quinzenal ou mensal corporativo unificado com Nota Fiscal.</span>
+                    </li>
+                    <li className="flex items-start gap-2.5">
+                      <CheckCircle className="w-4 h-4 text-purple-400 shrink-0 mt-0.5" />
+                      <span>Atendimento agendado em lote e socorro urgente prioritário para frotistas.</span>
+                    </li>
+                  </ul>
+                </div>
+
+              </div>
+            </div>
+          </section>
+
+          {/* D. SESSÃO DE TESTEMUNHOS / DEPOIMENTOS */}
+          <section className="py-16 sm:py-20 bg-white border-b border-zinc-200 relative overflow-hidden text-zinc-900">
+            {/* Ambient subtle glow */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[250px] bg-brand-orange/10 blur-[130px] pointer-events-none rounded-full" />
+
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-left space-y-12 relative z-10">
+              
+              <div className="text-center max-w-2xl mx-auto space-y-3">
+                <span className="text-xs font-black text-brand-orange uppercase tracking-widest bg-orange-50 border border-brand-orange/30 px-3.5 py-1 rounded-full">
+                  Depoimentos Reais
+                </span>
+                <h2 className="text-2xl sm:text-4xl font-black text-zinc-950 tracking-tight">
+                  Quem Confia no MyOttomotos
+                </h2>
+                <p className="text-zinc-600 text-xs sm:text-sm font-medium">
+                  Veja a experiência de clientes particulares, entregadores parceiros e gestores de frota corporativa.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+                
+                {/* Testimonial 1: Carol Silva */}
+                <div className="bg-zinc-50 border border-zinc-200/90 hover:border-brand-orange rounded-3xl p-6 space-y-5 flex flex-col justify-between transition-all group shadow-sm hover:shadow-md relative">
+                  <div className="space-y-4">
+                    {/* Header: Stars & Quote Icon */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1 text-amber-500">
+                        {[...Array(5)].map((_, i) => (
+                          <Star key={i} className="w-4 h-4 fill-amber-500" />
+                        ))}
+                      </div>
+                      <Quote className="w-6 h-6 text-brand-orange/40 group-hover:text-brand-orange transition-colors" />
+                    </div>
+
+                    {/* Testimonial Quote */}
+                    <p className="text-xs sm:text-sm text-zinc-700 leading-relaxed font-medium italic">
+                      "Minha moto furou o pneu a caminho do trabalho. Pelo MyOttomotos solicitei socorro, vi o furgão-oficina chegando em menos de 15 minutos e acompanhei todo o conserto em tempo real. Atendimento impecável e sem surpresas no preço!"
+                    </p>
                   </div>
 
-                  {authForm.type === 'PF' ? (
+                  {/* Author Info */}
+                  <div className="pt-4 border-t border-zinc-200 flex items-center gap-3">
+                    <div className="w-11 h-11 rounded-2xl bg-orange-100 border border-brand-orange/30 flex items-center justify-center text-brand-orange font-black text-sm shrink-0">
+                      CS
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-black text-zinc-950 group-hover:text-brand-orange transition-colors">
+                        Carol Silva
+                      </h3>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <span className="text-[10px] bg-orange-100 text-brand-orange font-bold px-2 py-0.5 rounded-full border border-brand-orange/30">
+                          Cliente Particular (CPF)
+                        </span>
+                        <span className="text-[10px] text-zinc-500 font-mono">Honda Biz 125</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Testimonial 2: Carlos Motoboy */}
+                <div className="bg-zinc-50 border border-zinc-200/90 hover:border-blue-500 rounded-3xl p-6 space-y-5 flex flex-col justify-between transition-all group shadow-sm hover:shadow-md relative">
+                  <div className="space-y-4">
+                    {/* Header: Stars & Quote Icon */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1 text-amber-500">
+                        {[...Array(5)].map((_, i) => (
+                          <Star key={i} className="w-4 h-4 fill-amber-500" />
+                        ))}
+                      </div>
+                      <Quote className="w-6 h-6 text-blue-500/40 group-hover:text-blue-500 transition-colors" />
+                    </div>
+
+                    {/* Testimonial Quote */}
+                    <p className="text-xs sm:text-sm text-zinc-700 leading-relaxed font-medium italic">
+                      "Como trabalho com entregas, não posso ficar com a moto parada em oficina. Agendei a troca do kit relação e pastilhas para ser feita na minha casa. Em 40 minutos o mecânico deixou a moto zera e ainda acumulei pontos no OttoClub."
+                    </p>
+                  </div>
+
+                  {/* Author Info */}
+                  <div className="pt-4 border-t border-zinc-200 flex items-center gap-3">
+                    <div className="w-11 h-11 rounded-2xl bg-blue-100 border border-blue-500/30 flex items-center justify-center text-blue-600 font-black text-sm shrink-0">
+                      CM
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-black text-zinc-950 group-hover:text-blue-600 transition-colors">
+                        Carlos Motoboy
+                      </h3>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <span className="text-[10px] bg-blue-100 text-blue-700 font-bold px-2 py-0.5 rounded-full border border-blue-300">
+                          Entregador Express
+                        </span>
+                        <span className="text-[10px] text-zinc-500 font-mono">Yamaha Factor 150</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Testimonial 3: Antônio Frotista */}
+                <div className="bg-zinc-50 border border-zinc-200/90 hover:border-purple-500 rounded-3xl p-6 space-y-5 flex flex-col justify-between transition-all group shadow-sm hover:shadow-md relative">
+                  <div className="space-y-4">
+                    {/* Header: Stars & Quote Icon */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1 text-amber-500">
+                        {[...Array(5)].map((_, i) => (
+                          <Star key={i} className="w-4 h-4 fill-amber-500" />
+                        ))}
+                      </div>
+                      <Quote className="w-6 h-6 text-purple-500/40 group-hover:text-purple-500 transition-colors" />
+                    </div>
+
+                    {/* Testimonial Quote */}
+                    <p className="text-xs sm:text-sm text-zinc-700 leading-relaxed font-medium italic">
+                      "Gerenciar a manutenção de 12 motos de entregas era um pesadelo logístico. Com o MyOttomotos B2B, agendamos as revisões preventivas em lote diretamente no nosso pátio. O faturamento unificado com nota fiscal facilitou demais nossa gestão."
+                    </p>
+                  </div>
+
+                  {/* Author Info */}
+                  <div className="pt-4 border-t border-zinc-200 flex items-center gap-3">
+                    <div className="w-11 h-11 rounded-2xl bg-purple-100 border border-purple-500/30 flex items-center justify-center text-purple-600 font-black text-sm shrink-0">
+                      AF
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-black text-zinc-950 group-hover:text-purple-600 transition-colors">
+                        Antônio Frotista
+                      </h3>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <span className="text-[10px] bg-purple-100 text-purple-700 font-bold px-2 py-0.5 rounded-full border border-purple-300">
+                          Gestor de Frota (PJ)
+                        </span>
+                        <span className="text-[10px] text-zinc-500 font-mono">LogiEntrega • 12 Motos</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </section>
+
+          {/* E. LOGIN & CADASTRO SECTION (INTEGRATED FORM) */}
+          <section id="auth-section" className="py-16 sm:py-20 bg-zinc-950">
+            <div className="max-w-md mx-auto px-4">
+              <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 sm:p-8 space-y-5 shadow-2xl text-left">
+                
+                <div className="text-center space-y-2 pb-1">
+                  <div className="w-12 h-12 rounded-2xl bg-brand-orange/10 border border-brand-orange/30 mx-auto flex items-center justify-center text-brand-orange">
+                    <User className="w-6 h-6" />
+                  </div>
+                  <h2 className="text-2xl font-black text-white tracking-tight">Acessar Minha Conta</h2>
+                  <p className="text-xs font-extrabold text-brand-orange">
+                    MyOttomotos
+                  </p>
+                </div>
+
+                {/* Manual Form Tabs */}
+                <div className="flex border-b border-zinc-800">
+                  <button
+                    type="button"
+                    onClick={() => setIsLoginTab(true)}
+                    className={`flex-1 pb-3 text-xs font-bold border-b-2 text-center transition-colors ${
+                      isLoginTab ? 'border-brand-orange text-brand-orange' : 'border-transparent text-zinc-500'
+                    }`}
+                  >
+                    Fazer Login
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsLoginTab(false)}
+                    className={`flex-1 pb-3 text-xs font-bold border-b-2 text-center transition-colors ${
+                      !isLoginTab ? 'border-brand-orange text-brand-orange' : 'border-transparent text-zinc-500'
+                    }`}
+                  >
+                    Criar Conta
+                  </button>
+                </div>
+
+                <form onSubmit={handleManualLoginSubmit} className="space-y-4 text-xs">
+                  {!isLoginTab && (
                     <>
-                      {/* Name */}
-                      <div className="space-y-1 animate-fadeIn">
-                        <label className="text-zinc-500 block font-bold">Nome Completo</label>
-                        <input
-                          type="text"
-                          required
-                          placeholder="Ex: Carol Silva"
-                          value={authForm.name}
-                          onChange={(e) => setAuthForm(prev => ({ ...prev, name: e.target.value }))}
-                          className="w-full bg-white border border-zinc-200 rounded-xl px-3 py-2.5 text-zinc-900 font-bold focus:outline-none focus:border-brand-orange"
-                        />
+                      {/* Tax Designation Toggle */}
+                      <div className="space-y-1">
+                        <label className="text-zinc-400 block font-bold">Tipo de Cliente</label>
+                        <div className="grid grid-cols-2 gap-2 p-1 bg-zinc-950 rounded-xl border border-zinc-800">
+                          <button
+                            type="button"
+                            onClick={() => setAuthForm(prev => ({ ...prev, type: 'PF' }))}
+                            className={`py-1.5 text-[10px] font-black uppercase rounded-lg transition-all ${
+                              authForm.type === 'PF' ? 'bg-brand-orange text-black font-extrabold shadow-sm' : 'text-zinc-400 hover:text-white'
+                            }`}
+                          >
+                            Pessoa Física (CPF)
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setAuthForm(prev => ({ ...prev, type: 'PJ' }))}
+                            className={`py-1.5 text-[10px] font-black uppercase rounded-lg transition-all ${
+                              authForm.type === 'PJ' ? 'bg-brand-orange text-black font-extrabold shadow-sm' : 'text-zinc-400 hover:text-white'
+                            }`}
+                          >
+                            Pessoa Jurídica (CNPJ)
+                          </button>
+                        </div>
                       </div>
-                      {/* CPF */}
-                      <div className="space-y-1 animate-fadeIn">
-                        <label className="text-zinc-500 block font-bold">CPF</label>
-                        <input
-                          type="text"
-                          required
-                          placeholder="Ex: 123.456.789-00"
-                          value={authForm.cpf}
-                          onChange={(e) => setAuthForm(prev => ({ ...prev, cpf: e.target.value }))}
-                          className="w-full bg-white border border-zinc-200 rounded-xl px-3 py-2.5 text-zinc-900 font-bold focus:outline-none focus:border-brand-orange"
-                        />
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      {/* Razão Social */}
-                      <div className="space-y-1 animate-fadeIn">
-                        <label className="text-zinc-500 block font-bold">Razão Social / Empresa</label>
-                        <input
-                          type="text"
-                          required
-                          placeholder="Ex: LogiEntrega Express Ltda"
-                          value={authForm.companyName}
-                          onChange={(e) => setAuthForm(prev => ({ ...prev, companyName: e.target.value }))}
-                          className="w-full bg-white border border-zinc-200 rounded-xl px-3 py-2.5 text-zinc-900 font-bold focus:outline-none focus:border-brand-orange"
-                        />
-                      </div>
-                      {/* CNPJ */}
-                      <div className="space-y-1 animate-fadeIn">
-                        <label className="text-zinc-500 block font-bold">CNPJ</label>
-                        <input
-                          type="text"
-                          required
-                          placeholder="Ex: 12.345.678/0001-99"
-                          value={authForm.cnpj}
-                          onChange={(e) => setAuthForm(prev => ({ ...prev, cnpj: e.target.value }))}
-                          className="w-full bg-white border border-zinc-200 rounded-xl px-3 py-2.5 text-zinc-900 font-bold focus:outline-none focus:border-brand-orange"
-                        />
-                      </div>
-                      {/* Nome do Responsável */}
-                      <div className="space-y-1 animate-fadeIn">
-                        <label className="text-zinc-500 block font-bold">Nome do Gestor da Frota</label>
-                        <input
-                          type="text"
-                          required
-                          placeholder="Ex: Antônio de Souza"
-                          value={authForm.name}
-                          onChange={(e) => setAuthForm(prev => ({ ...prev, name: e.target.value }))}
-                          className="w-full bg-white border border-zinc-200 rounded-xl px-3 py-2.5 text-zinc-900 font-bold focus:outline-none focus:border-brand-orange"
-                        />
-                      </div>
+
+                      {authForm.type === 'PF' ? (
+                        <>
+                          {/* Name */}
+                          <div className="space-y-1 animate-fadeIn">
+                            <label className="text-zinc-400 block font-bold">Nome Completo</label>
+                            <input
+                              type="text"
+                              required
+                              placeholder="Ex: Carol Silva"
+                              value={authForm.name}
+                              onChange={(e) => setAuthForm(prev => ({ ...prev, name: e.target.value }))}
+                              className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2.5 text-white font-bold focus:outline-none focus:border-brand-orange"
+                            />
+                          </div>
+                          {/* CPF */}
+                          <div className="space-y-1 animate-fadeIn">
+                            <label className="text-zinc-400 block font-bold">CPF</label>
+                            <input
+                              type="text"
+                              required
+                              placeholder="Ex: 123.456.789-00"
+                              value={authForm.cpf}
+                              onChange={(e) => setAuthForm(prev => ({ ...prev, cpf: e.target.value }))}
+                              className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2.5 text-white font-bold focus:outline-none focus:border-brand-orange"
+                            />
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          {/* Razão Social */}
+                          <div className="space-y-1 animate-fadeIn">
+                            <label className="text-zinc-400 block font-bold">Razão Social / Empresa</label>
+                            <input
+                              type="text"
+                              required
+                              placeholder="Ex: LogiEntrega Express Ltda"
+                              value={authForm.companyName}
+                              onChange={(e) => setAuthForm(prev => ({ ...prev, companyName: e.target.value }))}
+                              className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2.5 text-white font-bold focus:outline-none focus:border-brand-orange"
+                            />
+                          </div>
+                          {/* CNPJ */}
+                          <div className="space-y-1 animate-fadeIn">
+                            <label className="text-zinc-400 block font-bold">CNPJ</label>
+                            <input
+                              type="text"
+                              required
+                              placeholder="Ex: 12.345.678/0001-99"
+                              value={authForm.cnpj}
+                              onChange={(e) => setAuthForm(prev => ({ ...prev, cnpj: e.target.value }))}
+                              className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2.5 text-white font-bold focus:outline-none focus:border-brand-orange"
+                            />
+                          </div>
+                          {/* Nome do Responsável */}
+                          <div className="space-y-1 animate-fadeIn">
+                            <label className="text-zinc-400 block font-bold">Nome do Gestor da Frota</label>
+                            <input
+                              type="text"
+                              required
+                              placeholder="Ex: Antônio de Souza"
+                              value={authForm.name}
+                              onChange={(e) => setAuthForm(prev => ({ ...prev, name: e.target.value }))}
+                              className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2.5 text-white font-bold focus:outline-none focus:border-brand-orange"
+                            />
+                          </div>
+                        </>
+                      )}
                     </>
                   )}
-                </>
-              )}
 
-              {/* Email */}
-              <div className="space-y-1">
-                <label className="text-zinc-500 block font-bold">E-mail</label>
-                <input
-                  type="email"
-                  required
-                  placeholder="Ex: cliente@ottomotos.com"
-                  value={authForm.email}
-                  onChange={(e) => setAuthForm(prev => ({ ...prev, email: e.target.value }))}
-                  className="w-full bg-white border border-zinc-200 rounded-xl px-3 py-2.5 text-zinc-900 font-bold focus:outline-none focus:border-brand-orange"
-                />
+                  {/* Email */}
+                  <div className="space-y-1">
+                    <label className="text-zinc-400 block font-bold">E-mail</label>
+                    <input
+                      type="email"
+                      required
+                      placeholder="Ex: cliente@ottomotos.com"
+                      value={authForm.email}
+                      onChange={(e) => setAuthForm(prev => ({ ...prev, email: e.target.value }))}
+                      className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2.5 text-white font-bold focus:outline-none focus:border-brand-orange"
+                    />
+                  </div>
+
+                  {/* Password */}
+                  <div className="space-y-1">
+                    <label className="text-zinc-400 block font-bold">Senha</label>
+                    <input
+                      type="password"
+                      required
+                      placeholder="••••••••"
+                      value={authForm.password}
+                      onChange={(e) => setAuthForm(prev => ({ ...prev, password: e.target.value }))}
+                      className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2.5 text-white font-bold focus:outline-none focus:border-brand-orange"
+                    />
+                  </div>
+
+                  {/* Submit Button */}
+                  <button
+                    type="submit"
+                    className="w-full bg-brand-orange hover:bg-brand-orange-hover text-black font-black py-3.5 rounded-xl shadow-lg shadow-brand-orange/10 transition-all text-xs uppercase tracking-wider cursor-pointer"
+                  >
+                    {isLoginTab ? 'Entrar no MyOttomotos' : 'Finalizar Cadastro'}
+                  </button>
+                </form>
               </div>
+            </div>
+          </section>
 
-              {/* Password */}
-              <div className="space-y-1">
-                <label className="text-zinc-500 block font-bold">Senha</label>
-                <input
-                  type="password"
-                  required
-                  placeholder="••••••••"
-                  value={authForm.password}
-                  onChange={(e) => setAuthForm(prev => ({ ...prev, password: e.target.value }))}
-                  className="w-full bg-white border border-zinc-200 rounded-xl px-3 py-2.5 text-zinc-900 font-bold focus:outline-none focus:border-brand-orange"
-                />
-              </div>
-
-              {/* Submit Button */}
-              <button
-                type="submit"
-                className="w-full bg-brand-orange hover:bg-brand-orange-hover text-black font-black py-3 rounded-xl shadow-lg transition-all text-xs"
-              >
-                {isLoginTab ? 'Entrar no MyOttomotos' : 'Finalizar Cadastro'}
-              </button>
-            </form>
-          </div>
         </div>
       ) : (
         /* 2. LOGGED-IN CUSTOMER AREA */
@@ -1186,30 +1627,23 @@ export default function CustomerPortal({
               </div>
               <div className="space-y-0.5">
                 <div className="flex flex-wrap items-center gap-2">
-                  <h3 className="font-extrabold text-base text-zinc-950 leading-tight">
-                    {clientUser.companyName || clientUser.name}
+                  <h3 className="font-extrabold text-base md:text-lg text-zinc-950 leading-tight">
+                    Olá {clientUser.companyName || clientUser.name}, Bem-Vindo!
                   </h3>
                   <span className="text-[9px] bg-brand-orange/10 text-brand-orange font-bold px-1.5 py-0.5 rounded-full border border-brand-orange/15 uppercase">
                     {clientUser.type === 'PJ' ? 'Pessoa Jurídica (B2B)' : 'Pessoa Física (B2C)'}
                   </span>
                 </div>
-                <p className="text-xs text-zinc-500">
-                  {clientUser.companyName ? `Gestor: ${clientUser.name} • ` : ''} {clientUser.email} • ID: {clientUser.cpfCnpj}
+                <p className="text-xs text-zinc-500 font-mono pt-0.5">
+                  ID: {clientUser.cpfCnpj} • {clientUser.email}
                 </p>
               </div>
             </div>
 
             <div className="flex items-center gap-3">
-              <button 
-                onClick={() => setClientActiveTab('fidelidade')}
-                className="bg-brand-orange-light text-brand-orange border border-brand-orange/20 hover:bg-brand-orange/10 px-4 py-2 rounded-2xl text-xs font-black flex items-center gap-1.5 transition-all"
-              >
-                <Award className="w-4 h-4 text-brand-orange" />
-                <span>{clientUser.points} Pontos OttoClub</span>
-              </button>
               <button
                 onClick={handleLogout}
-                className="bg-white hover:bg-zinc-100 text-zinc-500 hover:text-zinc-900 border border-zinc-200 p-2.5 rounded-2xl transition-all shadow-sm"
+                className="bg-white hover:bg-zinc-100 text-zinc-500 hover:text-zinc-900 border border-zinc-200 p-2.5 rounded-2xl transition-all shadow-sm cursor-pointer"
                 title="Sair da Conta"
               >
                 <LogOut className="w-4 h-4" />
@@ -1220,68 +1654,75 @@ export default function CustomerPortal({
           {/* Sub-tab navigation */}
           <div className="flex border-b border-zinc-200 mb-8 overflow-x-auto gap-2 pb-1 scrollbar-none text-left">
             <button
+              onClick={() => setClientActiveTab('garagem')}
+              className={`py-3 px-5 font-black text-xs md:text-sm border-b-2 whitespace-nowrap transition-all flex items-center gap-1.5 cursor-pointer ${
+                clientActiveTab === 'garagem'
+                  ? 'border-brand-orange text-brand-orange'
+                  : 'border-transparent text-zinc-500 hover:text-zinc-900'
+              }`}
+            >
+              <Truck className="w-4 h-4" />
+              Minha Garagem
+            </button>
+            <button
               onClick={() => setClientActiveTab('catalog')}
-              className={`py-3 px-5 font-black text-xs md:text-sm border-b-2 whitespace-nowrap transition-all flex items-center gap-1.5 ${
+              className={`py-3 px-5 font-black text-xs md:text-sm border-b-2 whitespace-nowrap transition-all flex items-center gap-1.5 cursor-pointer ${
                 clientActiveTab === 'catalog'
                   ? 'border-brand-orange text-brand-orange'
                   : 'border-transparent text-zinc-500 hover:text-zinc-900'
               }`}
             >
               <ShoppingBag className="w-4 h-4" />
-              Catálogo & Orçamentos
+              Orçamento e Agendamento
+            </button>
+            <button
+              onClick={() => setClientActiveTab('os')}
+              className={`py-3 px-5 font-black text-xs md:text-sm border-b-2 whitespace-nowrap transition-all flex items-center gap-1.5 cursor-pointer ${
+                clientActiveTab === 'os'
+                  ? 'border-brand-orange text-brand-orange'
+                  : 'border-transparent text-zinc-500 hover:text-zinc-900'
+              }`}
+            >
+              <Wrench className="w-4 h-4" />
+              Ordem de Serviços
             </button>
             <button
               onClick={() => setClientActiveTab('tracking')}
-              className={`py-3 px-5 font-black text-xs md:text-sm border-b-2 whitespace-nowrap transition-all flex items-center gap-1.5 ${
+              className={`py-3 px-5 font-black text-xs md:text-sm border-b-2 whitespace-nowrap transition-all flex items-center gap-1.5 cursor-pointer ${
                 clientActiveTab === 'tracking'
                   ? 'border-brand-orange text-brand-orange'
                   : 'border-transparent text-zinc-500 hover:text-zinc-900'
               }`}
             >
               <MapPin className="w-4 h-4" />
-              Acompanhamento Ativo {activeTracking && <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>}
-            </button>
-            <button
-              onClick={() => setClientActiveTab('fidelidade')}
-              className={`py-3 px-5 font-black text-xs md:text-sm border-b-2 whitespace-nowrap transition-all flex items-center gap-1.5 ${
-                clientActiveTab === 'fidelidade'
-                  ? 'border-brand-orange text-brand-orange'
-                  : 'border-transparent text-zinc-500 hover:text-zinc-900'
-              }`}
-            >
-              <Award className="w-4 h-4" />
-              Fidelidade & Prêmios
-            </button>
-            <button
-              onClick={() => setClientActiveTab('dashboard')}
-              className={`py-3 px-5 font-black text-xs md:text-sm border-b-2 whitespace-nowrap transition-all flex items-center gap-1.5 ${
-                clientActiveTab === 'dashboard'
-                  ? 'border-brand-orange text-brand-orange'
-                  : 'border-transparent text-zinc-500 hover:text-zinc-900'
-              }`}
-            >
-              <Sliders className="w-4 h-4" />
-              Painel Geral (Garagem)
+              Acompanhamento {activeTracking && <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>}
             </button>
           </div>
 
-          {/* 2.1 DASHBOARD TAB */}
-          {clientActiveTab === 'dashboard' && (
+          {/* 2.1 MINHA GARAGEM TAB */}
+          {clientActiveTab === 'garagem' && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8 text-left">
+              
+              {/* Grid Layout: Garagem + Pontos + Benefícios */}
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 
-                {/* Garagem Card */}
-                <div className="lg:col-span-4 bg-white border border-zinc-200 rounded-3xl p-6 shadow-sm space-y-4">
+                {/* 1. SELEÇÃO DE MOTO (SUA GARAGEM) */}
+                <div className="lg:col-span-5 bg-white border border-zinc-200 rounded-3xl p-6 shadow-sm space-y-5">
                   <div className="flex justify-between items-center pb-3 border-b border-zinc-150">
-                    <h4 className="font-extrabold text-base text-zinc-950 flex items-center gap-1.5">
-                      <Truck className="w-5 h-5 text-brand-orange" />
-                      Sua Garagem
-                    </h4>
+                    <div>
+                      <h4 className="font-extrabold text-base text-zinc-950 flex items-center gap-1.5">
+                        <Truck className="w-5 h-5 text-brand-orange" />
+                        Sua Garagem
+                      </h4>
+                      <p className="text-[11px] text-zinc-500">
+                        Selecione a moto ativa para orçamentos e atendimentos.
+                      </p>
+                    </div>
                     <button
                       onClick={() => setShowAddBikeForm(!showAddBikeForm)}
-                      className="bg-brand-orange hover:bg-brand-orange-hover text-black text-[10px] font-black px-2.5 py-1.5 rounded-lg flex items-center gap-1 shadow transition-all"
+                      className="bg-brand-orange hover:bg-brand-orange-hover text-black text-[10px] font-black px-3 py-1.5 rounded-xl flex items-center gap-1 shadow-sm transition-all cursor-pointer"
                     >
-                      <Plus className="w-3 h-3" /> Adicionar Moto
+                      <Plus className="w-3.5 h-3.5" /> Adicionar Moto
                     </button>
                   </div>
 
@@ -1293,7 +1734,7 @@ export default function CustomerPortal({
                         <select
                           value={newBike.model}
                           onChange={(e) => setNewBike(prev => ({ ...prev, model: e.target.value }))}
-                          className="w-full bg-white border border-zinc-200 rounded-lg p-2 font-bold"
+                          className="w-full bg-white border border-zinc-200 rounded-lg p-2 font-bold focus:outline-none focus:border-brand-orange"
                         >
                           <option value="Honda CG 160 Titan">Honda CG 160 Titan</option>
                           <option value="Honda Biz 125">Honda Biz 125</option>
@@ -1311,7 +1752,7 @@ export default function CustomerPortal({
                             placeholder="Ex: ABC1D23"
                             value={newBike.plate}
                             onChange={(e) => setNewBike(prev => ({ ...prev, plate: e.target.value }))}
-                            className="w-full bg-white border border-zinc-200 rounded-lg p-2 font-bold uppercase"
+                            className="w-full bg-white border border-zinc-200 rounded-lg p-2 font-bold uppercase focus:outline-none focus:border-brand-orange"
                           />
                         </div>
                         <div className="space-y-1">
@@ -1321,21 +1762,21 @@ export default function CustomerPortal({
                             placeholder="Ex: 2024"
                             value={newBike.year}
                             onChange={(e) => setNewBike(prev => ({ ...prev, year: e.target.value }))}
-                            className="w-full bg-white border border-zinc-200 rounded-lg p-2 font-bold"
+                            className="w-full bg-white border border-zinc-200 rounded-lg p-2 font-bold focus:outline-none focus:border-brand-orange"
                           />
                         </div>
                       </div>
                       <div className="flex gap-2">
                         <button
                           type="submit"
-                          className="flex-1 bg-brand-orange hover:bg-brand-orange-hover text-black font-bold py-2 rounded-xl text-[10px]"
+                          className="flex-1 bg-brand-orange hover:bg-brand-orange-hover text-black font-bold py-2 rounded-xl text-[10px] cursor-pointer"
                         >
                           Confirmar Inclusão
                         </button>
                         <button
                           type="button"
                           onClick={() => setShowAddBikeForm(false)}
-                          className="flex-1 bg-zinc-200 hover:bg-zinc-300 text-zinc-700 font-bold py-2 rounded-xl text-[10px]"
+                          className="flex-1 bg-zinc-200 hover:bg-zinc-300 text-zinc-700 font-bold py-2 rounded-xl text-[10px] cursor-pointer"
                         >
                           Cancelar
                         </button>
@@ -1344,7 +1785,7 @@ export default function CustomerPortal({
                   )}
 
                   {/* Motorcycles list */}
-                  <div className="space-y-2.5">
+                  <div className="space-y-3">
                     {garage.map(bike => {
                       const isSelected = selectedMotoId === bike.id;
                       return (
@@ -1353,8 +1794,9 @@ export default function CustomerPortal({
                           onClick={() => {
                             setSelectedMotoId(bike.id);
                             setCheckoutMoto(bike.model);
+                            triggerToast(`Moto ativa alterada para ${bike.model}`);
                           }}
-                          className={`p-3.5 rounded-2xl border cursor-pointer text-left transition-all ${
+                          className={`p-4 rounded-2xl border cursor-pointer text-left transition-all ${
                             isSelected
                               ? 'border-brand-orange bg-brand-orange-light shadow-sm'
                               : 'border-zinc-200 hover:bg-zinc-50 bg-white'
@@ -1368,501 +1810,771 @@ export default function CustomerPortal({
                               {bike.plate}
                             </span>
                           </div>
-                          <div className="flex justify-between text-[10px] text-zinc-500 pt-1">
+                          <div className="flex justify-between text-[11px] text-zinc-500 pt-1.5">
                             <span>Ano: {bike.year} • Cor: {bike.color}</span>
-                            {isSelected && <span className="text-brand-orange font-bold">● Selecionada</span>}
+                            {isSelected ? (
+                              <span className="text-brand-orange font-black flex items-center gap-1">
+                                <Check className="w-3.5 h-3.5" /> Moto Ativa
+                              </span>
+                            ) : (
+                              <span className="text-zinc-400 hover:text-zinc-600">Clique para selecionar</span>
+                            )}
                           </div>
                         </div>
                       );
                     })}
                   </div>
-                </div>
 
-                {/* Selected Bike Active Orders & history */}
-                <div className="lg:col-span-8 space-y-6">
-                  
-                  {/* BLOCK A: ORÇAMENTOS ATIVOS */}
-                  <div className="bg-white border border-zinc-200 rounded-3xl p-6 shadow-sm space-y-4">
-                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-3 border-b border-zinc-150 gap-2">
-                      <div className="space-y-0.5">
-                        <h4 className="font-black text-sm text-zinc-950 uppercase tracking-tight flex items-center gap-1.5">
-                          <Sliders className="w-4 h-4 text-brand-orange" />
-                          a) Orçamentos Ativos (Bids Recebidos)
-                        </h4>
-                        <p className="text-[11px] text-zinc-500">
-                          Propostas enviadas por mecânicos móveis na sua região de Campinas.
-                        </p>
-                      </div>
-                      
-                      {/* Admin Expiry Adjustment Option inside Dashboard */}
-                      <div className="bg-zinc-50 border border-zinc-200 rounded-xl px-3 py-1.5 flex items-center gap-2 text-[10px] text-zinc-600 font-mono">
-                        <Settings className="w-3.5 h-3.5 text-zinc-500" />
-                        <span>Validade (Painel Admin):</span>
-                        <select
-                          value={adminQuoteExpiryMinutes}
-                          onChange={(e) => {
-                            setAdminQuoteExpiryMinutes(parseInt(e.target.value));
-                            triggerToast(`Tempo de validade das propostas alterado para ${e.target.value} minutos.`);
-                          }}
-                          className="bg-white border border-zinc-200 rounded px-1 py-0.5 text-[10px] font-bold text-zinc-850 focus:outline-none"
-                        >
-                          <option value="1">1 min</option>
-                          <option value="3">3 min</option>
-                          <option value="5">5 min</option>
-                          <option value="10">10 min</option>
-                          <option value="15">15 min</option>
-                        </select>
-                      </div>
-                    </div>
+                  {/* PRÓXIMAS MANUTENÇÕES PREVENTIVAS SUGERIDAS */}
+                  {(() => {
+                    const selectedBike = garage.find(b => b.id === selectedMotoId) || garage[0];
+                    if (!selectedBike) return null;
 
-                    {estimates.length > 0 ? (
-                      <div className="space-y-3">
-                        {estimates.map((est) => {
-                          const minutes = Math.floor(est.timeLeft / 60);
-                          const seconds = est.timeLeft % 60;
-                          const isExpired = est.status === 'expired';
-
-                          return (
-                            <div
-                              key={est.id}
-                              className={`p-4 rounded-2xl border transition-all flex flex-col md:flex-row justify-between items-start md:items-center gap-4 ${
-                                isExpired
-                                  ? 'bg-zinc-50 border-zinc-200 opacity-70'
-                                  : 'bg-white border-zinc-200 hover:border-zinc-300 shadow-xs'
-                              }`}
-                            >
-                              <div className="space-y-1 text-left flex-1">
-                                <div className="flex items-center gap-2">
-                                  <span className="text-[10px] bg-zinc-900 text-white font-mono font-bold px-1.5 py-0.5 rounded">
-                                    {est.id}
-                                  </span>
-                                  <h5 className={`font-extrabold text-sm ${isExpired ? 'text-zinc-500 line-through' : 'text-zinc-950'}`}>
-                                    {est.title}
-                                  </h5>
-                                </div>
-                                <p className="text-xs text-zinc-500">
-                                  Valor da Mão de Obra e Peças inclusas: <strong className="text-brand-orange">R$ {est.price},00</strong>
-                                </p>
-                                
-                                {/* Expiry countdown visual */}
-                                {!isExpired ? (
-                                  <div className="flex items-center gap-1.5 text-[11px] text-amber-600 font-bold mt-1">
-                                    <Clock className="w-3.5 h-3.5 text-amber-500 animate-spin" style={{ animationDuration: '6s' }} />
-                                    <span>Expira em: <strong className="font-mono text-xs">{minutes}:{seconds < 10 ? `0${seconds}` : seconds}</strong></span>
-                                  </div>
-                                ) : (
-                                  <div className="flex items-center gap-1.5 text-[11px] text-red-500 font-bold mt-1">
-                                    <Info className="w-3.5 h-3.5 text-red-500" />
-                                    <span>Proposta expirada no Painel Admin</span>
-                                  </div>
-                                )}
-                              </div>
-
-                              <div className="flex gap-2 w-full md:w-auto">
-                                {!isExpired ? (
-                                  <>
-                                    <button
-                                      onClick={() => handleApproveEstimate(est.id)}
-                                      className="flex-1 md:flex-initial bg-brand-orange hover:bg-brand-orange-hover text-black font-black text-xs px-4 py-2 rounded-xl transition-all shadow-sm flex items-center justify-center gap-1 cursor-pointer"
-                                    >
-                                      <Check className="w-3.5 h-3.5" /> Aprovar
-                                    </button>
-                                    <button
-                                      onClick={() => handleRejectEstimate(est.id)}
-                                      className="flex-1 md:flex-initial bg-zinc-100 hover:bg-zinc-200 text-zinc-700 border border-zinc-200 font-bold text-xs px-4 py-2 rounded-xl transition-all cursor-pointer"
-                                    >
-                                      Rejeitar
-                                    </button>
-                                  </>
-                                ) : (
-                                  <span className="w-full md:w-auto text-center bg-red-100 text-red-650 border border-red-200 text-[10px] font-black px-4 py-2 rounded-xl uppercase tracking-wider">
-                                    ❌ Expirado
-                                  </span>
-                                )}
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    ) : (
-                      <div className="py-6 text-center space-y-2 bg-zinc-50 rounded-2xl border border-dashed border-zinc-200">
-                        <p className="text-xs text-zinc-500 font-medium">Nenhum orçamento ativo ou pendente para esta moto.</p>
-                        <button
-                          onClick={() => setClientActiveTab('catalog')}
-                          className="text-xs text-brand-orange hover:underline font-bold"
-                        >
-                          Ir ao catálogo solicitar orçamento agora →
-                        </button>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* BLOCK B: OS ATIVAS E STATUS */}
-                  <div className="bg-white border border-zinc-200 rounded-3xl p-6 shadow-sm space-y-5">
-                    <div className="pb-3 border-b border-zinc-150">
-                      <h4 className="font-black text-sm text-zinc-950 uppercase tracking-tight flex items-center gap-1.5">
-                        <Sliders className="w-4 h-4 text-brand-orange" />
-                        b) OS Ativas e Respectivos Status
-                      </h4>
-                      <p className="text-[11px] text-zinc-500">
-                        Acompanhe o andamento das ordens de serviço ativas na van-oficina móvel.
-                      </p>
-                    </div>
-
-                    {activeOSList.length > 0 ? (
-                      <div className="space-y-6">
-                        {activeOSList.map((os) => {
-                          // Define milestone indexes
-                          const statuses = ['Não Iniciada', 'Em andamento', 'Aguardando aprovação', 'Concluido', 'Entregue'];
-                          const currentIdx = statuses.indexOf(os.status);
-
-                          return (
-                            <div key={os.id} className="p-5 bg-zinc-50 border border-zinc-200 rounded-2xl space-y-5 text-left">
-                              
-                              {/* Header info */}
-                              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                                <div className="space-y-1">
-                                  <div className="flex items-center gap-1.5">
-                                    <span className="text-[10px] bg-brand-orange text-black font-black px-2 py-0.5 rounded font-mono">
-                                      {os.id}
-                                    </span>
-                                    <h5 className="font-extrabold text-sm text-zinc-900">{os.title}</h5>
-                                  </div>
-                                  <p className="text-xs text-zinc-500">
-                                    Mecânico: <strong className="text-zinc-850">{os.mechanic}</strong> • Valor total: <strong className="text-brand-orange">R$ {os.price},00</strong>
-                                  </p>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  <span className="relative flex h-2 w-2">
-                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-orange opacity-75"></span>
-                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-orange"></span>
-                                  </span>
-                                  <span className="text-xs font-black text-brand-orange uppercase tracking-wider">{os.status}</span>
-                                </div>
-                              </div>
-
-                              {/* STAGES/MILESTONES TRACKER */}
-                              <div className="pt-2">
-                                <div className="flex justify-between items-center relative">
-                                  {/* Progress bar background line */}
-                                  <div className="absolute left-0 right-0 h-1 bg-zinc-200 top-1/2 -translate-y-1/2 z-0"></div>
-                                  {/* Active progress line */}
-                                  <div 
-                                    className="absolute left-0 h-1 bg-brand-orange top-1/2 -translate-y-1/2 z-0 transition-all duration-500"
-                                    style={{ width: `${(currentIdx / (statuses.length - 1)) * 100}%` }}
-                                  ></div>
-
-                                  {statuses.map((st, idx) => {
-                                    const isCompleted = idx <= currentIdx;
-                                    const isActive = idx === currentIdx;
-
-                                    return (
-                                      <div key={st} className="flex flex-col items-center z-10 relative">
-                                        <div 
-                                          className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black border-2 transition-all ${
-                                            isActive 
-                                              ? 'bg-brand-orange text-black border-brand-orange shadow-md scale-110'
-                                              : isCompleted
-                                              ? 'bg-black text-white border-black'
-                                              : 'bg-white text-zinc-400 border-zinc-200'
-                                          }`}
-                                        >
-                                          {isCompleted ? '✓' : idx + 1}
-                                        </div>
-                                        <span className={`text-[9px] font-bold mt-1.5 max-w-[70px] text-center leading-tight hidden sm:block ${
-                                          isActive ? 'text-brand-orange font-black' : isCompleted ? 'text-zinc-800' : 'text-zinc-400'
-                                        }`}>
-                                          {st}
-                                        </span>
-                                      </div>
-                                    );
-                                  })}
-                                </div>
-                                {/* Mobile-only status name */}
-                                <div className="text-center text-[10px] font-bold text-brand-orange uppercase mt-2 sm:hidden">
-                                  Status Atual: {os.status}
-                                </div>
-                              </div>
-
-                              {/* CRITICAL ADDITIONAL ITEM DIALOG FOR 'Aguardando aprovação' */}
-                              {os.status === 'Aguardando aprovação' && os.additionalApproved === null && (
-                                <div className="bg-amber-50 border-2 border-amber-400/55 p-4 rounded-xl space-y-3 animate-fadeIn">
-                                  <div className="flex items-start gap-2.5">
-                                    <Info className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
-                                    <div className="space-y-1">
-                                      <span className="text-[9px] bg-amber-600 text-white font-black px-1.5 py-0.5 rounded-full uppercase tracking-wider inline-block">
-                                        ⚠️ DIAGNÓSTICO CRÍTICO ADICIONAL
-                                      </span>
-                                      <h6 className="font-extrabold text-xs text-zinc-900">
-                                        O mecânico detectou: <strong className="text-amber-700">{os.additionalTitle}</strong>
-                                      </h6>
-                                      <p className="text-[11px] text-zinc-600 leading-relaxed">
-                                        Para garantir a segurança mecânica da sua moto, recomendamos a substituição adicional desta peça. A van já tem o item em estoque e a substituição é imediata.
-                                      </p>
-                                      <p className="text-xs pt-1">
-                                        Custo Adicional: <strong className="text-amber-700">R$ {os.additionalPrice},00</strong> (Mão de Obra inclusa)
-                                      </p>
-                                    </div>
-                                  </div>
-
-                                  <div className="flex gap-2 justify-end pt-1">
-                                    <button
-                                      onClick={() => handleApproveAdditional(os.id)}
-                                      className="bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] px-3.5 py-2 rounded-lg transition-all shadow-sm"
-                                    >
-                                      ✓ Autorizar Serviço Adicional
-                                    </button>
-                                    <button
-                                      onClick={() => handleRejectAdditional(os.id)}
-                                      className="bg-zinc-200 hover:bg-zinc-350 text-zinc-700 font-bold text-[10px] px-3.5 py-2 rounded-lg transition-all"
-                                    >
-                                      Rejeitar Item Extra
-                                    </button>
-                                  </div>
-                                </div>
-                              )}
-
-                              {/* Actions / Interactive Simulator for testing */}
-                              <div className="flex flex-wrap gap-2.5 pt-3 border-t border-zinc-200 justify-between items-center">
-                                <div className="flex gap-2">
-                                  <button
-                                    onClick={() => {
-                                      setClientActiveTab('tracking');
-                                      setActiveTracking(true);
-                                    }}
-                                    className="bg-brand-orange hover:bg-brand-orange-hover text-black font-black py-2 px-4 rounded-xl text-xs shadow-md transition-all flex items-center gap-1.5"
-                                  >
-                                    <MapPin className="w-4 h-4" /> Acompanhar Van & Câmera
-                                  </button>
-                                </div>
-
-                                {/* Simulator selector: Allow user to change status for testing/interactivity */}
-                                <div className="flex items-center gap-1.5 bg-zinc-100 border border-zinc-250/60 p-1 rounded-xl text-[10px] text-zinc-500 font-mono">
-                                  <span>Simular Status:</span>
-                                  <select
-                                    value={os.status}
-                                    onChange={(e) => {
-                                      const nextStatus = e.target.value as any;
-                                      setActiveOSList(prev => 
-                                        prev.map(item => item.id === os.id ? { ...item, status: nextStatus } : item)
-                                      );
-                                      if (nextStatus === 'Aguardando aprovação') {
-                                        // Reset approval
-                                        setActiveOSList(prev => 
-                                          prev.map(item => item.id === os.id ? { ...item, status: nextStatus, additionalApproved: null } : item)
-                                        );
-                                      }
-                                      triggerToast(`Status da O.S. alterado para ${nextStatus}!`);
-                                    }}
-                                    className="bg-white border border-zinc-200 rounded px-1.5 py-0.5 text-[9px] font-bold text-zinc-800"
-                                  >
-                                    {statuses.map(st => <option key={st} value={st}>{st}</option>)}
-                                  </select>
-
-                                  {os.status === 'Entregue' && (
-                                    <button
-                                      onClick={() => {
-                                        // Archive/move to history
-                                        const archivedOS = {
-                                          id: os.id,
-                                          title: os.title,
-                                          price: os.price,
-                                          date: 'Hoje',
-                                          mechanic: os.mechanic,
-                                          serviceType: 'Pronto Atendimento' as const,
-                                          warranty: '90 dias (Garantia Total)',
-                                          executedServices: [os.title, os.additionalTitle].filter(Boolean) as string[]
-                                        };
-                                        setHistoricalOSList(prev => [archivedOS, ...prev]);
-                                        setActiveOSList(prev => prev.filter(item => item.id !== os.id));
-                                        triggerToast('O.S. finalizada e movida para o Histórico de Revisões!');
-                                      }}
-                                      className="bg-emerald-600 text-white font-black px-2 py-1 rounded hover:bg-emerald-700 transition-all font-sans text-[9px]"
-                                    >
-                                      Finalizar & Arquivar
-                                    </button>
-                                  )}
-                                </div>
-                              </div>
-
-                            </div>
-                          );
-                        })}
-                      </div>
-                    ) : (
-                      <div className="py-6 text-center space-y-2 bg-zinc-50 rounded-2xl border border-dashed border-zinc-200 text-zinc-500 text-xs font-medium">
-                        <p>Nenhuma ordem de serviço ativa no momento para esta moto.</p>
-                      </div>
-                    )}
-
-                    {/* Fleet status table for PJ only, integrated beautifully inside Block B */}
-                    {clientUser.type === 'PJ' && (
-                      <div className="bg-zinc-50 border border-zinc-200 rounded-2xl p-4 space-y-3">
-                        <div className="flex justify-between items-center pb-2 border-b border-zinc-200">
-                          <h5 className="font-extrabold text-xs text-zinc-900 flex items-center gap-1">
-                            <Building2 className="w-3.5 h-3.5 text-brand-orange" />
-                            Painel de Controle da Frota (B2B)
+                    return (
+                      <div className="pt-5 border-t border-zinc-200 space-y-3">
+                        <div className="flex items-center justify-between">
+                          <h5 className="font-black text-xs text-zinc-950 uppercase tracking-wider flex items-center gap-1.5">
+                            <Wrench className="w-4 h-4 text-brand-orange" />
+                            Próximas Manutenções Preventivas
                           </h5>
-                          <span className="text-[10px] bg-emerald-100 text-emerald-700 font-extrabold px-2 py-0.5 rounded-full">
-                            1 Ativa / 2 Disponíveis
+                          <span className="text-[9px] bg-brand-orange/15 text-brand-orange font-extrabold px-2 py-0.5 rounded-full font-mono uppercase">
+                            Sugeridas ({selectedBike.model.split(' ')[0]} {selectedBike.model.split(' ')[1] || ''})
                           </span>
                         </div>
-                        <div className="overflow-x-auto text-[11px]">
-                          <table className="w-full text-left border-collapse">
-                            <thead>
-                              <tr className="border-b border-zinc-200 text-zinc-400 font-bold uppercase text-[9px] font-mono">
-                                <th className="py-1">Moto</th>
-                                <th>Placa</th>
-                                <th>Estado</th>
-                                <th>Local</th>
-                                <th>Ações</th>
-                              </tr>
-                            </thead>
-                            <tbody className="divide-y divide-zinc-150/40 font-medium text-zinc-700">
-                              <tr>
-                                <td className="py-2 font-bold text-zinc-900">Honda CG Cargo (#01)</td>
-                                <td className="font-mono text-zinc-500">FRO1A11</td>
-                                <td><span className="px-1.5 py-0.5 rounded-full text-[8px] bg-orange-100 text-orange-600 font-bold">Manutenção Ativa</span></td>
-                                <td>Rua Barão de Jaguara</td>
-                                <td>
-                                  <button
-                                    onClick={() => {
-                                      setSelectedMotoId('moto-antonio-1');
-                                      setClientActiveTab('tracking');
-                                      setActiveTracking(true);
-                                    }}
-                                    className="text-brand-orange hover:underline font-bold text-[10px]"
-                                  >
-                                    Rastrear
-                                  </button>
-                                </td>
-                              </tr>
-                              <tr>
-                                <td className="py-2 font-bold text-zinc-900">Honda CG Cargo (#02)</td>
-                                <td className="font-mono text-zinc-500">FRO1A22</td>
-                                <td><span className="px-1.5 py-0.5 rounded-full text-[8px] bg-emerald-100 text-emerald-600 font-bold">Disponível</span></td>
-                                <td>-</td>
-                                <td>
-                                  <button
-                                    onClick={() => {
-                                      setSelectedMotoId('moto-antonio-2');
-                                      setClientActiveTab('catalog');
-                                    }}
-                                    className="text-zinc-500 hover:underline font-bold text-[10px]"
-                                  >
-                                    Orçar
-                                  </button>
-                                </td>
-                              </tr>
-                              <tr>
-                                <td className="py-2 font-bold text-zinc-900">Yamaha Factor 150 (#03)</td>
-                                <td className="font-mono text-zinc-500">FRO1A33</td>
-                                <td><span className="px-1.5 py-0.5 rounded-full text-[8px] bg-emerald-100 text-emerald-600 font-bold">Disponível</span></td>
-                                <td>-</td>
-                                <td>
-                                  <button
-                                    onClick={() => {
-                                      setSelectedMotoId('moto-antonio-3');
-                                      setClientActiveTab('catalog');
-                                    }}
-                                    className="text-zinc-500 hover:underline font-bold text-[10px]"
-                                  >
-                                    Orçar
-                                  </button>
-                                </td>
-                              </tr>
-                            </tbody>
-                          </table>
+                        <p className="text-[11px] text-zinc-500 leading-snug">
+                          Baseado em informações da moto <strong>{selectedBike.model}</strong>, recomendações do fabricante e histórico de revisões.
+                        </p>
+
+                        <div className="space-y-2.5 pt-1">
+                          {[
+                            {
+                              id: 'prev-1',
+                              title: 'Troca de Óleo de Motor Mobil Super & Filtro',
+                              badge: '🔴 URGENTE',
+                              badgeStyle: 'bg-red-100 text-red-700 border border-red-200 font-extrabold',
+                              reason: `Recomendação de fábrica para ${selectedBike.model}: Troca a cada 3.000 km. Última realização registrada há ~2.850 km.`,
+                              estimated: 'R$ 45,00',
+                              serviceName: 'Troca de Óleo'
+                            },
+                            {
+                              id: 'prev-2',
+                              title: 'Kit Transmissão Relação (Corrente, Coroa e Pinhão)',
+                              badge: '🟡 EM BREVE',
+                              badgeStyle: 'bg-amber-100 text-amber-700 border border-amber-200 font-extrabold',
+                              reason: `Troca preventiva a cada 10.000 km recomendada para ${selectedBike.model} para evitar travamentos.`,
+                              estimated: 'R$ 160,00',
+                              serviceName: 'Kit Relação'
+                            },
+                            {
+                              id: 'prev-3',
+                              title: 'Pastilhas de Freio & Fluido DOT-4',
+                              badge: '🔵 PROGRAMADA',
+                              badgeStyle: 'bg-blue-100 text-blue-700 border border-blue-200 font-extrabold',
+                              reason: `Inspeção do sistema de freios a cada 6 meses ou 5.000 km conforme manual da ${selectedBike.model}.`,
+                              estimated: 'R$ 55,00',
+                              serviceName: 'Pastilha de Freio'
+                            },
+                            {
+                              id: 'prev-4',
+                              title: 'Vela de Ignição NGK & Filtro de Ar Tecfil',
+                              badge: '🟢 SUGERIDA',
+                              badgeStyle: 'bg-emerald-100 text-emerald-700 border border-emerald-200 font-extrabold',
+                              reason: `Otimiza a queima de combustível e o desempenho de aceleração da moto.`,
+                              estimated: 'R$ 65,00',
+                              serviceName: 'Vela'
+                            }
+                          ].map((item) => (
+                            <div key={item.id} className="p-3 rounded-2xl bg-zinc-50 border border-zinc-200 hover:border-brand-orange/40 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-left">
+                              <div className="space-y-0.5 flex-1">
+                                <div className="flex flex-wrap items-center gap-1.5">
+                                  <span className="font-extrabold text-xs text-zinc-900">{item.title}</span>
+                                  <span className={`text-[9px] px-1.5 py-0.2 rounded-full uppercase ${item.badgeStyle}`}>
+                                    {item.badge}
+                                  </span>
+                                </div>
+                                <p className="text-[11px] text-zinc-600 leading-snug">{item.reason}</p>
+                                <span className="text-[10px] text-zinc-400 font-mono block">Estimativa: <strong className="text-zinc-800">{item.estimated}</strong></span>
+                              </div>
+
+                              <button
+                                onClick={() => {
+                                  const matchedService = SERVICES_CATALOG.find(s => s.name.toLowerCase().includes(item.serviceName.toLowerCase())) || SERVICES_CATALOG[0];
+                                  addToCart(matchedService);
+                                  setIsCartOpen(true);
+                                  triggerToast(`Orçamento para "${item.title}" adicionado à sacola!`);
+                                }}
+                                className="bg-brand-orange hover:bg-brand-orange-hover text-black font-extrabold text-[11px] px-3 py-2 rounded-xl shadow-xs transition-all flex items-center justify-center gap-1 shrink-0 cursor-pointer"
+                              >
+                                <ShoppingBag className="w-3.5 h-3.5" /> Pedir Orçamento
+                              </button>
+                            </div>
+                          ))}
                         </div>
                       </div>
-                    )}
+                    );
+                  })()}
+                </div>
+
+                {/* 2. PONTOS & BENEFÍCIOS DISPONÍVEIS */}
+                <div className="lg:col-span-7 space-y-6">
+                  
+                  {/* CARD DE PONTOS OTTOCLUB */}
+                  <div className="bg-zinc-950 text-white rounded-3xl p-6 border border-zinc-800 shadow-xl space-y-4">
+                    <div className="flex justify-between items-start">
+                      <div className="space-y-1">
+                        <span className="text-[10px] bg-brand-orange text-black font-black px-2 py-0.5 rounded uppercase tracking-wider">
+                          Programa de Fidelidade OttoClub
+                        </span>
+                        <h4 className="font-extrabold text-lg">Seus Pontos Acumulados</h4>
+                        <p className="text-xs text-zinc-400">Cada R$ 1,00 gasto em manutenções e peças soma 1 ponto.</p>
+                      </div>
+                      <Award className="w-9 h-9 text-brand-orange animate-bounce" />
+                    </div>
+
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-4xl font-black text-white">{clientUser.points}</span>
+                      <span className="text-brand-orange font-bold text-xs uppercase font-mono">Pontos Válidos</span>
+                    </div>
+
+                    {/* Progress to next reward */}
+                    <div className="space-y-1.5 pt-2 border-t border-zinc-900">
+                      <div className="flex justify-between text-xs text-zinc-400">
+                        <span>Meta Moto Reserva Mottu Grátis (1.000 pts)</span>
+                        <span className="font-mono text-brand-orange font-bold">{Math.min(clientUser.points, 1000)} / 1000</span>
+                      </div>
+                      <div className="w-full bg-zinc-900 h-2.5 rounded-full overflow-hidden border border-zinc-800">
+                        <div 
+                          className="bg-gradient-to-r from-brand-orange to-amber-400 h-full rounded-full transition-all duration-500"
+                          style={{ width: `${Math.min((clientUser.points / 1000) * 100, 100)}%` }}
+                        ></div>
+                      </div>
+                    </div>
                   </div>
 
-                  {/* BLOCK C: HISTÓRICO DE OS */}
+                  {/* BENEFÍCIOS DISPONÍVEIS */}
                   <div className="bg-white border border-zinc-200 rounded-3xl p-6 shadow-sm space-y-4">
                     <div className="pb-3 border-b border-zinc-150">
                       <h4 className="font-black text-sm text-zinc-950 uppercase tracking-tight flex items-center gap-1.5">
-                        <History className="w-4 h-4 text-brand-orange" />
-                        c) Histórico de OS & Sumário de Serviços
+                        <Sparkles className="w-4 h-4 text-brand-orange" />
+                        Benefícios Disponíveis
                       </h4>
                       <p className="text-[11px] text-zinc-500">
-                        Histórico completo de revisões executadas com tipo de atendimento e certificado de garantia.
+                        Vantagens e benefícios prontos para resgate com a sua conta.
                       </p>
                     </div>
 
-                    {historicalOSList.length > 0 ? (
-                      <div className="space-y-3">
-                        {historicalOSList.map((hist) => (
-                          <div
-                            key={hist.id}
-                            className="p-4 border border-zinc-150 bg-zinc-50/50 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 text-left"
-                          >
-                            <div className="space-y-2 flex-1">
-                              <div className="space-y-0.5">
-                                <div className="flex items-center gap-2">
-                                  <span className="text-[9px] font-mono font-bold bg-zinc-200 text-zinc-700 px-1.5 py-0.5 rounded">
-                                    {hist.id}
-                                  </span>
-                                  <h5 className="font-extrabold text-sm text-zinc-900 leading-snug">{hist.title}</h5>
-                                </div>
-                                <p className="text-[11px] text-zinc-500">
-                                  Mecânico Responsável: <strong className="text-zinc-700">{hist.mechanic}</strong> • Realizado em: <strong className="text-zinc-700">{hist.date}</strong>
-                                </p>
-                              </div>
-
-                              {/* Sumário de Serviços Executados */}
-                              <div className="space-y-1">
-                                <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block">Serviços Executados:</span>
-                                <div className="flex flex-wrap gap-1.5">
-                                  {hist.executedServices && hist.executedServices.length > 0 ? (
-                                    hist.executedServices.map((srv, idx) => (
-                                      <span key={`${srv}-${idx}`} className="text-[9px] bg-zinc-100 border border-zinc-200 text-zinc-700 px-2 py-0.5 rounded-full font-bold">
-                                        🛠️ {srv}
-                                      </span>
-                                    ))
-                                  ) : (
-                                    <span className="text-[9px] bg-zinc-100 border border-zinc-200 text-zinc-700 px-2 py-0.5 rounded-full font-bold">
-                                      🛠️ {hist.title}
-                                    </span>
-                                  )}
-                                </div>
-                              </div>
-
-                              {/* Details: Tipo de Serviço, Garantia */}
-                              <div className="grid grid-cols-2 gap-4 pt-1 border-t border-zinc-150/50 text-[11px]">
-                                <div className="space-y-0.5">
-                                  <span className="text-zinc-400 block text-[9px] font-bold uppercase tracking-wider">Tipo de Atendimento</span>
-                                  <span className="font-extrabold text-zinc-800 flex items-center gap-1">
-                                    {hist.serviceType === 'Pronto Atendimento' ? '⚡' : '📅'} {hist.serviceType}
-                                  </span>
-                                </div>
-                                <div className="space-y-0.5">
-                                  <span className="text-zinc-400 block text-[9px] font-bold uppercase tracking-wider">Garantia Técnica</span>
-                                  <span className="font-extrabold text-emerald-600 flex items-center gap-1">
-                                    🛡️ {hist.warranty}
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
-
-                            <div className="text-right flex flex-row md:flex-col justify-between md:justify-center items-center md:items-end w-full md:w-auto pt-3 md:pt-0 border-t md:border-none border-zinc-200 shrink-0 gap-1">
-                              <span className="font-black text-base text-brand-orange">R$ {hist.price},00</span>
-                              <span className="text-[10px] text-emerald-600 font-bold flex items-center gap-1 bg-emerald-50 border border-emerald-100 px-2.5 py-1 rounded-full">
-                                <Check className="w-3 h-3 text-emerald-600" /> Atendido com Sucesso
-                              </span>
-                            </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      
+                      {/* Benefício 1: Moto Reserva Mottu */}
+                      <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200 space-y-2 flex flex-col justify-between">
+                        <div className="space-y-1">
+                          <div className="flex justify-between items-center">
+                            <span className="font-extrabold text-xs text-zinc-950">🏍️ Moto Reserva Mottu</span>
+                            <span className="text-[9px] bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded-full">
+                              {clientUser.points >= 1000 ? 'Liberado' : '1000 pts'}
+                            </span>
                           </div>
-                        ))}
+                          <p className="text-[11px] text-zinc-600 leading-relaxed">
+                            Não pare suas entregas! Acione a moto reserva entregue diretamente na van-oficina.
+                          </p>
+                        </div>
+                        <button
+                          onClick={() => {
+                            if (clientUser.points >= 1000) {
+                              triggerToast('Moto Reserva Mottu solicitada! Nossa equipe levará a moto na van.');
+                            } else {
+                              triggerToast(`Você precisa de mais ${1000 - clientUser.points} pontos para resgatar este benefício.`);
+                            }
+                          }}
+                          className={`w-full text-xs font-black py-2 rounded-xl transition-all cursor-pointer ${
+                            clientUser.points >= 1000
+                              ? 'bg-brand-orange hover:bg-brand-orange-hover text-black shadow-sm'
+                              : 'bg-zinc-200 text-zinc-500 hover:bg-zinc-300'
+                          }`}
+                        >
+                          {clientUser.points >= 1000 ? 'Resgatar Moto Reserva' : 'Acumular mais pontos'}
+                        </button>
                       </div>
-                    ) : (
-                      <p className="text-xs text-zinc-500 py-6 text-center bg-zinc-50 rounded-2xl border border-dashed border-zinc-200">
-                        Nenhum reparo concluído registrado anteriormente nesta moto.
+
+                      {/* Benefício 2: Indique e Ganhe R$ 20 */}
+                      <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200 space-y-2 flex flex-col justify-between">
+                        <div className="space-y-1">
+                          <div className="flex justify-between items-center">
+                            <span className="font-extrabold text-xs text-zinc-950">🎁 Indique e Ganhe R$ 20</span>
+                            <span className="text-[9px] bg-brand-orange/15 text-brand-orange font-bold px-2 py-0.5 rounded-full">
+                              Ativo
+                            </span>
+                          </div>
+                          <p className="text-[11px] text-zinc-600 leading-relaxed">
+                            Compartilhe seu link. Ganhe R$ 20 de crédito a cada novo amigo ou frotista indicado!
+                          </p>
+                        </div>
+                        <button
+                          onClick={() => {
+                            navigator.clipboard.writeText(`https://my.ottomotos.com/join/OTTO_${clientUser.name.split(' ')[0].toUpperCase()}_${clientUser.points}`);
+                            triggerToast('Link de indicação copiado para a área de transferência!');
+                          }}
+                          className="w-full bg-zinc-900 hover:bg-zinc-800 text-white font-bold text-xs py-2 rounded-xl transition-all shadow-xs flex items-center justify-center gap-1 cursor-pointer"
+                        >
+                          <Share2 className="w-3.5 h-3.5" /> Copiar Link de Indicação
+                        </button>
+                      </div>
+
+                      {/* Benefício 3: Lavagem Técnica Cortesia */}
+                      <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200 space-y-2">
+                        <div className="flex justify-between items-center">
+                          <span className="font-extrabold text-xs text-zinc-950">🧽 Lavagem Técnica & Spray Motul</span>
+                          <span className="text-[9px] bg-blue-100 text-blue-700 font-bold px-2 py-0.5 rounded-full">
+                            Cortesia
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-zinc-600 leading-relaxed">
+                          Lubrificação de transmissão e limpeza de aros inclusas em qualquer troca de óleo.
+                        </p>
+                      </div>
+
+                      {/* Benefício 4: Atendimento Expresso */}
+                      <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200 space-y-2">
+                        <div className="flex justify-between items-center">
+                          <span className="font-extrabold text-xs text-zinc-950">⚡ Atendimento Expresso</span>
+                          <span className="text-[9px] bg-purple-100 text-purple-700 font-bold px-2 py-0.5 rounded-full">
+                            Prioridade
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-zinc-600 leading-relaxed">
+                          Prioridade no despacho da Van Oficina móvel no raio de {adminRadius} km.
+                        </p>
+                      </div>
+
+                    </div>
+                  </div>
+
+                </div>
+
+              </div>
+
+              {/* 3. PROMOÇÕES EXCLUSIVAS MYOTTOMOTOS */}
+              <div className="bg-white border border-zinc-200 rounded-3xl p-6 shadow-sm space-y-5">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-3 border-b border-zinc-150 gap-2">
+                  <div>
+                    <h4 className="font-black text-sm text-zinc-950 uppercase tracking-tight flex items-center gap-1.5">
+                      <Flame className="w-4 h-4 text-brand-orange animate-pulse" />
+                      Promoções Exclusivas MyOttomotos
+                    </h4>
+                    <p className="text-[11px] text-zinc-500">
+                      Ofertas especiais válidas para agendamento ou pronto atendimento em Campinas e região.
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setClientActiveTab('catalog')}
+                    className="text-xs font-black text-brand-orange hover:underline flex items-center gap-1 cursor-pointer"
+                  >
+                    Ver todo o catálogo →
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  
+                  {/* Promo 1 */}
+                  <div className="bg-gradient-to-br from-zinc-950 to-zinc-900 text-white rounded-2xl p-5 space-y-4 border border-zinc-800 flex flex-col justify-between relative overflow-hidden group">
+                    <div className="absolute top-2 right-2 bg-brand-orange text-black font-black text-[9px] px-2 py-0.5 rounded-full uppercase">
+                      Economize R$ 15
+                    </div>
+                    <div className="space-y-2">
+                      <span className="text-[10px] text-brand-orange font-mono font-bold">PROMO_OLEO_01</span>
+                      <h5 className="font-extrabold text-sm text-white">Combo Óleo Mobil 20W-50 + Filtro Tecfil</h5>
+                      <p className="text-xs text-zinc-400 leading-relaxed">
+                        Troca rápida em 15 minutos na sua casa com verificação do nível de fluido de freio.
                       </p>
-                    )}
+                    </div>
+                    <div className="pt-2 border-t border-zinc-800 flex justify-between items-center">
+                      <div>
+                        <span className="text-[10px] text-zinc-500 line-through block">De R$ 95,00</span>
+                        <span className="text-lg font-black text-brand-orange">R$ 79,90</span>
+                      </div>
+                      <button
+                        onClick={() => {
+                          const srv = SERVICES_CATALOG.find(s => s.id === 'srv-1');
+                          if (srv) addToCart(srv);
+                          setClientActiveTab('catalog');
+                          triggerToast('Promoção adicionada ao catálogo!');
+                        }}
+                        className="bg-brand-orange hover:bg-brand-orange-hover text-black font-extrabold text-xs px-3.5 py-2 rounded-xl transition-all cursor-pointer"
+                      >
+                        Aproveitar
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Promo 2 */}
+                  <div className="bg-gradient-to-br from-zinc-950 to-zinc-900 text-white rounded-2xl p-5 space-y-4 border border-zinc-800 flex flex-col justify-between relative overflow-hidden group">
+                    <div className="absolute top-2 right-2 bg-blue-500 text-white font-black text-[9px] px-2 py-0.5 rounded-full uppercase">
+                      20% OFF Entregador
+                    </div>
+                    <div className="space-y-2">
+                      <span className="text-[10px] text-blue-400 font-mono font-bold">PROMO_RELAÇÃO_20</span>
+                      <h5 className="font-extrabold text-sm text-white">Kit Transmissão Reforçado KMC + Regulagem</h5>
+                      <p className="text-xs text-zinc-400 leading-relaxed">
+                        Corrente, coroa e pinhão instalados com lubrificação técnica Motul na bancada móvel.
+                      </p>
+                    </div>
+                    <div className="pt-2 border-t border-zinc-800 flex justify-between items-center">
+                      <div>
+                        <span className="text-[10px] text-zinc-500 line-through block">De R$ 220,00</span>
+                        <span className="text-lg font-black text-blue-400">R$ 176,00</span>
+                      </div>
+                      <button
+                        onClick={() => {
+                          const srv = SERVICES_CATALOG.find(s => s.id === 'srv-2');
+                          if (srv) addToCart(srv);
+                          setClientActiveTab('catalog');
+                          triggerToast('Promoção adicionada ao catálogo!');
+                        }}
+                        className="bg-blue-500 hover:bg-blue-600 text-white font-extrabold text-xs px-3.5 py-2 rounded-xl transition-all cursor-pointer"
+                      >
+                        Aproveitar
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Promo 3 */}
+                  <div className="bg-gradient-to-br from-zinc-950 to-zinc-900 text-white rounded-2xl p-5 space-y-4 border border-zinc-800 flex flex-col justify-between relative overflow-hidden group">
+                    <div className="absolute top-2 right-2 bg-purple-500 text-white font-black text-[9px] px-2 py-0.5 rounded-full uppercase">
+                      Faturamento B2B
+                    </div>
+                    <div className="space-y-2">
+                      <span className="text-[10px] text-purple-400 font-mono font-bold">PROMO_FROTA_PJ</span>
+                      <h5 className="font-extrabold text-sm text-white">Plano Frota Corporativa (a partir de 3 motos)</h5>
+                      <p className="text-xs text-zinc-400 leading-relaxed">
+                        Revisão preventiva em lote no pátio da sua empresa com faturamento unificado para 30 dias.
+                      </p>
+                    </div>
+                    <div className="pt-2 border-t border-zinc-800 flex justify-between items-center">
+                      <div>
+                        <span className="text-[10px] text-zinc-500 block">Faturamento</span>
+                        <span className="text-lg font-black text-purple-400">30 Dias (PJ)</span>
+                      </div>
+                      <button
+                        onClick={() => {
+                          setClientActiveTab('catalog');
+                          triggerToast('Consulte os serviços de agendamento no catálogo!');
+                        }}
+                        className="bg-purple-600 hover:bg-purple-700 text-white font-extrabold text-xs px-3.5 py-2 rounded-xl transition-all cursor-pointer"
+                      >
+                        Consultar
+                      </button>
+                    </div>
                   </div>
 
                 </div>
               </div>
+
+            </motion.div>
+          )}
+
+          {/* 2.3 ORDEM DE SERVIÇOS TAB */}
+          {clientActiveTab === 'os' && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8 text-left">
+              
+              {/* BLOCK A: ÚLTIMO ORÇAMENTO ATIVO */}
+              <div className="bg-white border border-zinc-200 rounded-3xl p-6 shadow-sm space-y-4">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-3 border-b border-zinc-150 gap-2">
+                  <div className="space-y-0.5">
+                    <h4 className="font-black text-sm text-zinc-950 uppercase tracking-tight flex items-center gap-1.5">
+                      <FileText className="w-4 h-4 text-brand-orange" />
+                      Último Orçamento Ativo (Propostas Recebidas)
+                    </h4>
+                    <p className="text-[11px] text-zinc-500">
+                      Propostas de orçamento enviadas pelos mecânicos móveis para a sua moto ativa.
+                    </p>
+                  </div>
+                  
+                  {/* Admin Expiry Adjustment Option */}
+                  <div className="bg-zinc-50 border border-zinc-200 rounded-xl px-3 py-1.5 flex items-center gap-2 text-[10px] text-zinc-600 font-mono">
+                    <Settings className="w-3.5 h-3.5 text-zinc-500" />
+                    <span>Validade (Admin):</span>
+                    <select
+                      value={adminQuoteExpiryMinutes}
+                      onChange={(e) => {
+                        setAdminQuoteExpiryMinutes(parseInt(e.target.value));
+                        triggerToast(`Validade das propostas alterada para ${e.target.value} minutos.`);
+                      }}
+                      className="bg-white border border-zinc-200 rounded px-1 py-0.5 text-[10px] font-bold text-zinc-850 focus:outline-none"
+                    >
+                      <option value="1">1 min</option>
+                      <option value="3">3 min</option>
+                      <option value="5">5 min</option>
+                      <option value="10">10 min</option>
+                      <option value="15">15 min</option>
+                    </select>
+                  </div>
+                </div>
+
+                {estimates.length > 0 ? (
+                  <div className="space-y-3">
+                    {estimates.map((est) => {
+                      const minutes = Math.floor(est.timeLeft / 60);
+                      const seconds = est.timeLeft % 60;
+                      const isExpired = est.status === 'expired';
+
+                      return (
+                        <div
+                          key={est.id}
+                          className={`p-4 rounded-2xl border transition-all flex flex-col md:flex-row justify-between items-start md:items-center gap-4 ${
+                            isExpired
+                              ? 'bg-zinc-50 border-zinc-200 opacity-70'
+                              : 'bg-white border-zinc-200 hover:border-zinc-300 shadow-xs'
+                          }`}
+                        >
+                          <div className="space-y-1 text-left flex-1">
+                            <div className="flex items-center gap-2">
+                              <span className="text-[10px] bg-zinc-900 text-white font-mono font-bold px-1.5 py-0.5 rounded">
+                                {est.id}
+                              </span>
+                              <h5 className={`font-extrabold text-sm ${isExpired ? 'text-zinc-500 line-through' : 'text-zinc-950'}`}>
+                                {est.title}
+                              </h5>
+                            </div>
+                            <p className="text-xs text-zinc-500">
+                              Mão de obra e insumos inclusos: <strong className="text-brand-orange font-bold">R$ {est.price},00</strong>
+                            </p>
+                            
+                            {!isExpired ? (
+                              <div className="flex items-center gap-1.5 text-[11px] text-amber-600 font-bold mt-1">
+                                <Clock className="w-3.5 h-3.5 text-amber-500 animate-spin" style={{ animationDuration: '6s' }} />
+                                <span>Expira em: <strong className="font-mono text-xs">{minutes}:{seconds < 10 ? `0${seconds}` : seconds}</strong></span>
+                              </div>
+                            ) : (
+                              <div className="flex items-center gap-1.5 text-[11px] text-red-500 font-bold mt-1">
+                                <Info className="w-3.5 h-3.5 text-red-500" />
+                                <span>Proposta expirada no Painel Admin</span>
+                              </div>
+                            )}
+                          </div>
+
+                          <div className="flex gap-2 w-full md:w-auto">
+                            {!isExpired ? (
+                              <>
+                                <button
+                                  onClick={() => handleApproveEstimate(est.id)}
+                                  className="flex-1 md:flex-initial bg-brand-orange hover:bg-brand-orange-hover text-black font-black text-xs px-4 py-2 rounded-xl transition-all shadow-sm flex items-center justify-center gap-1 cursor-pointer"
+                                >
+                                  <Check className="w-3.5 h-3.5" /> Aprovar
+                                </button>
+                                <button
+                                  onClick={() => handleRejectEstimate(est.id)}
+                                  className="flex-1 md:flex-initial bg-zinc-100 hover:bg-zinc-200 text-zinc-700 border border-zinc-200 font-bold text-xs px-4 py-2 rounded-xl transition-all cursor-pointer"
+                                >
+                                  Rejeitar
+                                </button>
+                              </>
+                            ) : (
+                              <span className="w-full md:w-auto text-center bg-red-100 text-red-650 border border-red-200 text-[10px] font-black px-4 py-2 rounded-xl uppercase tracking-wider">
+                                ❌ Expirado
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="py-6 text-center space-y-2 bg-zinc-50 rounded-2xl border border-dashed border-zinc-200">
+                    <p className="text-xs text-zinc-500 font-medium">Nenhum orçamento ativo ou pendente para esta moto.</p>
+                    <button
+                      onClick={() => setClientActiveTab('catalog')}
+                      className="text-xs text-brand-orange hover:underline font-bold cursor-pointer"
+                    >
+                      Ir ao catálogo solicitar orçamento agora →
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* BLOCK B: ÚLTIMO ORÇAMENTO EM ANDAMENTO OU ENCERRADO */}
+              <div className="bg-white border border-zinc-200 rounded-3xl p-6 shadow-sm space-y-5">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-3 border-b border-zinc-150 gap-2">
+                  <div>
+                    <h4 className="font-black text-sm text-zinc-950 uppercase tracking-tight flex items-center gap-1.5">
+                      <Wrench className="w-4 h-4 text-brand-orange" />
+                      Último Orçamento em Andamento ou Encerrado
+                    </h4>
+                    <p className="text-[11px] text-zinc-500">
+                      Acompanhe o andamento das ordens de serviço ativas e autorizações na van-oficina.
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setClientActiveTab('tracking')}
+                    className="bg-brand-orange hover:bg-brand-orange-hover text-black font-extrabold text-xs px-3.5 py-2 rounded-xl transition-all shadow-xs flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <Eye className="w-3.5 h-3.5" /> Acompanhar Van & Câmera On-line
+                  </button>
+                </div>
+
+                {activeOSList.length > 0 ? (
+                  <div className="space-y-4">
+                    {activeOSList.map((os) => {
+                      const stages = [
+                        { id: 1, label: 'Não Iniciada' },
+                        { id: 2, label: 'Em andamento' },
+                        { id: 3, label: 'Aguardando aprovação' },
+                        { id: 4, label: 'Concluido' },
+                        { id: 5, label: 'Entregue' }
+                      ];
+
+                      const currentStageIndex = stages.findIndex(s => s.label === os.status) + 1 || 2;
+
+                      return (
+                        <div key={os.id} className="p-5 border border-zinc-200 rounded-2xl bg-zinc-50/50 space-y-4 text-left">
+                          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-2 pb-3 border-b border-zinc-200">
+                            <div className="space-y-0.5">
+                              <div className="flex items-center gap-2">
+                                <span className="text-[10px] font-mono font-bold bg-zinc-900 text-white px-2 py-0.5 rounded">
+                                  {os.id}
+                                </span>
+                                <h5 className="font-black text-sm text-zinc-950">{os.title}</h5>
+                              </div>
+                              <p className="text-xs text-zinc-500">
+                                Mecânico Responsável: <strong>{os.mechanic}</strong> • Data: {os.date}
+                              </p>
+                            </div>
+                            <div className="text-right">
+                              <span className="text-xs font-black text-brand-orange block">Total: R$ {os.price},00</span>
+                              <span className="text-[10px] text-zinc-400">Previsão: ~25 min</span>
+                            </div>
+                          </div>
+
+                          {/* 5-Stage Milestone Progress Bar */}
+                          <div className="space-y-2">
+                            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block">Etapa do Atendimento:</span>
+                            <div className="grid grid-cols-5 gap-1.5 text-center">
+                              {stages.map((stg) => {
+                                const isCurrent = currentStageIndex === stg.id;
+                                const isDone = currentStageIndex > stg.id;
+
+                                return (
+                                  <div key={stg.id} className="space-y-1">
+                                    <div className={`h-2 rounded-full transition-all ${
+                                      isDone ? 'bg-emerald-500' : isCurrent ? 'bg-brand-orange animate-pulse' : 'bg-zinc-200'
+                                    }`}></div>
+                                    <span className={`text-[9px] block font-bold leading-tight ${
+                                      isCurrent ? 'text-brand-orange' : isDone ? 'text-emerald-600' : 'text-zinc-400'
+                                    }`}>
+                                      {stg.label}
+                                    </span>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+
+                          {/* Additional Diagnostics Alert if present and pending */}
+                          {os.additionalTitle && os.additionalApproved === null && (
+                            <div className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-2xl space-y-3 animate-fadeIn">
+                              <div className="flex items-start gap-2.5">
+                                <AlertTriangle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+                                <div className="space-y-1 text-xs">
+                                  <h6 className="font-extrabold text-amber-600 uppercase tracking-wider">Aviso de Diagnóstico Adicional do Mecânico</h6>
+                                  <p className="text-zinc-700 leading-relaxed">
+                                    {os.additionalTitle}
+                                  </p>
+                                  <p className="font-mono text-zinc-800 pt-1">
+                                    Valor Adicional do Item: <strong className="text-amber-600 font-extrabold">R$ {os.additionalPrice},00</strong>
+                                  </p>
+                                </div>
+                              </div>
+
+                              <div className="flex gap-2 pt-1">
+                                <button
+                                  onClick={() => handleApproveAdditional(os.id)}
+                                  className="flex-1 bg-amber-500 hover:bg-amber-600 text-black font-extrabold text-xs py-2 rounded-xl transition-all shadow-sm cursor-pointer"
+                                >
+                                  ✓ Autorizar Item Adicional
+                                </button>
+                                <button
+                                  onClick={() => handleRejectAdditional(os.id)}
+                                  className="flex-1 bg-zinc-200 hover:bg-zinc-300 text-zinc-700 font-bold text-xs py-2 rounded-xl transition-all cursor-pointer"
+                                >
+                                  Recusar Item
+                                </button>
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Status Indicator */}
+                          <div className="pt-2 border-t border-zinc-200 flex flex-wrap items-center justify-between gap-2 text-[10px]">
+                            <span className="text-zinc-400 font-mono">Status Atual: <strong className="text-zinc-700">{os.status}</strong></span>
+                            <div className="flex gap-1.5">
+                              <span className="bg-emerald-100 text-emerald-800 font-bold px-2.5 py-1 rounded-lg">
+                                Van em Atendimento
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="py-6 text-center space-y-2 bg-zinc-50 rounded-2xl border border-dashed border-zinc-200">
+                    <p className="text-xs text-zinc-500 font-medium">Nenhuma ordem de serviço em andamento no momento.</p>
+                  </div>
+                )}
+
+                {/* PJ Fleet Table if PJ User */}
+                {clientUser.type === 'PJ' && (
+                  <div className="pt-4 border-t border-zinc-200 space-y-3">
+                    <span className="text-xs font-black text-zinc-950 uppercase tracking-tight block">
+                      Painel de Frota B2B ({clientUser.companyName})
+                    </span>
+                    <div className="overflow-x-auto border border-zinc-200 rounded-2xl bg-white">
+                      <table className="w-full text-left text-xs">
+                        <thead className="bg-zinc-100 text-zinc-600 font-bold text-[10px] uppercase">
+                          <tr>
+                            <th className="py-2.5 px-3">Veículo</th>
+                            <th className="py-2.5 px-3">Placa</th>
+                            <th className="py-2.5 px-3">Status</th>
+                            <th className="py-2.5 px-3">Atendimento</th>
+                            <th className="py-2.5 px-3">Ação</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-zinc-100 text-[11px]">
+                          <tr>
+                            <td className="py-2 px-3 font-bold text-zinc-900">Honda CG 160 Cargo (#01)</td>
+                            <td className="font-mono text-zinc-500">FRO1A11</td>
+                            <td><span className="px-1.5 py-0.5 rounded-full text-[8px] bg-amber-100 text-amber-700 font-bold">Em Manutenção</span></td>
+                            <td>Van #02 em Rota</td>
+                            <td>
+                              <button
+                                onClick={() => setClientActiveTab('tracking')}
+                                className="text-brand-orange hover:underline font-bold text-[10px] cursor-pointer"
+                              >
+                                Ver Van
+                              </button>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="py-2 px-3 font-bold text-zinc-900">Honda CG 160 Cargo (#02)</td>
+                            <td className="font-mono text-zinc-500">FRO1A22</td>
+                            <td><span className="px-1.5 py-0.5 rounded-full text-[8px] bg-emerald-100 text-emerald-600 font-bold">Disponível</span></td>
+                            <td>-</td>
+                            <td>
+                              <button
+                                onClick={() => {
+                                  setSelectedMotoId('moto-antonio-2');
+                                  setClientActiveTab('catalog');
+                                }}
+                                className="text-zinc-500 hover:underline font-bold text-[10px] cursor-pointer"
+                              >
+                                Orçar
+                              </button>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="py-2 px-3 font-bold text-zinc-900">Yamaha Factor 150 (#03)</td>
+                            <td className="font-mono text-zinc-500">FRO1A33</td>
+                            <td><span className="px-1.5 py-0.5 rounded-full text-[8px] bg-emerald-100 text-emerald-600 font-bold">Disponível</span></td>
+                            <td>-</td>
+                            <td>
+                              <button
+                                onClick={() => {
+                                  setSelectedMotoId('moto-antonio-3');
+                                  setClientActiveTab('catalog');
+                                }}
+                                className="text-zinc-500 hover:underline font-bold text-[10px] cursor-pointer"
+                              >
+                                Orçar
+                              </button>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* BLOCK C: HISTÓRICO DE SERVIÇOS REALIZADOS */}
+              <div className="bg-white border border-zinc-200 rounded-3xl p-6 shadow-sm space-y-4">
+                <div className="pb-3 border-b border-zinc-150">
+                  <h4 className="font-black text-sm text-zinc-950 uppercase tracking-tight flex items-center gap-1.5">
+                    <History className="w-4 h-4 text-brand-orange" />
+                    Histórico de Serviços Realizados
+                  </h4>
+                  <p className="text-[11px] text-zinc-500">
+                    Histórico completo de revisões e manutenções concluídas com garantia técnica.
+                  </p>
+                </div>
+
+                {historicalOSList.length > 0 ? (
+                  <div className="space-y-3">
+                    {historicalOSList.map((hist) => (
+                      <div
+                        key={hist.id}
+                        className="p-4 border border-zinc-200 bg-zinc-50/50 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 text-left"
+                      >
+                        <div className="space-y-2 flex-1">
+                          <div className="space-y-0.5">
+                            <div className="flex items-center gap-2">
+                              <span className="text-[9px] font-mono font-bold bg-zinc-200 text-zinc-700 px-1.5 py-0.5 rounded">
+                                {hist.id}
+                              </span>
+                              <h5 className="font-extrabold text-sm text-zinc-900 leading-snug">{hist.title}</h5>
+                            </div>
+                            <p className="text-[11px] text-zinc-500">
+                              Mecânico Responsável: <strong className="text-zinc-700">{hist.mechanic}</strong> • Realizado em: <strong className="text-zinc-700">{hist.date}</strong>
+                            </p>
+                          </div>
+
+                          {/* Sumário de Serviços Executados */}
+                          <div className="space-y-1">
+                            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block">Serviços Executados:</span>
+                            <div className="flex flex-wrap gap-1.5">
+                              {hist.executedServices && hist.executedServices.length > 0 ? (
+                                hist.executedServices.map((srv, idx) => (
+                                  <span key={`${srv}-${idx}`} className="text-[9px] bg-zinc-100 border border-zinc-200 text-zinc-700 px-2 py-0.5 rounded-full font-bold">
+                                    🛠️ {srv}
+                                  </span>
+                                ))
+                              ) : (
+                                <span className="text-[9px] bg-zinc-100 border border-zinc-200 text-zinc-700 px-2 py-0.5 rounded-full font-bold">
+                                  🛠️ {hist.title}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-4 pt-1 border-t border-zinc-150/50 text-[11px]">
+                            <div className="space-y-0.5">
+                              <span className="text-zinc-400 block text-[9px] font-bold uppercase tracking-wider">Tipo de Atendimento</span>
+                              <span className="font-extrabold text-zinc-800 flex items-center gap-1">
+                                {hist.serviceType === 'Pronto Atendimento' ? '⚡' : '📅'} {hist.serviceType}
+                              </span>
+                            </div>
+                            <div className="space-y-0.5">
+                              <span className="text-zinc-400 block text-[9px] font-bold uppercase tracking-wider">Garantia Técnica</span>
+                              <span className="font-extrabold text-emerald-600 flex items-center gap-1">
+                                🛡️ {hist.warranty}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="text-right flex flex-row md:flex-col justify-between md:justify-center items-center md:items-end w-full md:w-auto pt-3 md:pt-0 border-t md:border-none border-zinc-200 shrink-0 gap-1">
+                          <span className="font-black text-base text-brand-orange">R$ {hist.price},00</span>
+                          <span className="text-[10px] text-emerald-600 font-bold flex items-center gap-1 bg-emerald-50 border border-emerald-100 px-2.5 py-1 rounded-full">
+                            <Check className="w-3 h-3 text-emerald-600" /> Atendido com Sucesso
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-xs text-zinc-500 py-6 text-center bg-zinc-50 rounded-2xl border border-dashed border-zinc-200">
+                    Nenhum reparo concluído registrado anteriormente nesta moto.
+                  </p>
+                )}
+              </div>
+
             </motion.div>
           )}
 
@@ -1879,60 +2591,53 @@ export default function CustomerPortal({
                 <p className="text-xs text-zinc-500">
                   Selecione os itens desejados para a sua moto. Ao enviar o pedido, mecânicos ativos na sua região enviarão propostas de orçamento personalizadas em tempo real.
                 </p>
-
-                {/* Sub-filtering: Pronto Atendimento vs Sob Agendamento */}
-                <div className="flex justify-center gap-2 pt-2">
-                  <button
-                    onClick={() => setFilterCatalogType('all')}
-                    className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
-                      filterCatalogType === 'all'
-                        ? 'bg-zinc-900 text-white shadow-sm'
-                        : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'
-                    }`}
-                  >
-                    Ver Tudo
-                  </button>
-                  <button
-                    onClick={() => setFilterCatalogType('pronto')}
-                    className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
-                      filterCatalogType === 'pronto'
-                        ? 'bg-brand-orange text-black shadow-sm font-black'
-                        : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'
-                    }`}
-                  >
-                    ⚡ Pronto Atendimento (Serviços Rápidos)
-                  </button>
-                  <button
-                    onClick={() => setFilterCatalogType('agendado')}
-                    className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
-                      filterCatalogType === 'agendado'
-                        ? 'bg-zinc-950 text-brand-orange shadow-sm border border-brand-orange/35'
-                        : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'
-                    }`}
-                  >
-                    📅 Sob Agendamento (Complexos)
-                  </button>
-                </div>
               </div>
 
               {/* Category tabs */}
-              <div className="flex border-b border-zinc-200 mb-8 overflow-x-auto gap-2 pb-1 scrollbar-none">
-                {['Todos os Serviços', 'Mais Pedidos', 'Mecânica Rápida', 'Transmissão & Freios'].map(cat => (
+              <div className="flex border-b border-zinc-200 mb-4 overflow-x-auto gap-2 pb-2 scrollbar-none">
+                {[
+                  '⚡ Socorro & Pronta Entrega',
+                  '📅 Manutenção Preventiva & Agendada',
+                  '🛠️ Mecânica Complexa & Diagnóstico'
+                ].map(cat => (
                   <button
                     key={cat}
                     onClick={() => {
                       setActiveCategory(cat);
                       logEvent('Google Analytics', 'gtag("event", "select_category")', { category: cat });
                     }}
-                    className={`py-2 px-4 font-bold text-xs rounded-full transition-all whitespace-nowrap ${
+                    className={`py-2.5 px-4 font-extrabold text-xs rounded-full transition-all whitespace-nowrap border ${
                       activeCategory === cat
-                        ? 'bg-brand-orange text-black shadow font-black'
-                        : 'text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100'
+                        ? 'bg-brand-orange text-black border-brand-orange shadow-sm font-black scale-[1.02]'
+                        : 'bg-zinc-50 text-zinc-600 border-zinc-200 hover:text-zinc-900 hover:bg-zinc-100'
                     }`}
                   >
                     {cat}
                   </button>
                 ))}
+              </div>
+
+              {/* Selected Category Description Info Banner */}
+              <div className="bg-gradient-to-r from-zinc-900 via-zinc-900 to-zinc-800 text-white p-4 rounded-2xl mb-6 border border-zinc-800 shadow-sm flex items-start gap-3">
+                <div className="p-2 bg-brand-orange/20 text-brand-orange rounded-xl text-lg shrink-0">
+                  {activeCategory.startsWith('⚡') ? '⚡' : activeCategory.startsWith('📅') ? '📅' : '🛠️'}
+                </div>
+                <div className="space-y-0.5">
+                  <h4 className="text-xs font-black text-white uppercase tracking-wider flex items-center gap-2">
+                    {activeCategory}
+                  </h4>
+                  <p className="text-xs text-zinc-300 leading-relaxed">
+                    {activeCategory === '⚡ Socorro & Pronta Entrega' && (
+                      'Serviços executados em até 30–45 minutos no local (ex: Pneu furado, bateria descarregada, cabo rompido, troca de óleo rápida).'
+                    )}
+                    {activeCategory === '📅 Manutenção Preventiva & Agendada' && (
+                      'Revisões periódicas por quilometragem e substituição de componentes de desgaste regular (ex: Kit relação, pastilhas, fluido de freio).'
+                    )}
+                    {activeCategory === '🛠️ Mecânica Complexa & Diagnóstico' && (
+                      'Serviços que exigem desmontagem maior ou análise no furgão-oficina (ex: Amortecedores, embreagem, limpeza de carburador/injeção, elétrica).'
+                    )}
+                  </p>
+                </div>
               </div>
 
               {/* Menu Grid */}
@@ -2065,7 +2770,7 @@ export default function CustomerPortal({
                   {/* PROPOSALS LIST STATE */}
                   {quoteStatus === 'proposals' && (
                     <div className="bg-zinc-950 text-white rounded-3xl p-6 border border-zinc-800 shadow-2xl space-y-6">
-                      <div className="flex justify-between items-center pb-4 border-b border-zinc-900">
+                      <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-3 pb-4 border-b border-zinc-900">
                         <div className="space-y-1">
                           <div className="flex items-center gap-2">
                             <span className="relative flex h-2.5 w-2.5">
@@ -2077,8 +2782,18 @@ export default function CustomerPortal({
                             </h4>
                           </div>
                           <p className="text-xs text-zinc-400">
-                            Os seguintes mecânicos móveis estão disponíveis no raio de atendimento e enviaram suas propostas de mão de obra:
+                            Os mecânicos móveis abaixo avaliaram seu pedido e enviaram a cotação com disponibilidade de atendimento:
                           </p>
+                        </div>
+
+                        <div className="bg-brand-orange/10 border border-brand-orange/20 px-3 py-2 rounded-2xl flex items-center gap-2 shrink-0">
+                          <Calendar className="w-4 h-4 text-brand-orange" />
+                          <div className="text-left text-[11px]">
+                            <span className="text-zinc-400 block font-normal text-[9px] uppercase">Data/Horário Solicitados</span>
+                            <strong className="text-brand-orange font-bold font-mono">
+                              {checkoutDate ? checkoutDate.split('-').reverse().join('/') : 'Amanhã'} às {checkoutTime}
+                            </strong>
+                          </div>
                         </div>
                       </div>
 
@@ -2089,60 +2804,105 @@ export default function CustomerPortal({
                             mechanicName: 'Danilo Silva',
                             rating: 4.9,
                             reviewsCount: 142,
+                            punctualityRate: '99% no prazo',
+                            completedJobs: '142 serviços',
                             distance: '2.4 km',
                             price: 85,
                             arrivalMinutes: 12,
                             vehicle: 'Furgão Oficina Móvel #02',
-                            avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=100'
+                            avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=100',
+                            canAttendRequestedTime: true,
+                            proposedTime: checkoutTime,
+                            note: 'Confirma atendimento no horário solicitado'
                           },
                           {
                             id: 'prop-carlos',
                             mechanicName: 'Carlos Santos',
                             rating: 4.8,
                             reviewsCount: 98,
+                            punctualityRate: '97% no prazo',
+                            completedJobs: '98 serviços',
                             distance: '1.2 km',
                             price: 75,
                             arrivalMinutes: 8,
                             vehicle: 'Furgão Oficina Móvel #05',
-                            avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=100'
+                            avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=100',
+                            canAttendRequestedTime: false,
+                            proposedTime: '16:30',
+                            note: 'Sugere atendimento às 16:30 (contra-horário)'
                           },
                           {
                             id: 'prop-joao',
                             mechanicName: 'João Souza',
                             rating: 4.7,
                             reviewsCount: 65,
+                            punctualityRate: '95% no prazo',
+                            completedJobs: '65 serviços',
                             distance: '4.1 km',
                             price: 90,
                             arrivalMinutes: 15,
                             vehicle: 'Furgão Oficina Móvel #09',
-                            avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=100'
+                            avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=100',
+                            canAttendRequestedTime: true,
+                            proposedTime: checkoutTime,
+                            note: 'Confirma atendimento no horário solicitado'
                           }
                         ].map((bid) => (
                           <div key={bid.id} className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 flex flex-col justify-between gap-4 hover:border-brand-orange transition-all duration-300">
+                            {/* Mechanic Profile */}
                             <div className="flex items-center gap-3">
                               <img src={bid.avatar} alt={bid.mechanicName} className="w-12 h-12 rounded-full object-cover border border-zinc-800" referrerPolicy="no-referrer" />
                               <div className="text-left">
                                 <h5 className="font-extrabold text-sm text-white">{bid.mechanicName}</h5>
                                 <p className="text-[10px] text-zinc-300">{bid.vehicle}</p>
-                                <div className="flex items-center gap-1 text-[11px] text-amber-500 font-bold mt-0.5">
-                                  <span>★</span>
-                                  <span>{bid.rating}</span>
+                                <div className="flex items-center gap-1.5 text-[10px] text-amber-500 font-bold mt-0.5">
+                                  <span>★ {bid.rating}</span>
                                   <span className="text-zinc-500 font-normal">({bid.reviewsCount})</span>
                                 </div>
                               </div>
                             </div>
 
-                            <div className="space-y-2 border-t border-b border-zinc-800 py-3 text-left text-xs text-zinc-300">
+                            {/* Performance Highlights */}
+                            <div className="bg-zinc-950/70 p-2.5 rounded-xl border border-zinc-800/80 text-[10px] space-y-1 text-left">
+                              <span className="text-zinc-400 font-bold uppercase block tracking-wider">Performance do Mecânico</span>
+                              <div className="flex justify-between text-zinc-300">
+                                <span>Pontualidade: <strong className="text-emerald-400">{bid.punctualityRate}</strong></span>
+                                <span>Histórico: <strong className="text-white">{bid.completedJobs}</strong></span>
+                              </div>
+                            </div>
+
+                            {/* Mechanic Schedule Confirmation / Alternative */}
+                            <div className={`p-2.5 rounded-xl border text-[11px] font-bold text-left space-y-0.5 ${
+                              bid.canAttendRequestedTime
+                                ? 'bg-emerald-950/40 border-emerald-800/80 text-emerald-300'
+                                : 'bg-amber-950/40 border-amber-800/80 text-amber-300'
+                            }`}>
+                              <div className="flex items-center gap-1.5">
+                                <Clock className="w-3.5 h-3.5 shrink-0" />
+                                <span>
+                                  {bid.canAttendRequestedTime
+                                    ? `✅ Atende em: ${checkoutDate ? checkoutDate.split('-').reverse().join('/') : ''} às ${checkoutTime}`
+                                    : `📅 Contra-Horário: ${checkoutDate ? checkoutDate.split('-').reverse().join('/') : ''} às ${bid.proposedTime}`
+                                  }
+                                </span>
+                              </div>
+                              <p className="text-[10px] opacity-80 font-normal">
+                                {bid.note}
+                              </p>
+                            </div>
+
+                            {/* Proposal Price & Details */}
+                            <div className="space-y-1.5 border-t border-zinc-800 pt-3 text-left text-xs text-zinc-300">
                               <div className="flex justify-between">
-                                <span>Distância:</span>
+                                <span>Distância do local:</span>
                                 <strong className="text-white">{bid.distance}</strong>
                               </div>
                               <div className="flex justify-between">
-                                <span>Tempo estimado:</span>
+                                <span>Tempo de deslocamento:</span>
                                 <strong className="text-white">~ {bid.arrivalMinutes} min</strong>
                               </div>
-                              <div className="flex justify-between items-center text-sm pt-1 border-t border-zinc-800/30">
-                                <span className="font-bold text-zinc-300">Mão de Obra:</span>
+                              <div className="flex justify-between items-center text-sm pt-2 border-t border-zinc-800/40">
+                                <span className="font-bold text-zinc-300">Valor da Mão de Obra:</span>
                                 <strong className="text-brand-orange text-base font-black">R$ {bid.price},00</strong>
                               </div>
                             </div>
@@ -2151,11 +2911,11 @@ export default function CustomerPortal({
                               onClick={() => {
                                 setSelectedProposal(bid);
                                 setQuoteStatus('approved');
-                                triggerToast(`Orçamento aprovado com sucesso! ${bid.mechanicName} está se deslocando.`);
+                                triggerToast(`Orçamento aprovado! Agendado com ${bid.mechanicName} para ${bid.canAttendRequestedTime ? checkoutTime : bid.proposedTime}.`);
                               }}
                               className="w-full bg-brand-orange hover:bg-brand-orange-hover text-black font-extrabold py-2.5 rounded-xl text-xs transition-all cursor-pointer"
                             >
-                              ✓ Aprovar Orçamento
+                              ✓ Aprovar e Agendar Orçamento
                             </button>
                           </div>
                         ))}
@@ -2777,6 +3537,36 @@ export default function CustomerPortal({
                         placeholder="Ex: ABC1D23"
                         className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-3.5 py-2.5 text-zinc-900 font-bold focus:bg-white focus:outline-none focus:border-brand-orange"
                       />
+                    </div>
+                  </div>
+
+                  {/* DATA E HORÁRIO DESEJADOS PARA O ATENDIMENTO */}
+                  <div className="bg-brand-orange/5 border border-brand-orange/20 p-3.5 rounded-2xl space-y-2">
+                    <span className="text-[11px] font-black text-brand-orange uppercase tracking-wider block flex items-center gap-1.5">
+                      <Calendar className="w-3.5 h-3.5" /> Agendamento Desejado
+                    </span>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="space-y-1">
+                        <label className="text-zinc-600 block text-[10px] font-bold">Data do Atendimento</label>
+                        <input
+                          type="date"
+                          required
+                          value={checkoutDate}
+                          onChange={(e) => setCheckoutDate(e.target.value)}
+                          className="w-full bg-white border border-zinc-200 rounded-xl px-3 py-2 text-zinc-900 font-bold text-xs focus:outline-none focus:border-brand-orange"
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="text-zinc-600 block text-[10px] font-bold">Horário Desejado</label>
+                        <input
+                          type="time"
+                          required
+                          value={checkoutTime}
+                          onChange={(e) => setCheckoutTime(e.target.value)}
+                          className="w-full bg-white border border-zinc-200 rounded-xl px-3 py-2 text-zinc-900 font-bold text-xs focus:outline-none focus:border-brand-orange"
+                        />
+                      </div>
                     </div>
                   </div>
 

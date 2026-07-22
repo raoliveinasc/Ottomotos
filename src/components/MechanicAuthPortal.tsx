@@ -18,7 +18,24 @@ import {
   Award,
   IdCard,
   Eye,
-  EyeOff
+  EyeOff,
+  Truck,
+  DollarSign,
+  TrendingUp,
+  Clock,
+  Check,
+  CheckCircle,
+  HelpCircle,
+  Info,
+  ChevronDown,
+  ChevronUp,
+  MapPin,
+  Sliders,
+  Camera,
+  Globe,
+  Star,
+  Users,
+  ArrowLeft
 } from 'lucide-react';
 
 interface MechanicAuthPortalProps {
@@ -51,6 +68,13 @@ export default function MechanicAuthPortal({ onLoginSuccess, onBackToLanding }: 
   const [loginError, setLoginError] = useState('');
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
+  // Earnings Simulator state
+  const [jobsPerDay, setJobsPerDay] = useState<number>(5);
+  const [daysPerWeek, setDaysPerWeek] = useState<number>(5);
+
+  // FAQ accordion state
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
+
   // Register Form states
   const [regName, setRegName] = useState('');
   const [regEmail, setRegEmail] = useState('');
@@ -74,7 +98,7 @@ export default function MechanicAuthPortal({ onLoginSuccess, onBackToLanding }: 
   const [createdProtocol, setCreatedProtocol] = useState('');
   const [createdCandidate, setCreatedCandidate] = useState<any | null>(null);
 
-  // Default demo mechanic
+  // Default demo mechanics
   const demoMechanics = [
     {
       id: 'mcn-01',
@@ -85,6 +109,23 @@ export default function MechanicAuthPortal({ onLoginSuccess, onBackToLanding }: 
       cnh: 'Categoria AB - Definitiva'
     }
   ];
+
+  // Calculate earnings formula
+  const calculateEarnings = () => {
+    const weeklyJobs = jobsPerDay * daysPerWeek;
+    const monthlyJobs = Math.round(weeklyJobs * 4.34);
+    const grossRatePerJob = 75; // average net rate per service
+    return monthlyJobs * grossRatePerJob;
+  };
+
+  // Scroll smoothly to auth section
+  const scrollToAuth = (tab: 'login' | 'register') => {
+    setActiveTab(tab);
+    const el = document.getElementById('auth-form-section');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   // Handle Login submission
   const handleLoginSubmit = (e: React.FormEvent) => {
@@ -98,14 +139,11 @@ export default function MechanicAuthPortal({ onLoginSuccess, onBackToLanding }: 
 
     setIsLoggingIn(true);
 
-    // Simulate database lookup delay
     setTimeout(() => {
-      // Look for the demo mechanic or newly registered approved mechanic
       const found = demoMechanics.find(
         m => m.email.toLowerCase() === loginEmail.toLowerCase()
       );
 
-      // Also search in approved mechanics list from localStorage
       let customFound = null;
       try {
         const savedApproved = localStorage.getItem('otto_approved_mechanics');
@@ -132,7 +170,6 @@ export default function MechanicAuthPortal({ onLoginSuccess, onBackToLanding }: 
       if (activeUser) {
         onLoginSuccess(activeUser);
       } else {
-        // Fallback convenience: allow mock logins for testing with any password
         if (loginEmail.includes('@') && loginPassword.length >= 4) {
           onLoginSuccess({
             id: `mcn-${Math.floor(Math.random() * 900) + 100}`,
@@ -143,7 +180,7 @@ export default function MechanicAuthPortal({ onLoginSuccess, onBackToLanding }: 
             cnh: 'Categoria AB - Definitiva'
           });
         } else {
-          setLoginError('Credenciais não encontradas ou inválidas. Tente usar as credenciais de demonstração.');
+          setLoginError('Credenciais não encontradas ou inválidas.');
         }
       }
       setIsLoggingIn(false);
@@ -193,7 +230,6 @@ export default function MechanicAuthPortal({ onLoginSuccess, onBackToLanding }: 
     }));
   };
 
-  // Pre-configured mock files for convenience
   const mockFileSelection = (docKey: string) => {
     const fileOptions: Record<string, { name: string; size: string }> = {
       cnh: { name: 'cnh_digital_definitiva_ab.pdf', size: '1.4 MB' },
@@ -205,7 +241,6 @@ export default function MechanicAuthPortal({ onLoginSuccess, onBackToLanding }: 
     triggerDocUpload(docKey, chosen.name, chosen.size);
   };
 
-  // Handle Register/Application submission
   const handleRegisterSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -214,7 +249,6 @@ export default function MechanicAuthPortal({ onLoginSuccess, onBackToLanding }: 
       return;
     }
 
-    // Verify at least CNH and Background check are simulated
     if (!documents.cnh || !documents.background) {
       alert('Por favor, anexe pelo menos os documentos obrigatórios (CNH e Certidão de Antecedentes Criminais).');
       return;
@@ -235,7 +269,6 @@ export default function MechanicAuthPortal({ onLoginSuccess, onBackToLanding }: 
       exp: `${regExp} anos de experiência ativa. Cursos: ${regCerts || 'Não informado'}`
     };
 
-    // Save to pending list in localStorage
     try {
       const savedPending = localStorage.getItem('otto_pending_onboardings');
       let arr = [];
@@ -253,11 +286,9 @@ export default function MechanicAuthPortal({ onLoginSuccess, onBackToLanding }: 
     setRegisterSuccess(true);
   };
 
-  // Instant demo-approval bypass for QA/convenience
   const handleInstantApprovalBypass = () => {
     if (!createdCandidate) return;
 
-    // Save to approved mechanics in localStorage
     try {
       const savedApproved = localStorage.getItem('otto_approved_mechanics');
       let approvedArr = [];
@@ -267,7 +298,6 @@ export default function MechanicAuthPortal({ onLoginSuccess, onBackToLanding }: 
       approvedArr.unshift(createdCandidate);
       localStorage.setItem('otto_approved_mechanics', JSON.stringify(approvedArr));
 
-      // Remove from pending
       const savedPending = localStorage.getItem('otto_pending_onboardings');
       if (savedPending) {
         const pendArr = JSON.parse(savedPending);
@@ -278,7 +308,6 @@ export default function MechanicAuthPortal({ onLoginSuccess, onBackToLanding }: 
       console.error(err);
     }
 
-    // Immediately log in
     onLoginSuccess({
       id: createdCandidate.id,
       name: createdCandidate.name,
@@ -290,52 +319,400 @@ export default function MechanicAuthPortal({ onLoginSuccess, onBackToLanding }: 
   };
 
   return (
-    <div className="min-h-screen bg-zinc-50 text-zinc-900 flex flex-col justify-between py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden font-sans" id="mechanic-auth-container">
-      {/* Background ambient accents */}
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-brand-orange/5 rounded-full blur-[120px] pointer-events-none"></div>
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-zinc-200/50 rounded-full blur-[100px] pointer-events-none"></div>
+    <div className="min-h-screen bg-zinc-950 text-white selection:bg-brand-orange selection:text-black font-sans">
+      {/* 1. HEADER DA ÁREA DO MECÂNICO */}
+      <header className="sticky top-0 z-50 bg-zinc-950/90 backdrop-blur-md border-b border-zinc-800/80 px-4 py-3.5">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={onBackToLanding}
+              className="p-2 bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
+              title="Voltar ao início"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span className="hidden sm:inline">Início</span>
+            </button>
+            <div className="h-5 w-px bg-zinc-800 hidden sm:block"></div>
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-xl bg-brand-orange text-black flex items-center justify-center font-black text-sm shadow-md">
+                <Truck className="w-4 h-4" />
+              </div>
+              <div>
+                <span className="font-extrabold text-sm sm:text-base text-white tracking-tight block leading-tight">
+                  MyOttoVan
+                </span>
+                <span className="text-[9px] text-brand-orange font-mono uppercase font-bold tracking-wider block">
+                  Área do Mecânico & MEI
+                </span>
+              </div>
+            </div>
+          </div>
 
-      <div className="w-full z-10 space-y-8 my-auto transition-all duration-300">
-        {/* MAIN COMPONENT BOX */}
+          <div className="flex items-center gap-2.5">
+            <button
+              onClick={() => scrollToAuth('login')}
+              className="bg-zinc-900 hover:bg-zinc-800 text-white font-extrabold text-xs px-3.5 py-2 rounded-xl border border-zinc-750 transition-all cursor-pointer flex items-center gap-1.5"
+            >
+              <User className="w-3.5 h-3.5 text-brand-orange" />
+              <span>Entrar</span>
+            </button>
+            <button
+              onClick={() => scrollToAuth('register')}
+              className="bg-brand-orange hover:bg-brand-orange-hover text-black font-extrabold text-xs px-4 py-2 rounded-xl shadow-lg transition-all cursor-pointer uppercase tracking-wider hidden sm:flex items-center gap-1.5"
+            >
+              <Wrench className="w-3.5 h-3.5" />
+              <span>Cadastrar MEI</span>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* 2. HERO SECTION - ABORDAGEM LANDING PAGE */}
+      <section className="relative pt-12 pb-20 px-4 overflow-hidden border-b border-zinc-900 bg-gradient-to-b from-zinc-950 via-zinc-900/50 to-zinc-950">
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-brand-orange/5 rounded-full blur-[150px] pointer-events-none"></div>
+
+        <div className="max-w-6xl mx-auto text-center space-y-7 relative z-10">
+          <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-brand-orange/10 border border-brand-orange/20 text-brand-orange text-xs font-black rounded-full uppercase tracking-wider">
+            <Sparkles className="w-3.5 h-3.5 animate-pulse" />
+            Franquia Móvel de Mecânica sob Demanda
+          </span>
+
+          <h1 className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight leading-[1.08] max-w-4xl mx-auto text-white font-sans">
+            Sua oficina sobre rodas completa. <br className="hidden sm:inline" />
+            <span className="text-brand-orange">Sua liberdade e faturamento em alta.</span>
+          </h1>
+
+          <p className="text-zinc-300 text-xs sm:text-sm md:text-base max-w-2xl mx-auto leading-relaxed font-normal">
+            Elimine os altos custos fixos de aluguel comercial. Trabalhe com a van equipada MyOttoVan, atenda chamados em tempo real na sua região e fature direto na sua conta MEI.
+          </p>
+
+          {/* Prova Social de Confiança do Mecânico */}
+          <div className="max-w-xl mx-auto bg-zinc-900/90 border border-zinc-800 rounded-2xl p-4.5 flex flex-col sm:flex-row items-center gap-4 text-left shadow-2xl">
+            <div className="flex -space-x-2 shrink-0 items-center">
+              <img
+                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=100"
+                alt="Danilo Silva"
+                className="w-11 h-11 rounded-full object-cover border-2 border-brand-orange"
+                referrerPolicy="no-referrer"
+              />
+              <div className="w-6 h-6 rounded-full bg-brand-orange text-black flex items-center justify-center text-[10px] font-black border-2 border-zinc-900">
+                ★
+              </div>
+            </div>
+            <div>
+              <p className="text-xs text-zinc-200 italic font-medium leading-snug">
+                "Antes eu pagava R$ 2.800 de aluguel fixo em ponto comercial e sobrava muito pouco. Com a MyOttoVan, recebo os chamados no tablet, uso o estoque de peças consignado e faturo mais de R$ 10.000/mês."
+              </p>
+              <span className="text-[10px] text-brand-orange block mt-1.5 font-bold font-mono">
+                Danilo Silva — Mecânico Parceiro há 1 ano • 4.9 ★ • +140 atendimentos
+              </span>
+            </div>
+          </div>
+
+          {/* Botões de Ação Principais */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-3 max-w-md mx-auto w-full">
+            <button
+              onClick={() => scrollToAuth('login')}
+              className="w-full sm:w-auto flex-1 bg-brand-orange hover:bg-brand-orange-hover text-black font-black text-sm py-4 px-6 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-brand-orange/20 hover:scale-[1.02] cursor-pointer uppercase tracking-wider"
+            >
+              <User className="w-4 h-4" />
+              <span>Acessar Login do Mecânico</span>
+            </button>
+            <button
+              onClick={() => scrollToAuth('register')}
+              className="w-full sm:w-auto flex-1 bg-zinc-900 hover:bg-zinc-800 text-white font-extrabold text-sm py-4 px-6 rounded-xl border border-zinc-750 flex items-center justify-center gap-2 transition-all cursor-pointer uppercase tracking-wider"
+            >
+              <Briefcase className="w-4 h-4 text-brand-orange" />
+              <span>Cadastrar MEI</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* 3. VANTAGENS COMPETITIVAS */}
+      <section className="py-16 px-4 max-w-7xl mx-auto border-b border-zinc-900">
+        <div className="text-center max-w-3xl mx-auto space-y-2 mb-12">
+          <span className="text-xs bg-brand-orange/10 text-brand-orange font-bold px-3 py-1 rounded-full uppercase tracking-widest border border-brand-orange/20 inline-block">
+            Por que ser um Parceiro MyOttoVan?
+          </span>
+          <h2 className="text-2xl sm:text-4xl font-black text-white uppercase tracking-tight">
+            Tudo o que você precisa para crescer sem dívidas
+          </h2>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="bg-zinc-900/80 border border-zinc-800 p-6 rounded-2xl space-y-3 text-left hover:border-brand-orange/40 transition-all">
+            <div className="w-10 h-10 rounded-xl bg-brand-orange/10 text-brand-orange flex items-center justify-center border border-brand-orange/20">
+              <DollarSign className="w-5 h-5" />
+            </div>
+            <h3 className="font-extrabold text-base text-white">Rendimento Atrativo</h3>
+            <p className="text-xs text-zinc-400 leading-relaxed">
+              Média líquida de R$ 75,00 por serviço. Faça seu próprio horário e multiplique seus ganhos diários.
+            </p>
+          </div>
+
+          <div className="bg-zinc-900/80 border border-zinc-800 p-6 rounded-2xl space-y-3 text-left hover:border-brand-orange/40 transition-all">
+            <div className="w-10 h-10 rounded-xl bg-brand-orange/10 text-brand-orange flex items-center justify-center border border-brand-orange/20">
+              <Shield className="w-5 h-5" />
+            </div>
+            <h3 className="font-extrabold text-base text-white">Zero Custo de Galpão</h3>
+            <p className="text-xs text-zinc-400 leading-relaxed">
+              Esqueça contas absurdas de luz comercial, água e aluguel de ponto fixo. A van é sua base autônoma.
+            </p>
+          </div>
+
+          <div className="bg-zinc-900/80 border border-zinc-800 p-6 rounded-2xl space-y-3 text-left hover:border-brand-orange/40 transition-all">
+            <div className="w-10 h-10 rounded-xl bg-brand-orange/10 text-brand-orange flex items-center justify-center border border-brand-orange/20">
+              <Award className="w-5 h-5" />
+            </div>
+            <h3 className="font-extrabold text-base text-white">Peças Consignadas</h3>
+            <p className="text-xs text-zinc-400 leading-relaxed">
+              Estoque completo de peças de marcas líderes (Cofap, NGK, Tecfil, D.I.D, Mobil) sem precisar desembolsar capital.
+            </p>
+          </div>
+
+          <div className="bg-zinc-900/80 border border-zinc-800 p-6 rounded-2xl space-y-3 text-left hover:border-brand-orange/40 transition-all">
+            <div className="w-10 h-10 rounded-xl bg-brand-orange/10 text-brand-orange flex items-center justify-center border border-brand-orange/20">
+              <TrendingUp className="w-5 h-5" />
+            </div>
+            <h3 className="font-extrabold text-base text-white">Despacho Estilo Uber</h3>
+            <p className="text-xs text-zinc-400 leading-relaxed">
+              Chamados de socorro e agendamentos entregues direto no tablet por geolocalização.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* 4. SIMULADOR INTERATIVO DE GANHOS */}
+      <section className="py-16 px-4 max-w-7xl mx-auto border-b border-zinc-900">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          <div className="lg:col-span-7 space-y-6 text-left">
+            <span className="text-xs bg-brand-orange/10 text-brand-orange font-bold px-3 py-1 rounded-full uppercase tracking-widest border border-brand-orange/20 inline-block">
+              Simulador Financeiro
+            </span>
+
+            <h2 className="text-2xl sm:text-3xl font-black text-white uppercase tracking-tight">
+              Quanto eu posso faturar operando a MyOttoVan?
+            </h2>
+
+            <p className="text-xs sm:text-sm text-zinc-300 leading-relaxed">
+              Ajuste a quantidade de atendimentos diários e os dias trabalhados na semana para simular sua margem líquida média mensal.
+            </p>
+
+            <div className="space-y-6 bg-zinc-900 border border-zinc-800 p-6 rounded-3xl">
+              <div className="space-y-2">
+                <div className="flex justify-between text-xs font-bold text-zinc-300">
+                  <span>Atendimentos por dia</span>
+                  <span className="text-brand-orange font-black text-sm">{jobsPerDay} reparos/dia</span>
+                </div>
+                <input
+                  type="range"
+                  min="1"
+                  max="10"
+                  step="1"
+                  value={jobsPerDay}
+                  onChange={(e) => setJobsPerDay(parseInt(e.target.value))}
+                  className="w-full accent-brand-orange bg-zinc-950 h-2.5 rounded-lg appearance-none cursor-pointer"
+                />
+                <div className="flex justify-between text-[10px] text-zinc-500 font-mono">
+                  <span>1 serviço (ritmo leve)</span>
+                  <span>10 serviços (alta produtividade)</span>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex justify-between text-xs font-bold text-zinc-300">
+                  <span>Dias trabalhados por semana</span>
+                  <span className="text-brand-orange font-black text-sm">{daysPerWeek} dias/semana</span>
+                </div>
+                <input
+                  type="range"
+                  min="1"
+                  max="7"
+                  step="1"
+                  value={daysPerWeek}
+                  onChange={(e) => setDaysPerWeek(parseInt(e.target.value))}
+                  className="w-full accent-brand-orange bg-zinc-950 h-2.5 rounded-lg appearance-none cursor-pointer"
+                />
+                <div className="flex justify-between text-[10px] text-zinc-500 font-mono">
+                  <span>1 dia</span>
+                  <span>7 dias (escala cheia)</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex gap-3 bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-4 text-[11px] text-zinc-400">
+              <Info className="w-5 h-5 text-brand-orange shrink-0 mt-0.5" />
+              <p className="leading-relaxed">
+                💡 <strong>Entendimento do Cálculo:</strong> Considerando a taxa média de R$ 75,00 líquidos por job concluído, realizando <strong>{jobsPerDay} serviços/dia</strong> e descansando <strong>{7 - daysPerWeek} dias/semana</strong>, seu faturamento ultrapassa o ganho de mecânicos sob regime CLT fixo!
+              </p>
+            </div>
+          </div>
+
+          <div className="lg:col-span-5 bg-gradient-to-br from-zinc-900 via-zinc-950 to-brand-orange/10 border border-zinc-800 rounded-3xl p-8 text-center space-y-6 shadow-2xl relative overflow-hidden">
+            <span className="text-[10px] bg-brand-orange/10 text-brand-orange font-bold px-3 py-1 rounded-full uppercase tracking-widest border border-brand-orange/20 inline-block">
+              Rendimento Mensal Estimado
+            </span>
+
+            <div className="space-y-1">
+              <p className="text-[11px] text-zinc-400 uppercase font-black tracking-wider">Faturamento Líquido Estimado</p>
+              <h3 className="text-4xl md:text-5xl font-black text-white tracking-tight font-sans drop-shadow">
+                R$ {calculateEarnings().toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </h3>
+              <p className="text-[10px] text-emerald-400 font-mono font-bold">✓ Livre de Aluguel de Ponto Comercial</p>
+            </div>
+
+            <div className="bg-zinc-950/60 p-4 rounded-2xl border border-zinc-850 text-xs text-left space-y-2">
+              <div className="flex justify-between">
+                <span className="text-zinc-500">Média de jobs semanais:</span>
+                <strong className="text-zinc-200">{jobsPerDay * daysPerWeek} atendimentos</strong>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-zinc-500">Média de jobs mensais:</span>
+                <strong className="text-zinc-200">{Math.round(jobsPerDay * daysPerWeek * 4.34)} atendimentos</strong>
+              </div>
+            </div>
+
+            <button
+              onClick={() => scrollToAuth('register')}
+              className="w-full bg-brand-orange hover:bg-brand-orange-hover text-black font-extrabold py-3.5 px-4 rounded-xl text-center text-xs transition-all shadow-lg hover:scale-[1.01] cursor-pointer uppercase tracking-wider"
+            >
+              🚀 Iniciar Minha Candidatura MEI
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* 5. ESTRUTURA TECNOLÓGICA DA VAN */}
+      <section className="py-16 px-4 max-w-7xl mx-auto border-b border-zinc-900">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 space-y-6 shadow-2xl relative overflow-hidden text-left">
+            <div className="flex justify-between items-center pb-3 border-b border-zinc-800">
+              <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 bg-brand-orange rounded-full animate-ping"></span>
+                <h4 className="font-bold text-xs uppercase tracking-wider text-zinc-300">
+                  ESTRUTURA TECNOLÓGICA DA MYOTTOVAN #02
+                </h4>
+              </div>
+              <span className="text-[10px] font-mono bg-zinc-950 px-2 py-0.5 rounded text-zinc-500">Campinas SP</span>
+            </div>
+
+            <div className="space-y-4">
+              <div className="bg-zinc-950/80 p-3 rounded-xl border border-zinc-800 text-xs flex gap-3 items-start">
+                <div className="w-6 h-6 rounded bg-brand-orange/20 text-brand-orange flex items-center justify-center font-bold font-mono text-[11px] shrink-0">1</div>
+                <div className="space-y-0.5">
+                  <h5 className="font-extrabold text-white">Bancada de Serviços de Alta Densidade</h5>
+                  <p className="text-[11px] text-zinc-400">Equipada com compressor pneumático de alta performance, morsa e suporte técnico.</p>
+                </div>
+              </div>
+
+              <div className="bg-zinc-950/80 p-3 rounded-xl border border-zinc-800 text-xs flex gap-3 items-start">
+                <div className="w-6 h-6 rounded bg-brand-orange/20 text-brand-orange flex items-center justify-center font-bold font-mono text-[11px] shrink-0">2</div>
+                <div className="space-y-0.5">
+                  <h5 className="font-extrabold text-white">Câmera HD de Transmissão de Bancada</h5>
+                  <p className="text-[11px] text-zinc-400">Transmite automaticamente o vídeo do diagnóstico e troca de peças em HD para a tela do app do cliente.</p>
+                </div>
+              </div>
+
+              <div className="bg-zinc-950/80 p-3 rounded-xl border border-zinc-800 text-xs flex gap-3 items-start">
+                <div className="w-6 h-6 rounded bg-brand-orange/20 text-brand-orange flex items-center justify-center font-bold font-mono text-[11px] shrink-0">3</div>
+                <div className="space-y-0.5">
+                  <h5 className="font-extrabold text-white">Estoque Consignado Inteligente</h5>
+                  <p className="text-[11px] text-zinc-400">Peças sobressalentes organizadas para reposição autônoma sem travar seu capital.</p>
+                </div>
+              </div>
+
+              <div className="bg-zinc-950/80 p-3 rounded-xl border border-zinc-800 text-xs flex gap-3 items-start">
+                <div className="w-6 h-6 rounded bg-brand-orange/20 text-brand-orange flex items-center justify-center font-bold font-mono text-[11px] shrink-0">4</div>
+                <div className="space-y-0.5">
+                  <h5 className="font-extrabold text-white">Tablet de Navegação e Ordens de Serviço</h5>
+                  <p className="text-[11px] text-zinc-400">Exibe rotas otimizadas com cálculo de tráfego, checklists digitais e chamados ativos.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-6 text-left">
+            <span className="text-xs bg-brand-orange/10 text-brand-orange font-bold px-3 py-1 rounded-full uppercase tracking-widest border border-brand-orange/20 inline-block">
+              Modelo de Parceria MEI
+            </span>
+            
+            <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight leading-[1.1]">
+              Seja o dono da sua rota. Opere a <span className="text-brand-orange">MyOttoVan.</span>
+            </h2>
+            
+            <p className="text-zinc-300 text-sm leading-relaxed">
+              A OttoMotos conecta mecânicos qualificados a uma frota de vans oficinas totalmente equipadas. Em vez de abrir uma loja física e arcar com reformas e aluguel comercial, você atende clientes prontos da sua região com respaldo tecnológico.
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="bg-zinc-900 border border-zinc-800 p-4 rounded-2xl">
+                <h5 className="font-black text-brand-orange text-xs uppercase tracking-wider mb-1">Custo Fixos Mínimos</h5>
+                <p className="text-xs text-zinc-400 leading-normal">Livre-se de contas comerciais pesadas. A van é sua oficina autônoma móvel.</p>
+              </div>
+              
+              <div className="bg-zinc-900 border border-zinc-800 p-4 rounded-2xl">
+                <h5 className="font-black text-brand-orange text-xs uppercase tracking-wider mb-1">Chamados em Tempo Real</h5>
+                <p className="text-xs text-zinc-400 leading-normal">O app direciona os chamados por proximidade, reduzindo tempo gasto no trânsito.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 6. SESSÃO DE AUTENTICAÇÃO E CADASTRO (FORMULÁRIOS) */}
+      <section id="auth-form-section" className="py-16 px-4 max-w-5xl mx-auto">
+        <div className="text-center max-w-2xl mx-auto space-y-2 mb-8">
+          <span className="text-xs bg-brand-orange/10 text-brand-orange font-bold px-3 py-1 rounded-full uppercase tracking-widest border border-brand-orange/20 inline-block">
+            Portal de Acesso e Candidatura
+          </span>
+          <h2 className="text-2xl sm:text-4xl font-black text-white uppercase tracking-tight">
+            Acesse sua Conta ou Inscreva-se
+          </h2>
+          <p className="text-xs text-zinc-400">
+            Se você já é um mecânico credenciado, faça o login. Se deseja se tornar parceiro, preencha o formulário de candidatura MEI.
+          </p>
+        </div>
+
         <motion.div
           layout
           transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-          className="mx-auto w-full bg-white border border-zinc-200 rounded-3xl overflow-hidden shadow-xl text-left text-zinc-900 transition-all duration-300 pt-6"
-          style={{ maxWidth: activeTab === 'login' ? '460px' : '780px' }}
+          className="mx-auto w-full bg-white text-zinc-900 border border-zinc-200 rounded-3xl overflow-hidden shadow-2xl text-left transition-all duration-300 pt-6"
+          style={{ maxWidth: activeTab === 'login' ? '480px' : '820px' }}
         >
           {!registerSuccess ? (
             <div>
               {/* BRANDING HEADER - MyOttoVan Style */}
-              <div className="text-center space-y-2 pb-4 px-6">
-                <h2 className="text-3xl font-black text-zinc-950 tracking-tight">MyOttoVan</h2>
-                <p className="text-sm font-extrabold text-brand-orange tracking-tight">
+              <div className="text-center space-y-1 pb-4 px-6">
+                <h3 className="text-2xl font-black text-zinc-950 tracking-tight">MyOttoVan</h3>
+                <p className="text-xs font-extrabold text-brand-orange tracking-tight">
                   "Seja o dono da sua rota e do seu sucesso"
                 </p>
               </div>
 
-              {/* TABS HEADER - MyOttomotos Style */}
-              <div className="flex border-b border-zinc-200 bg-zinc-50/50 px-4">
+              {/* TABS HEADER */}
+              <div className="flex border-b border-zinc-200 bg-zinc-50 px-4">
                 <button
                   type="button"
                   onClick={() => setActiveTab('login')}
-                  className={`flex-1 pb-3 text-xs sm:text-sm font-bold border-b-2 text-center transition-colors cursor-pointer ${
+                  className={`flex-1 py-3 text-xs sm:text-sm font-bold border-b-2 text-center transition-colors cursor-pointer ${
                     activeTab === 'login'
                       ? 'border-brand-orange text-brand-orange font-black'
                       : 'border-transparent text-zinc-400 hover:text-zinc-600'
                   }`}
                 >
-                  Fazer Login
+                  🔑 Fazer Login
                 </button>
                 <button
                   type="button"
                   onClick={() => setActiveTab('register')}
-                  className={`flex-1 pb-3 text-xs sm:text-sm font-bold border-b-2 text-center transition-colors cursor-pointer ${
+                  className={`flex-1 py-3 text-xs sm:text-sm font-bold border-b-2 text-center transition-colors cursor-pointer ${
                     activeTab === 'register'
                       ? 'border-brand-orange text-brand-orange font-black'
                       : 'border-transparent text-zinc-400 hover:text-zinc-600'
                   }`}
                 >
-                  Ser Franqueado
+                  📝 Cadastrar MEI
                 </button>
               </div>
 
@@ -351,7 +728,6 @@ export default function MechanicAuthPortal({ onLoginSuccess, onBackToLanding }: 
                       transition={{ duration: 0.2 }}
                       className="space-y-6"
                     >
-
                       {loginError && (
                         <div className="bg-red-50 border border-red-200 text-red-600 p-3.5 rounded-xl text-xs text-left font-semibold">
                           ⚠️ {loginError}
@@ -360,7 +736,7 @@ export default function MechanicAuthPortal({ onLoginSuccess, onBackToLanding }: 
 
                       <form onSubmit={handleLoginSubmit} className="space-y-4 text-left text-xs">
                         <div className="space-y-1">
-                          <label className="text-zinc-500 block font-bold">
+                          <label className="text-zinc-600 block font-bold">
                             E-mail do Mecânico / ID Parceiro
                           </label>
                           <div className="relative">
@@ -378,7 +754,7 @@ export default function MechanicAuthPortal({ onLoginSuccess, onBackToLanding }: 
 
                         <div className="space-y-1">
                           <div className="flex justify-between items-center">
-                            <label className="text-zinc-500 block font-bold">
+                            <label className="text-zinc-600 block font-bold">
                               Senha de Acesso
                             </label>
                             <a href="#esqueci" className="text-[10px] text-zinc-400 hover:text-brand-orange transition-colors">
@@ -421,20 +797,7 @@ export default function MechanicAuthPortal({ onLoginSuccess, onBackToLanding }: 
                         </button>
                       </form>
 
-                      {/* QUICK DEMO ASSISTANCE BOX */}
-                      <div className="bg-amber-50/80 border border-amber-200 p-4 rounded-2xl text-left space-y-2">
-                        <div className="flex items-center gap-1.5 text-xs text-brand-orange font-bold">
-                          <Sparkles className="w-4 h-4" />
-                          <span>Modo de Demonstração Técnico</span>
-                        </div>
-                        <p className="text-[11px] text-zinc-600 leading-relaxed font-sans">
-                          Para testar a interface do tablet de bordo do mecânico (Estilo Uber, com controle de rotas, fotos de check-in, monitor de vídeo, e faturamento), utilize a credencial de demonstração:
-                        </p>
-                        <div className="p-3 bg-white rounded-xl border border-zinc-200 font-mono text-[10px] space-y-1 text-zinc-800">
-                          <p><span className="text-zinc-400">E-mail:</span> <span className="text-zinc-700 font-bold">danilo@ottomotos.com</span></p>
-                          <p><span className="text-zinc-400">Senha:</span> <span className="text-zinc-700 font-bold">qualquer senha</span></p>
-                        </div>
-                      </div>
+                      {/* NOTA: A seção "Modo de Demonstração Técnico" foi totalmente removida conforme solicitado! */}
                     </motion.div>
                   ) : (
                     <motion.div
@@ -467,39 +830,32 @@ export default function MechanicAuthPortal({ onLoginSuccess, onBackToLanding }: 
                                 required
                                 placeholder="ex: Sandro de Souza Lima"
                                 value={regName}
-                                onChange={e => {
-                                  setRegName(e.target.value);
-                                  if (!regMeName && e.target.value) {
-                                    setRegMeName(`${e.target.value} Mecânica ME`);
-                                  }
-                                }}
-                                className="w-full bg-white border border-zinc-200 rounded-xl px-3.5 py-2.5 text-zinc-950 font-bold focus:outline-none focus:border-brand-orange transition-all placeholder:text-zinc-400"
+                                onChange={e => setRegName(e.target.value)}
+                                className="w-full bg-white border border-zinc-200 rounded-xl px-3.5 py-2 text-zinc-950 font-bold focus:outline-none focus:border-brand-orange"
                               />
                             </div>
 
                             <div className="space-y-1">
-                              <label className="text-zinc-500 block font-bold">E-mail de Contato</label>
+                              <label className="text-zinc-500 block font-bold">E-mail Comercial</label>
                               <input
                                 type="email"
                                 required
-                                placeholder="ex: sandrosouza@gmail.com"
+                                placeholder="ex: sandro.mecanica@gmail.com"
                                 value={regEmail}
                                 onChange={e => setRegEmail(e.target.value)}
-                                className="w-full bg-white border border-zinc-200 rounded-xl px-3.5 py-2.5 text-zinc-950 font-bold focus:outline-none focus:border-brand-orange transition-all placeholder:text-zinc-400"
+                                className="w-full bg-white border border-zinc-200 rounded-xl px-3.5 py-2 text-zinc-950 font-bold focus:outline-none focus:border-brand-orange"
                               />
                             </div>
-                          </div>
 
-                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                             <div className="space-y-1">
-                              <label className="text-zinc-500 block font-bold">WhatsApp (DDD + Celular)</label>
+                              <label className="text-zinc-500 block font-bold">WhatsApp / Telefone</label>
                               <input
-                                type="tel"
+                                type="text"
                                 required
-                                placeholder="ex: (19) 99311-2288"
+                                placeholder="(19) 99812-4411"
                                 value={regPhone}
                                 onChange={e => setRegPhone(e.target.value)}
-                                className="w-full bg-white border border-zinc-200 rounded-xl px-3.5 py-2.5 text-zinc-950 font-bold focus:outline-none focus:border-brand-orange transition-all placeholder:text-zinc-400"
+                                className="w-full bg-white border border-zinc-200 rounded-xl px-3.5 py-2 text-zinc-950 font-bold focus:outline-none focus:border-brand-orange"
                               />
                             </div>
 
@@ -508,302 +864,223 @@ export default function MechanicAuthPortal({ onLoginSuccess, onBackToLanding }: 
                               <input
                                 type="text"
                                 required
-                                placeholder="ex: 412.091.228-09"
+                                placeholder="000.000.000-00"
                                 value={regCpf}
                                 onChange={e => setRegCpf(e.target.value)}
-                                className="w-full bg-white border border-zinc-200 rounded-xl px-3.5 py-2.5 text-zinc-950 font-bold focus:outline-none focus:border-brand-orange transition-all placeholder:text-zinc-400"
+                                className="w-full bg-white border border-zinc-200 rounded-xl px-3.5 py-2 text-zinc-950 font-bold focus:outline-none focus:border-brand-orange"
                               />
                             </div>
 
-                            <div className="space-y-1">
+                            <div className="space-y-1 sm:col-span-2">
                               <label className="text-zinc-500 block font-bold">Categoria da CNH</label>
                               <select
                                 value={regCnh}
                                 onChange={e => setRegCnh(e.target.value)}
-                                className="w-full bg-white border border-zinc-200 rounded-xl px-3.5 py-2.5 text-zinc-950 font-bold focus:outline-none focus:border-brand-orange transition-all"
+                                className="w-full bg-white border border-zinc-200 rounded-xl px-3.5 py-2 text-zinc-950 font-bold focus:outline-none focus:border-brand-orange"
                               >
-                                <option value="A">Categoria A (Moto)</option>
-                                <option value="AB">Categoria AB (Moto e Carro)</option>
-                                <option value="B">Categoria B (Carro)</option>
+                                <option value="AB">Categoria AB (Moto & Carro - Recomendado)</option>
+                                <option value="A">Categoria A (Apenas Moto)</option>
+                                <option value="B">Categoria B (Apenas Carro/Van)</option>
+                                <option value="C">Categoria C ou Superior</option>
                               </select>
                             </div>
                           </div>
                         </div>
 
-                        {/* SECTION 2: DADOS EMPRESARIAIS (MEI) */}
-                        <div className="space-y-4">
+                        {/* SECTION 2: REGISTRO MEI */}
+                        <div className="space-y-4 pt-2">
                           <h4 className="text-xs font-black text-brand-orange uppercase tracking-wider border-b border-zinc-200 pb-1.5 flex items-center gap-1.5">
-                            <Briefcase className="w-3.5 h-3.5" /> 2. CNPJ MEI do Parceiro
+                            <Briefcase className="w-3.5 h-3.5" /> 2. Registro MEI (Pessoa Jurídica)
                           </h4>
 
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div className="space-y-1">
-                              <label className="text-zinc-500 block font-bold">CNPJ (MEI)</label>
+                              <label className="text-zinc-500 block font-bold">CNPJ do MEI</label>
                               <input
                                 type="text"
                                 required
-                                placeholder="ex: 44.512.102/0001-99"
+                                placeholder="00.000.000/0001-00"
                                 value={regCnpj}
                                 onChange={e => setRegCnpj(e.target.value)}
-                                className="w-full bg-white border border-zinc-200 rounded-xl px-3.5 py-2.5 text-zinc-950 font-bold focus:outline-none focus:border-brand-orange transition-all placeholder:text-zinc-400"
+                                className="w-full bg-white border border-zinc-200 rounded-xl px-3.5 py-2 text-zinc-950 font-bold focus:outline-none focus:border-brand-orange"
                               />
                             </div>
 
                             <div className="space-y-1">
-                              <label className="text-zinc-500 block font-bold">Razão Social / Nome Fantasia</label>
+                              <label className="text-zinc-500 block font-bold">Razão Social / Nome Fantasia MEI</label>
                               <input
                                 type="text"
                                 required
-                                placeholder="ex: Sandro de Souza Reparos ME"
+                                placeholder="ex: Sandro Reparos de Motocicletas ME"
                                 value={regMeName}
                                 onChange={e => setRegMeName(e.target.value)}
-                                className="w-full bg-white border border-zinc-200 rounded-xl px-3.5 py-2.5 text-zinc-950 font-bold focus:outline-none focus:border-brand-orange transition-all placeholder:text-zinc-400"
+                                className="w-full bg-white border border-zinc-200 rounded-xl px-3.5 py-2 text-zinc-950 font-bold focus:outline-none focus:border-brand-orange"
                               />
                             </div>
                           </div>
                         </div>
 
-                        {/* SECTION 3: EXPERIÊNCIA */}
-                        <div className="space-y-4">
+                        {/* SECTION 3: EXPERIÊNCIA TÉCNICA */}
+                        <div className="space-y-4 pt-2">
                           <h4 className="text-xs font-black text-brand-orange uppercase tracking-wider border-b border-zinc-200 pb-1.5 flex items-center gap-1.5">
-                            <Award className="w-3.5 h-3.5" /> 3. Experiência Técnica & Cursos
+                            <Wrench className="w-3.5 h-3.5" /> 3. Experiência de Oficina
                           </h4>
 
-                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            <div className="space-y-1 sm:col-span-1">
-                              <label className="text-zinc-500 block font-bold">Tempo como Mecânico</label>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div className="space-y-1">
+                              <label className="text-zinc-500 block font-bold">Tempo de Experiência Ativa</label>
                               <select
                                 value={regExp}
                                 onChange={e => setRegExp(e.target.value)}
-                                className="w-full bg-white border border-zinc-200 rounded-xl px-3.5 py-2.5 text-zinc-950 font-bold focus:outline-none focus:border-brand-orange transition-all"
+                                className="w-full bg-white border border-zinc-200 rounded-xl px-3.5 py-2 text-zinc-950 font-bold focus:outline-none focus:border-brand-orange"
                               >
-                                <option value="1">Menos de 2 anos</option>
+                                <option value="1">1 a 2 anos</option>
                                 <option value="3">3 a 5 anos</option>
                                 <option value="5">Mais de 5 anos</option>
                               </select>
                             </div>
 
-                            <div className="space-y-1 sm:col-span-2">
-                              <label className="text-zinc-500 block font-bold">Certificados Técnicos / Cursos Principais</label>
+                            <div className="space-y-1">
+                              <label className="text-zinc-500 block font-bold">Cursos ou Certificações (Opcional)</label>
                               <input
                                 type="text"
-                                placeholder="ex: Senai Mecânica de Motos, Injeção Eletrônica Pro"
+                                placeholder="ex: SENAI Mecânica de Motos, Injeção Eletrônica Magneti Marelli"
                                 value={regCerts}
                                 onChange={e => setRegCerts(e.target.value)}
-                                className="w-full bg-white border border-zinc-200 rounded-xl px-3.5 py-2.5 text-zinc-950 font-bold focus:outline-none focus:border-brand-orange transition-all placeholder:text-zinc-400"
+                                className="w-full bg-white border border-zinc-200 rounded-xl px-3.5 py-2 text-zinc-950 font-bold focus:outline-none focus:border-brand-orange"
                               />
                             </div>
                           </div>
                         </div>
 
-                        {/* SECTION 4: DOCUMENT UPLOAD SIMULATOR */}
-                        <div className="space-y-4">
+                        {/* SECTION 4: DOCUMENTOS OBRIGATÓRIOS */}
+                        <div className="space-y-4 pt-2">
                           <h4 className="text-xs font-black text-brand-orange uppercase tracking-wider border-b border-zinc-200 pb-1.5 flex items-center gap-1.5">
-                            <FileText className="w-3.5 h-3.5" /> 4. Envio de Arquivos Digitalizados (Simulado)
+                            <FileText className="w-3.5 h-3.5" /> 4. Anexo de Documentos para Auditoria
                           </h4>
 
-                          <p className="text-[11px] text-zinc-500 leading-relaxed">
-                            Clique nas áreas para simular o upload seguro e imediato dos seus documentos. Formatos aceitos: PDF, JPEG, PNG de até 10 MB.
-                          </p>
-
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            {/* DOC 1: CNH */}
-                            <div className="bg-white border border-zinc-200 p-4 rounded-2xl space-y-3 relative overflow-hidden shadow-sm">
-                              <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-2">
-                                  <IdCard className="w-5 h-5 text-zinc-400 shrink-0" />
-                                  <div className="text-left">
-                                    <span className="text-xs font-bold text-zinc-800 block">CNH Frente & Verso *</span>
-                                    <span className="text-[9px] text-zinc-400 block font-mono">Obrigatório</span>
-                                  </div>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            {/* Doc 1: CNH */}
+                            <div className="p-3 bg-zinc-50 border border-zinc-200 rounded-2xl space-y-2">
+                              <div className="flex justify-between items-start">
+                                <div>
+                                  <span className="font-bold text-zinc-900 block">1. CNH Digital ou Foto *</span>
+                                  <span className="text-[10px] text-zinc-500">Categoria A ou AB válida</span>
                                 </div>
-                                {documents.cnh?.completed && (
-                                  <span className="text-[9px] bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 px-2 py-0.5 rounded font-bold font-mono">
-                                    OK
-                                  </span>
-                                )}
+                                <span className="text-[9px] bg-red-100 text-red-700 font-bold px-1.5 py-0.5 rounded">Obrigatório</span>
                               </div>
 
-                              {!documents.cnh ? (
+                              {documents.cnh ? (
+                                <div className="bg-white p-2 rounded-xl border border-zinc-200 flex items-center justify-between text-[11px]">
+                                  <div className="flex items-center gap-2 truncate">
+                                    <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                                    <span className="font-bold text-zinc-800 truncate">{documents.cnh.name}</span>
+                                  </div>
+                                  <button type="button" onClick={() => removeDoc('cnh')} className="text-zinc-400 hover:text-red-500">
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </button>
+                                </div>
+                              ) : (
                                 <button
                                   type="button"
                                   onClick={() => mockFileSelection('cnh')}
-                                  className="w-full py-3 border border-dashed border-zinc-300 hover:border-brand-orange bg-zinc-50 hover:bg-zinc-100 rounded-xl flex items-center justify-center gap-1.5 text-[10px] uppercase font-bold text-zinc-500 hover:text-brand-orange transition-all cursor-pointer"
+                                  className="w-full py-2 bg-white hover:bg-zinc-100 border border-dashed border-zinc-300 rounded-xl text-zinc-600 font-bold text-[11px] flex items-center justify-center gap-1.5 cursor-pointer"
                                 >
-                                  <FileUp className="w-3.5 h-3.5" /> Selecionar CNH
+                                  <FileUp className="w-3.5 h-3.5 text-brand-orange" /> Anexar CNH
                                 </button>
-                              ) : (
-                                <div className="space-y-2 text-left font-mono text-[10px]">
-                                  <div className="flex items-center justify-between bg-zinc-50 p-2.5 rounded-xl border border-zinc-200">
-                                    <span className="truncate text-zinc-700 pr-2">{documents.cnh.name}</span>
-                                    <button
-                                      type="button"
-                                      onClick={() => removeDoc('cnh')}
-                                      className="text-red-500 hover:text-red-600 shrink-0 p-1 cursor-pointer"
-                                    >
-                                      <Trash2 className="w-3.5 h-3.5" />
-                                    </button>
-                                  </div>
-
-                                  {documents.cnh.uploading && (
-                                    <div className="space-y-1">
-                                      <div className="h-1 bg-zinc-200 rounded-full overflow-hidden">
-                                        <div className="h-full bg-brand-orange transition-all duration-150" style={{ width: `${documents.cnh.progress}%` }}></div>
-                                      </div>
-                                      <span className="text-[9px] text-zinc-400">Enviando ({documents.cnh.progress}%)</span>
-                                    </div>
-                                  )}
-                                </div>
                               )}
                             </div>
 
-                            {/* DOC 2: BACKGROUND CHECK */}
-                            <div className="bg-white border border-zinc-200 p-4 rounded-2xl space-y-3 relative overflow-hidden shadow-sm">
-                              <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-2">
-                                  <Shield className="w-5 h-5 text-zinc-400 shrink-0" />
-                                  <div className="text-left">
-                                    <span className="text-xs font-bold text-zinc-800 block">Antecedentes Criminais *</span>
-                                    <span className="text-[9px] text-zinc-400 block font-mono">Obrigatório</span>
-                                  </div>
+                            {/* Doc 2: Antecedentes */}
+                            <div className="p-3 bg-zinc-50 border border-zinc-200 rounded-2xl space-y-2">
+                              <div className="flex justify-between items-start">
+                                <div>
+                                  <span className="font-bold text-zinc-900 block">2. Antecedentes Criminais *</span>
+                                  <span className="text-[10px] text-zinc-500">Certidão Negativa Polícia Federal</span>
                                 </div>
-                                {documents.background?.completed && (
-                                  <span className="text-[9px] bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 px-2 py-0.5 rounded font-bold font-mono">
-                                    OK
-                                  </span>
-                                )}
+                                <span className="text-[9px] bg-red-100 text-red-700 font-bold px-1.5 py-0.5 rounded">Obrigatório</span>
                               </div>
 
-                              {!documents.background ? (
+                              {documents.background ? (
+                                <div className="bg-white p-2 rounded-xl border border-zinc-200 flex items-center justify-between text-[11px]">
+                                  <div className="flex items-center gap-2 truncate">
+                                    <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                                    <span className="font-bold text-zinc-800 truncate">{documents.background.name}</span>
+                                  </div>
+                                  <button type="button" onClick={() => removeDoc('background')} className="text-zinc-400 hover:text-red-500">
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </button>
+                                </div>
+                              ) : (
                                 <button
                                   type="button"
                                   onClick={() => mockFileSelection('background')}
-                                  className="w-full py-3 border border-dashed border-zinc-300 hover:border-brand-orange bg-zinc-50 hover:bg-zinc-100 rounded-xl flex items-center justify-center gap-1.5 text-[10px] uppercase font-bold text-zinc-500 hover:text-brand-orange transition-all cursor-pointer"
+                                  className="w-full py-2 bg-white hover:bg-zinc-100 border border-dashed border-zinc-300 rounded-xl text-zinc-600 font-bold text-[11px] flex items-center justify-center gap-1.5 cursor-pointer"
                                 >
-                                  <FileUp className="w-3.5 h-3.5" /> Selecionar Atestado
+                                  <FileUp className="w-3.5 h-3.5 text-brand-orange" /> Anexar Certidão
                                 </button>
-                              ) : (
-                                <div className="space-y-2 text-left font-mono text-[10px]">
-                                  <div className="flex items-center justify-between bg-zinc-50 p-2.5 rounded-xl border border-zinc-200">
-                                    <span className="truncate text-zinc-700 pr-2">{documents.background.name}</span>
-                                    <button
-                                      type="button"
-                                      onClick={() => removeDoc('background')}
-                                      className="text-red-500 hover:text-red-600 shrink-0 p-1 cursor-pointer"
-                                    >
-                                      <Trash2 className="w-3.5 h-3.5" />
-                                    </button>
-                                  </div>
-
-                                  {documents.background.uploading && (
-                                    <div className="space-y-1">
-                                      <div className="h-1 bg-zinc-200 rounded-full overflow-hidden">
-                                        <div className="h-full bg-brand-orange transition-all duration-150" style={{ width: `${documents.background.progress}%` }}></div>
-                                      </div>
-                                      <span className="text-[9px] text-zinc-400">Enviando ({documents.background.progress}%)</span>
-                                    </div>
-                                  )}
-                                </div>
                               )}
                             </div>
 
-                            {/* DOC 3: RESIDENCE */}
-                            <div className="bg-white border border-zinc-200 p-4 rounded-2xl space-y-3 relative overflow-hidden shadow-sm">
-                              <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-2">
-                                  <FileText className="w-5 h-5 text-zinc-400 shrink-0" />
-                                  <div className="text-left">
-                                    <span className="text-xs font-bold text-zinc-800 block">Comprovante de Endereço</span>
-                                    <span className="text-[9px] text-zinc-400 block font-mono">Opcional</span>
-                                  </div>
+                            {/* Doc 3: Comprovante de Residência */}
+                            <div className="p-3 bg-zinc-50 border border-zinc-200 rounded-2xl space-y-2">
+                              <div className="flex justify-between items-start">
+                                <div>
+                                  <span className="font-bold text-zinc-900 block">3. Comprovante de Residência</span>
+                                  <span className="text-[10px] text-zinc-500">Conta recente (até 90 dias)</span>
                                 </div>
-                                {documents.residence?.completed && (
-                                  <span className="text-[9px] bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 px-2 py-0.5 rounded font-bold font-mono">
-                                    OK
-                                  </span>
-                                )}
+                                <span className="text-[9px] bg-zinc-200 text-zinc-600 font-bold px-1.5 py-0.5 rounded">Opcional</span>
                               </div>
 
-                              {!documents.residence ? (
+                              {documents.residence ? (
+                                <div className="bg-white p-2 rounded-xl border border-zinc-200 flex items-center justify-between text-[11px]">
+                                  <div className="flex items-center gap-2 truncate">
+                                    <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                                    <span className="font-bold text-zinc-800 truncate">{documents.residence.name}</span>
+                                  </div>
+                                  <button type="button" onClick={() => removeDoc('residence')} className="text-zinc-400 hover:text-red-500">
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </button>
+                                </div>
+                              ) : (
                                 <button
                                   type="button"
                                   onClick={() => mockFileSelection('residence')}
-                                  className="w-full py-3 border border-dashed border-zinc-300 hover:border-brand-orange bg-zinc-50 hover:bg-zinc-100 rounded-xl flex items-center justify-center gap-1.5 text-[10px] uppercase font-bold text-zinc-500 hover:text-brand-orange transition-all cursor-pointer"
+                                  className="w-full py-2 bg-white hover:bg-zinc-100 border border-dashed border-zinc-300 rounded-xl text-zinc-600 font-bold text-[11px] flex items-center justify-center gap-1.5 cursor-pointer"
                                 >
-                                  <FileUp className="w-3.5 h-3.5" /> Selecionar Comprovante
+                                  <FileUp className="w-3.5 h-3.5 text-brand-orange" /> Anexar Comprovante
                                 </button>
-                              ) : (
-                                <div className="space-y-2 text-left font-mono text-[10px]">
-                                  <div className="flex items-center justify-between bg-zinc-50 p-2.5 rounded-xl border border-zinc-200">
-                                    <span className="truncate text-zinc-700 pr-2">{documents.residence.name}</span>
-                                    <button
-                                      type="button"
-                                      onClick={() => removeDoc('residence')}
-                                      className="text-red-500 hover:text-red-600 shrink-0 p-1 cursor-pointer"
-                                    >
-                                      <Trash2 className="w-3.5 h-3.5" />
-                                    </button>
-                                  </div>
-
-                                  {documents.residence.uploading && (
-                                    <div className="space-y-1">
-                                      <div className="h-1 bg-zinc-200 rounded-full overflow-hidden">
-                                        <div className="h-full bg-brand-orange transition-all duration-150" style={{ width: `${documents.residence.progress}%` }}></div>
-                                      </div>
-                                      <span className="text-[9px] text-zinc-400">Enviando ({documents.residence.progress}%)</span>
-                                    </div>
-                                  )}
-                                </div>
                               )}
                             </div>
 
-                            {/* DOC 4: CERTIFICADOS */}
-                            <div className="bg-white border border-zinc-200 p-4 rounded-2xl space-y-3 relative overflow-hidden shadow-sm">
-                              <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-2">
-                                  <Award className="w-5 h-5 text-zinc-400 shrink-0" />
-                                  <div className="text-left">
-                                    <span className="text-xs font-bold text-zinc-800 block">Certificados Técnicos</span>
-                                    <span className="text-[9px] text-zinc-400 block font-mono">Altamente Recomendável</span>
-                                  </div>
+                            {/* Doc 4: Certificados */}
+                            <div className="p-3 bg-zinc-50 border border-zinc-200 rounded-2xl space-y-2">
+                              <div className="flex justify-between items-start">
+                                <div>
+                                  <span className="font-bold text-zinc-900 block">4. Certificados Cursos</span>
+                                  <span className="text-[10px] text-zinc-500">Comprovação técnica extra</span>
                                 </div>
-                                {documents.technical?.completed && (
-                                  <span className="text-[9px] bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 px-2 py-0.5 rounded font-bold font-mono">
-                                    OK
-                                  </span>
-                                )}
+                                <span className="text-[9px] bg-zinc-200 text-zinc-600 font-bold px-1.5 py-0.5 rounded">Opcional</span>
                               </div>
 
-                              {!documents.technical ? (
+                              {documents.technical ? (
+                                <div className="bg-white p-2 rounded-xl border border-zinc-200 flex items-center justify-between text-[11px]">
+                                  <div className="flex items-center gap-2 truncate">
+                                    <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                                    <span className="font-bold text-zinc-800 truncate">{documents.technical.name}</span>
+                                  </div>
+                                  <button type="button" onClick={() => removeDoc('technical')} className="text-zinc-400 hover:text-red-500">
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </button>
+                                </div>
+                              ) : (
                                 <button
                                   type="button"
                                   onClick={() => mockFileSelection('technical')}
-                                  className="w-full py-3 border border-dashed border-zinc-300 hover:border-brand-orange bg-zinc-50 hover:bg-zinc-100 rounded-xl flex items-center justify-center gap-1.5 text-[10px] uppercase font-bold text-zinc-500 hover:text-brand-orange transition-all cursor-pointer"
+                                  className="w-full py-2 bg-white hover:bg-zinc-100 border border-dashed border-zinc-300 rounded-xl text-zinc-600 font-bold text-[11px] flex items-center justify-center gap-1.5 cursor-pointer"
                                 >
-                                  <FileUp className="w-3.5 h-3.5" /> Selecionar Certificado
+                                  <FileUp className="w-3.5 h-3.5 text-brand-orange" /> Anexar Diploma/Certificado
                                 </button>
-                              ) : (
-                                <div className="space-y-2 text-left font-mono text-[10px]">
-                                  <div className="flex items-center justify-between bg-zinc-50 p-2.5 rounded-xl border border-zinc-200">
-                                    <span className="truncate text-zinc-700 pr-2">{documents.technical.name}</span>
-                                    <button
-                                      type="button"
-                                      onClick={() => removeDoc('technical')}
-                                      className="text-red-500 hover:text-red-600 shrink-0 p-1 cursor-pointer"
-                                    >
-                                      <Trash2 className="w-3.5 h-3.5" />
-                                    </button>
-                                  </div>
-
-                                  {documents.technical.uploading && (
-                                    <div className="space-y-1">
-                                      <div className="h-1 bg-zinc-200 rounded-full overflow-hidden">
-                                        <div className="h-full bg-brand-orange transition-all duration-150" style={{ width: `${documents.technical.progress}%` }}></div>
-                                      </div>
-                                      <span className="text-[9px] text-zinc-400">Enviando ({documents.technical.progress}%)</span>
-                                    </div>
-                                  )}
-                                </div>
                               )}
                             </div>
                           </div>
@@ -811,9 +1088,9 @@ export default function MechanicAuthPortal({ onLoginSuccess, onBackToLanding }: 
 
                         <button
                           type="submit"
-                          className="w-full bg-brand-orange hover:bg-brand-orange-hover text-black font-black py-3 rounded-xl flex items-center justify-center gap-2 transition-all hover:scale-[1.01] cursor-pointer shadow-lg text-xs sm:text-sm uppercase tracking-wider mt-4"
+                          className="w-full bg-brand-orange hover:bg-brand-orange-hover text-black font-black py-3.5 rounded-xl flex items-center justify-center gap-2 transition-all hover:scale-[1.01] cursor-pointer shadow-lg text-xs sm:text-sm uppercase tracking-wider mt-6"
                         >
-                          <span>Submeter Cadastro & Documentos</span>
+                          <span>Enviar Candidatura para Auditoria de Segurança</span>
                           <ArrowRight className="w-4 h-4" />
                         </button>
                       </form>
@@ -823,125 +1100,140 @@ export default function MechanicAuthPortal({ onLoginSuccess, onBackToLanding }: 
               </div>
             </div>
           ) : (
-            /* REGISTRATION CANDIDACY RECEIVED SUCCESS SCREEN - Light Theme style */
-            <motion.div
-              key="registration-success"
-              initial={{ opacity: 0, scale: 0.98 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="p-8 sm:p-12 text-center space-y-8 text-zinc-900"
-            >
-              <div className="inline-flex w-16 h-16 rounded-full bg-emerald-100 border border-emerald-200 items-center justify-center text-emerald-600 shadow-sm">
-                <CheckCircle2 className="w-8 h-8" />
+            /* SUCCESS ONBOARDING PROTOCOL BOX */
+            <div className="p-8 text-center space-y-6">
+              <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto text-2xl font-bold">
+                ✓
               </div>
 
-              <div className="space-y-3">
-                <h2 className="text-2xl font-black text-zinc-950 uppercase tracking-tight">Candidatura Recebida! 🚀</h2>
-                <p className="text-xs sm:text-sm text-zinc-500 max-w-lg mx-auto leading-relaxed">
-                  Seus dados e documentos digitais foram salvos com sucesso e enviados para a fila técnica da expansão de rede. Veja abaixo o seu protocolo e andamento.
-                </p>
-              </div>
-
-              {/* PROTOCOL CODE CARD */}
-              <div className="bg-zinc-50 border border-zinc-200 p-4 rounded-2xl max-w-md mx-auto text-center space-y-1.5 font-mono shadow-inner">
-                <span className="text-[10px] text-zinc-400 block uppercase tracking-wider font-bold">Protocolo de Registro Unificado</span>
-                <span className="text-base font-black text-brand-orange tracking-wider block">{createdProtocol}</span>
-                <span className="text-[9px] text-zinc-500 block leading-normal">
-                  Nome: {regName} • CNPJ: {regCnpj}
+              <div className="space-y-2">
+                <span className="text-[10px] font-mono bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full border border-emerald-200 font-bold">
+                  PROTOCOLO DE CANDIDATURA: {createdProtocol}
                 </span>
-              </div>
-
-              {/* OPERATIONAL TRACKING PIPELINE MAP */}
-              <div className="max-w-xl mx-auto space-y-4 pt-2">
-                <h4 className="text-[10px] font-mono uppercase tracking-wider text-zinc-400 font-bold text-left">Pipeline de Ativação do Franqueado</h4>
-                
-                <div className="space-y-3 text-left text-xs">
-                  {/* Step 1 */}
-                  <div className="flex gap-3 items-start">
-                    <span className="w-5 h-5 rounded-full bg-emerald-500 text-white text-[10px] font-black flex items-center justify-center shrink-0">1</span>
-                    <div>
-                      <h5 className="font-bold text-zinc-900">Inscrição de Candidatura & MEI Recebidos</h5>
-                      <p className="text-[10px] text-zinc-500">Completo • Formulário e documentos CNH, MEI e ficha de antecedentes criados e indexados.</p>
-                    </div>
-                  </div>
-
-                  {/* Step 2 */}
-                  <div className="flex gap-3 items-start">
-                    <span className="w-5 h-5 rounded-full bg-brand-orange text-white text-[10px] font-black flex items-center justify-center shrink-0 animate-pulse">2</span>
-                    <div>
-                      <h5 className="font-bold text-brand-orange flex items-center gap-1.5">
-                        <span>Análise Técnica Master de Documentos</span>
-                        <span className="w-1.5 h-1.5 bg-brand-orange rounded-full animate-ping"></span>
-                      </h5>
-                      <p className="text-[10px] text-zinc-600 font-semibold">Em Auditoria • Nossa equipe administrativa está validando a CNH e a certidão criminal.</p>
-                    </div>
-                  </div>
-
-                  {/* Step 3 */}
-                  <div className="flex gap-3 items-start opacity-50">
-                    <span className="w-5 h-5 rounded-full bg-zinc-200 text-zinc-500 text-[10px] font-black flex items-center justify-center shrink-0">3</span>
-                    <div>
-                      <h5 className="font-bold text-zinc-700">Triagem Prática & Prova Diagnóstica</h5>
-                      <p className="text-[10px] text-zinc-400">Pendente • Agendamento de teste prático presencial com motocicletas reais na van.</p>
-                    </div>
-                  </div>
-
-                  {/* Step 4 */}
-                  <div className="flex gap-3 items-start opacity-50">
-                    <span className="w-5 h-5 rounded-full bg-zinc-200 text-zinc-500 text-[10px] font-black flex items-center justify-center shrink-0">4</span>
-                    <div>
-                      <h5 className="font-bold text-zinc-700">Entrega de OttoVan & Ativação de Sinal</h5>
-                      <p className="text-[10px] text-zinc-400">Pendente • Retirada do furgão-oficina mobiliado e ativação do tablet operacional.</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* DEMO BYPASS FOR QA TESTING */}
-              <div className="bg-brand-orange/5 border border-brand-orange/20 p-5 rounded-2xl max-w-lg mx-auto text-left space-y-4 shadow-sm">
-                <div className="flex items-center gap-1.5 text-xs text-brand-orange font-bold">
-                  <Sparkles className="w-4 h-4" />
-                  <span>Testando como Desenvolvedor ou Administrador?</span>
-                </div>
-                <p className="text-[11px] text-zinc-600 leading-relaxed font-sans">
-                  Sua candidatura foi salva na lista de aguardando onboarding! Você pode abrir o <strong>Painel Administrativo (Admin Portal)</strong> na barra de navegação superior para ver seu nome lá e aprová-lo manualmente. 
+                <h3 className="text-xl sm:text-2xl font-black text-zinc-950">
+                  Candidatura Enviada com Sucesso!
+                </h3>
+                <p className="text-xs text-zinc-600 max-w-md mx-auto leading-relaxed">
+                  Olá <strong>{createdCandidate?.name}</strong>, sua ficha foi registrada e enviada para o painel da equipe técnica da OttoMotos.
                 </p>
-                <p className="text-[11px] text-zinc-600 leading-relaxed font-sans">
-                  Ou, se preferir ver o tablet de bordo agora, use o botão de atalho de simulação abaixo para <strong>aprovar imediatamente</strong> e logar como si mesmo:
-                </p>
-
-                <div className="flex flex-col sm:flex-row gap-3 pt-1">
-                  <button
-                    onClick={handleInstantApprovalBypass}
-                    className="flex-1 bg-brand-orange hover:bg-brand-orange-hover text-black font-black py-2.5 px-4 rounded-xl text-xs uppercase tracking-wider transition-all hover:scale-[1.01] flex items-center justify-center gap-1.5 cursor-pointer shadow-md"
-                  >
-                    <span>Aprovar & Entrar com {regName.split(' ')[0]}</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={() => {
-                      setRegisterSuccess(false);
-                      setActiveTab('login');
-                    }}
-                    className="bg-white hover:bg-zinc-100 text-zinc-600 border border-zinc-200 py-2.5 px-4 rounded-xl text-xs font-bold transition-colors cursor-pointer shadow-sm"
-                  >
-                    Voltar para Login
-                  </button>
-                </div>
               </div>
-            </motion.div>
+
+              <div className="bg-amber-50 border border-amber-200 p-4 rounded-2xl text-left space-y-2 max-w-lg mx-auto text-xs">
+                <h4 className="font-extrabold text-amber-900 flex items-center gap-1.5">
+                  <Sparkles className="w-4 h-4 text-brand-orange" /> Próximos Passos de Homologação:
+                </h4>
+                <ul className="space-y-1.5 text-amber-800 text-[11px] list-disc list-inside">
+                  <li>Nossa equipe efetuará a checagem da CNH e do MEI.</li>
+                  <li>Entraremos em contato via WhatsApp no número {createdCandidate?.phone}.</li>
+                  <li>Agendamento da vistoria presencial da sua MyOttoVan.</li>
+                </ul>
+              </div>
+
+              <div className="pt-4 border-t border-zinc-200 flex flex-col sm:flex-row gap-3 justify-center max-w-md mx-auto">
+                <button
+                  type="button"
+                  onClick={handleInstantApprovalBypass}
+                  className="w-full bg-brand-orange hover:bg-brand-orange-hover text-black font-extrabold py-3 px-4 rounded-xl text-xs transition-all shadow-md cursor-pointer uppercase tracking-wider"
+                >
+                  ⚡ Aprovação Instantânea (Modo Teste QA)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setRegisterSuccess(false);
+                    setActiveTab('login');
+                  }}
+                  className="w-full bg-zinc-100 hover:bg-zinc-200 text-zinc-700 font-bold py-3 px-4 rounded-xl text-xs transition-all cursor-pointer"
+                >
+                  Voltar para Tela de Login
+                </button>
+              </div>
+            </div>
           )}
         </motion.div>
+      </section>
 
-        {/* BOTTOM NAV BAR ACCESS BUTTON */}
-        <div className="text-center">
-          <button
-            onClick={onBackToLanding}
-            className="text-zinc-400 hover:text-brand-orange text-xs font-bold uppercase tracking-wider transition-colors inline-flex items-center gap-1.5 cursor-pointer"
-          >
-            ← Voltar para a Página Principal de Clientes
-          </button>
+      {/* 7. FAQ PARA MECÂNICOS */}
+      <section className="py-16 px-4 max-w-4xl mx-auto border-t border-zinc-900">
+        <div className="text-center space-y-2 mb-10">
+          <span className="text-xs bg-brand-orange/10 text-brand-orange font-bold px-3 py-1 rounded-full uppercase tracking-widest border border-brand-orange/20 inline-block">
+            Tire Suas Dúvidas
+          </span>
+          <h2 className="text-2xl sm:text-3xl font-black text-white uppercase tracking-tight">
+            Perguntas Frequentes do Mecânico
+          </h2>
         </div>
-      </div>
+
+        <div className="space-y-3 text-left">
+          {[
+            {
+              q: 'Preciso ter van própria para me tornar um mecânico parceiro?',
+              a: 'Não. A MyOttoVan é fornecida no modelo de parceria/franquia móvel já equipada com compressor, morsa, bancada de serviço e câmera HD de monitoramento.'
+            },
+            {
+              q: 'Quais são os requisitos mínimos para aprovação?',
+              a: 'Você precisa ter CNH válida com Categoria AB ou A (moto e van), registro MEI ativo de manutenção de motocicletas e atestado de bons antecedentes criminais.'
+            },
+            {
+              q: 'Como funciona o estoque de peças consignado?',
+              a: 'A van já sai para a rua com estoque de óleos, filtros Tecfil, pastilhas TRW Varga e velas NGK. Você só paga pelas peças que utilizar ao concluir os serviços dos clientes.'
+            },
+            {
+              q: 'Como e quando recebo pelos atendimentos efetuados?',
+              a: 'Todos os valores das mãos de obra aprovadas são repassados diretamente para a sua conta bancária vinculada ao seu CNPJ MEI semanalmente com extrato transparente.'
+            }
+          ].map((faq, idx) => (
+            <div
+              key={idx}
+              className="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden transition-all"
+            >
+              <button
+                onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
+                className="w-full p-4.5 text-left font-bold text-sm text-white flex justify-between items-center gap-4 cursor-pointer hover:text-brand-orange transition-colors"
+              >
+                <span>{faq.q}</span>
+                {openFaq === idx ? (
+                  <ChevronUp className="w-4 h-4 text-brand-orange shrink-0" />
+                ) : (
+                  <ChevronDown className="w-4 h-4 text-zinc-400 shrink-0" />
+                )}
+              </button>
+              {openFaq === idx && (
+                <div className="px-4.5 pb-4.5 text-xs text-zinc-300 leading-relaxed border-t border-zinc-800/60 pt-3">
+                  {faq.a}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 8. FOOTER DA ÁREA DO MECÂNICO */}
+      <footer className="border-t border-zinc-900 bg-zinc-950 py-10 px-4 text-center text-xs text-zinc-500 space-y-4">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 rounded-lg bg-brand-orange text-black flex items-center justify-center font-bold text-xs">
+              <Truck className="w-3.5 h-3.5" />
+            </div>
+            <span className="font-extrabold text-white text-sm">MyOttoVan</span>
+            <span className="text-[10px] text-zinc-600 font-mono">© 2026 OttoMotos Tecnologias para Mobilidade</span>
+          </div>
+
+          <div className="flex items-center gap-4 text-[11px] text-zinc-400">
+            <button onClick={onBackToLanding} className="hover:text-brand-orange transition-colors cursor-pointer">
+              Portal Institucional
+            </button>
+            <span>•</span>
+            <button onClick={() => scrollToAuth('login')} className="hover:text-brand-orange transition-colors cursor-pointer">
+              Login Mecânico
+            </button>
+            <span>•</span>
+            <button onClick={() => scrollToAuth('register')} className="hover:text-brand-orange transition-colors cursor-pointer">
+              Seja um Parceiro
+            </button>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

@@ -153,11 +153,16 @@ const BrandLogo: React.FC<{ name: string; logoUrl: string }> = ({ name }) => {
 };
 
 // Custom Services list for Client Section (iFood Style)
+export type ServiceCategory =
+  | '⚡ Socorro & Pronta Entrega'
+  | '📅 Manutenção Preventiva & Agendada'
+  | '🛠️ Mecânica Complexa & Diagnóstico';
+
 interface Service {
   id: string;
   name: string;
   time: number;
-  category: 'Mais Pedidos' | 'Mecânica Rápida' | 'Transmissão & Freios';
+  category: ServiceCategory;
   image: string;
   description: string;
   formaAtendimento: 'Pronto Atendimento' | 'Sob Agendamento';
@@ -169,7 +174,7 @@ const SERVICES_CATALOG: Service[] = [
     name: 'TROCAR ÓLEO DE MOTOR',
     formaAtendimento: 'Pronto Atendimento',
     time: 15,
-    category: 'Mais Pedidos',
+    category: '⚡ Socorro & Pronta Entrega',
     image: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&q=80&w=400',
     description: 'Substituição completa do óleo com lubrificante premium Mobil para prolongar a vida útil do motor.'
   },
@@ -178,7 +183,7 @@ const SERVICES_CATALOG: Service[] = [
     name: 'TROCAR KIT TRANSMISSAO (RELAÇÃO)',
     formaAtendimento: 'Sob Agendamento',
     time: 40,
-    category: 'Transmissão & Freios',
+    category: '📅 Manutenção Preventiva & Agendada',
     image: 'https://images.unsplash.com/photo-1609630875171-b1321377ee65?auto=format&fit=crop&q=80&w=400',
     description: 'Troca de corrente, coroa e pinhão novos com regulagem profissional e lubrificação técnica.'
   },
@@ -187,7 +192,7 @@ const SERVICES_CATALOG: Service[] = [
     name: 'TROCA DE FILTRO DE OLEO',
     formaAtendimento: 'Pronto Atendimento',
     time: 10,
-    category: 'Mecânica Rápida',
+    category: '⚡ Socorro & Pronta Entrega',
     image: 'https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&q=80&w=400',
     description: 'Instalação de novo filtro de óleo de alta eficiência para manter a lubrificação do motor sempre purificada.'
   },
@@ -196,7 +201,7 @@ const SERVICES_CATALOG: Service[] = [
     name: 'TROCA DA PASTILHA DE FREIO',
     formaAtendimento: 'Pronto Atendimento',
     time: 20,
-    category: 'Mais Pedidos',
+    category: '📅 Manutenção Preventiva & Agendada',
     image: 'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&q=80&w=400',
     description: 'Substituição das pastilhas de freio dianteiras ou traseiras Cobreq com lixamento técnico do disco.'
   },
@@ -205,7 +210,7 @@ const SERVICES_CATALOG: Service[] = [
     name: 'TROCA DA LONA DE FREIO',
     formaAtendimento: 'Pronto Atendimento',
     time: 25,
-    category: 'Transmissão & Freios',
+    category: '📅 Manutenção Preventiva & Agendada',
     image: 'https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&q=80&w=400',
     description: 'Substituição completa das sapatas/lonas de freio traseiras para sistemas de tambor mecânico.'
   },
@@ -214,7 +219,7 @@ const SERVICES_CATALOG: Service[] = [
     name: 'RETROVISORES',
     formaAtendimento: 'Pronto Atendimento',
     time: 10,
-    category: 'Mecânica Rápida',
+    category: '⚡ Socorro & Pronta Entrega',
     image: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&q=80&w=400',
     description: 'Instalação e ajuste de espelhos retrovisores reforçados anti-vibração para garantir segurança.'
   },
@@ -223,7 +228,7 @@ const SERVICES_CATALOG: Service[] = [
     name: 'REPARO CAMARA PNEU DIANTEIRO/TRASEIRO',
     formaAtendimento: 'Pronto Atendimento',
     time: 25,
-    category: 'Mecânica Rápida',
+    category: '⚡ Socorro & Pronta Entrega',
     image: 'https://images.unsplash.com/photo-1615887023516-9b6bcd559e87?auto=format&fit=crop&q=80&w=400',
     description: 'Reparo profissional de furo ou vulcanização completa de câmara de ar de moto.'
   },
@@ -232,7 +237,7 @@ const SERVICES_CATALOG: Service[] = [
     name: 'REPARO PNEU SEM DIANTEIRO/TRASEIRO',
     formaAtendimento: 'Pronto Atendimento',
     time: 15,
-    category: 'Mais Pedidos',
+    category: '⚡ Socorro & Pronta Entrega',
     image: 'https://images.unsplash.com/photo-1582266255765-fa5cf1a1d501?auto=format&fit=crop&q=80&w=400',
     description: 'Remoção de objeto perfurante e remendo rápido do tipo macarrão vulcanizado para pneu tubeless.'
   },
@@ -241,7 +246,7 @@ const SERVICES_CATALOG: Service[] = [
     name: 'TROCA DE FILTRO AR',
     formaAtendimento: 'Pronto Atendimento',
     time: 15,
-    category: 'Mecânica Rápida',
+    category: '📅 Manutenção Preventiva & Agendada',
     image: 'https://images.unsplash.com/photo-1449426468159-d96dbf08f19f?auto=format&fit=crop&q=80&w=400',
     description: 'Substituição do filtro de ar para melhorar o rendimento e reduzir o consumo de combustível.'
   },
@@ -250,7 +255,7 @@ const SERVICES_CATALOG: Service[] = [
     name: 'TROCA DO LAMPADAS',
     formaAtendimento: 'Pronto Atendimento',
     time: 15,
-    category: 'Mecânica Rápida',
+    category: '⚡ Socorro & Pronta Entrega',
     image: 'https://images.unsplash.com/photo-1508898578281-774ac4893c0c?auto=format&fit=crop&q=80&w=400',
     description: 'Substituição de lâmpadas queimadas de farol principal, piscas auxiliares ou lanterna de freio.'
   },
@@ -259,7 +264,7 @@ const SERVICES_CATALOG: Service[] = [
     name: 'TROCAR VELA DE IGNIÇÃO',
     formaAtendimento: 'Pronto Atendimento',
     time: 15,
-    category: 'Mecânica Rápida',
+    category: '⚡ Socorro & Pronta Entrega',
     image: 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?auto=format&fit=crop&q=80&w=400',
     description: 'Instalação de vela de ignição NGK nova para garantir partidas rápidas e queima eficiente.'
   }
@@ -325,7 +330,7 @@ export default function App() {
   // Client Shopping Bag State (iFood Style)
   const [cart, setCart] = useState<Array<{ service: Service; quantity: number }>>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [activeCategory, setActiveCategory] = useState<string>('Mais Pedidos');
+  const [activeCategory, setActiveCategory] = useState<string>('⚡ Socorro & Pronta Entrega');
 
   // Checkout and tracking states
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
